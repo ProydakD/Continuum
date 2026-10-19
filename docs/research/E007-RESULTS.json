@@ -1,0 +1,1622 @@
+{
+  "experiment": "E-007",
+  "fixture": false,
+  "terminal": true,
+  "status_counts": {
+    "completed": 974,
+    "failed": 3,
+    "budget_rejected": 1,
+    "skipped_dependency": 1,
+    "injected_crash_after_commit": 12
+  },
+  "model_positions": 984,
+  "independent_test_worlds": 24,
+  "lineage_verified_contexts": 980,
+  "primary": {
+    "estimate": 0.0,
+    "bootstrap_95": [
+      0.0,
+      0.0
+    ],
+    "exact_two_sided_p": 1.0,
+    "n_worlds": 24,
+    "holm_p": 1,
+    "positive_rule_met": false
+  },
+  "contrasts": {
+    "T1-C1": {
+      "estimate": 0.9583333333333334,
+      "bootstrap_95": [
+        0.875,
+        1.0
+      ],
+      "exact_two_sided_p": 2.384185791015625e-07,
+      "n_worlds": 24,
+      "holm_p": 9.5367431640625e-07,
+      "positive_rule_met": true
+    },
+    "T2v3-T1": {
+      "estimate": 0.0,
+      "bootstrap_95": [
+        0.0,
+        0.0
+      ],
+      "exact_two_sided_p": 1.0,
+      "n_worlds": 24,
+      "holm_p": 1,
+      "positive_rule_met": false
+    },
+    "T2v3-C1": {
+      "estimate": 0.9583333333333334,
+      "bootstrap_95": [
+        0.875,
+        1.0
+      ],
+      "exact_two_sided_p": 2.384185791015625e-07,
+      "n_worlds": 24,
+      "holm_p": 9.5367431640625e-07,
+      "positive_rule_met": true
+    },
+    "T2v3-missing": {
+      "estimate": 1.0,
+      "bootstrap_95": [
+        1.0,
+        1.0
+      ],
+      "exact_two_sided_p": 1.1920928955078125e-07,
+      "n_worlds": 24,
+      "holm_p": 5.960464477539062e-07,
+      "positive_rule_met": true
+    },
+    "T2v3-T2v1": {
+      "estimate": 0.041666666666666664,
+      "bootstrap_95": [
+        0.0,
+        0.10416666666666667
+      ],
+      "exact_two_sided_p": 0.5,
+      "n_worlds": 24,
+      "holm_p": 1,
+      "positive_rule_met": false
+    }
+  },
+  "groups": {
+    "p2-v3/32": {
+      "denominator": 24,
+      "lineage_verified": 24,
+      "rule_correct": 24,
+      "numeric_correct": 24,
+      "all_correct": 24,
+      "control_expected_correct": 24,
+      "correct_fields": 216,
+      "wrong_fields": 0,
+      "null_fields": 0,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "p2-v2/32": {
+      "denominator": 24,
+      "lineage_verified": 24,
+      "rule_correct": 24,
+      "numeric_correct": 24,
+      "all_correct": 24,
+      "control_expected_correct": 24,
+      "correct_fields": 216,
+      "wrong_fields": 0,
+      "null_fields": 0,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "p1-v3/24": {
+      "denominator": 24,
+      "lineage_verified": 24,
+      "rule_correct": 22,
+      "numeric_correct": 22,
+      "all_correct": 22,
+      "control_expected_correct": 22,
+      "correct_fields": 209,
+      "wrong_fields": 7,
+      "null_fields": 0,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "p2-v1/32": {
+      "denominator": 24,
+      "lineage_verified": 24,
+      "rule_correct": 24,
+      "numeric_correct": 24,
+      "all_correct": 24,
+      "control_expected_correct": 24,
+      "correct_fields": 216,
+      "wrong_fields": 0,
+      "null_fields": 0,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "T1/24": {
+      "denominator": 24,
+      "lineage_verified": 24,
+      "rule_correct": 24,
+      "numeric_correct": 24,
+      "all_correct": 24,
+      "control_expected_correct": 24,
+      "correct_fields": 216,
+      "wrong_fields": 0,
+      "null_fields": 0,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "T1/32": {
+      "denominator": 24,
+      "lineage_verified": 24,
+      "rule_correct": 24,
+      "numeric_correct": 24,
+      "all_correct": 24,
+      "control_expected_correct": 24,
+      "correct_fields": 216,
+      "wrong_fields": 0,
+      "null_fields": 0,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "C1/24": {
+      "denominator": 24,
+      "lineage_verified": 24,
+      "rule_correct": 0,
+      "numeric_correct": 0,
+      "all_correct": 0,
+      "control_expected_correct": 0,
+      "correct_fields": 2,
+      "wrong_fields": 0,
+      "null_fields": 214,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "p1-v1/32": {
+      "denominator": 24,
+      "lineage_verified": 24,
+      "rule_correct": 22,
+      "numeric_correct": 22,
+      "all_correct": 22,
+      "control_expected_correct": 22,
+      "correct_fields": 198,
+      "wrong_fields": 0,
+      "null_fields": 18,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "p2-v3/48": {
+      "denominator": 24,
+      "lineage_verified": 24,
+      "rule_correct": 24,
+      "numeric_correct": 23,
+      "all_correct": 23,
+      "control_expected_correct": 23,
+      "correct_fields": 216,
+      "wrong_fields": 0,
+      "null_fields": 0,
+      "arithmetic_error_with_correct_rule": 1
+    },
+    "p1-v3/32": {
+      "denominator": 24,
+      "lineage_verified": 24,
+      "rule_correct": 24,
+      "numeric_correct": 23,
+      "all_correct": 23,
+      "control_expected_correct": 23,
+      "correct_fields": 216,
+      "wrong_fields": 0,
+      "null_fields": 0,
+      "arithmetic_error_with_correct_rule": 1
+    },
+    "T1/48": {
+      "denominator": 24,
+      "lineage_verified": 24,
+      "rule_correct": 24,
+      "numeric_correct": 24,
+      "all_correct": 24,
+      "control_expected_correct": 24,
+      "correct_fields": 216,
+      "wrong_fields": 0,
+      "null_fields": 0,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "C1/32": {
+      "denominator": 24,
+      "lineage_verified": 23,
+      "rule_correct": 1,
+      "numeric_correct": 1,
+      "all_correct": 1,
+      "control_expected_correct": 1,
+      "correct_fields": 23,
+      "wrong_fields": 0,
+      "null_fields": 193,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "C1/48": {
+      "denominator": 24,
+      "lineage_verified": 24,
+      "rule_correct": 22,
+      "numeric_correct": 22,
+      "all_correct": 22,
+      "control_expected_correct": 22,
+      "correct_fields": 212,
+      "wrong_fields": 0,
+      "null_fields": 4,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "p1-v2/32": {
+      "denominator": 24,
+      "lineage_verified": 24,
+      "rule_correct": 24,
+      "numeric_correct": 24,
+      "all_correct": 24,
+      "control_expected_correct": 24,
+      "correct_fields": 216,
+      "wrong_fields": 0,
+      "null_fields": 0,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "p2-v3/24": {
+      "denominator": 24,
+      "lineage_verified": 24,
+      "rule_correct": 24,
+      "numeric_correct": 24,
+      "all_correct": 24,
+      "control_expected_correct": 24,
+      "correct_fields": 216,
+      "wrong_fields": 0,
+      "null_fields": 0,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "p1-v3/48": {
+      "denominator": 24,
+      "lineage_verified": 24,
+      "rule_correct": 22,
+      "numeric_correct": 22,
+      "all_correct": 22,
+      "control_expected_correct": 22,
+      "correct_fields": 204,
+      "wrong_fields": 12,
+      "null_fields": 0,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "missing/32": {
+      "denominator": 48,
+      "lineage_verified": 48,
+      "rule_correct": 0,
+      "numeric_correct": 0,
+      "all_correct": 0,
+      "control_expected_correct": 0,
+      "correct_fields": 0,
+      "wrong_fields": 0,
+      "null_fields": 432,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "stale/32": {
+      "denominator": 12,
+      "lineage_verified": 12,
+      "rule_correct": 12,
+      "numeric_correct": 12,
+      "all_correct": 12,
+      "control_expected_correct": 12,
+      "correct_fields": 108,
+      "wrong_fields": 0,
+      "null_fields": 0,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "incompatible/32": {
+      "denominator": 12,
+      "lineage_verified": 12,
+      "rule_correct": 0,
+      "numeric_correct": 0,
+      "all_correct": 0,
+      "control_expected_correct": 0,
+      "correct_fields": 96,
+      "wrong_fields": 12,
+      "null_fields": 0,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "corrupt/32": {
+      "denominator": 12,
+      "lineage_verified": 12,
+      "rule_correct": 1,
+      "numeric_correct": 1,
+      "all_correct": 1,
+      "control_expected_correct": 1,
+      "correct_fields": 41,
+      "wrong_fields": 0,
+      "null_fields": 67,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "ambiguous/32": {
+      "denominator": 12,
+      "lineage_verified": 12,
+      "rule_correct": 1,
+      "numeric_correct": 1,
+      "all_correct": 1,
+      "control_expected_correct": 11,
+      "correct_fields": 97,
+      "wrong_fields": 0,
+      "null_fields": 11,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "crash/32": {
+      "denominator": 12,
+      "lineage_verified": 12,
+      "rule_correct": 12,
+      "numeric_correct": 12,
+      "all_correct": 12,
+      "control_expected_correct": 12,
+      "correct_fields": 108,
+      "wrong_fields": 0,
+      "null_fields": 0,
+      "arithmetic_error_with_correct_rule": 0
+    },
+    "cross_model/32": {
+      "denominator": 12,
+      "lineage_verified": 10,
+      "rule_correct": 7,
+      "numeric_correct": 6,
+      "all_correct": 6,
+      "control_expected_correct": 6,
+      "correct_fields": 80,
+      "wrong_fields": 10,
+      "null_fields": 18,
+      "arithmetic_error_with_correct_rule": 1
+    }
+  },
+  "world_scores": {
+    "test-01": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-02": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-03": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-04": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-05": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-06": {
+      "C1": 1,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-07": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-08": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 0.5,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-09": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-10": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-11": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-12": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-13": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-14": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-15": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-16": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-17": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-18": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 0.5,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-19": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-20": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-21": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-22": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-23": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    },
+    "test-24": {
+      "C1": 0,
+      "T1": 1,
+      "T2v1": 1.0,
+      "T2v2": 1.0,
+      "T2v3": 1.0,
+      "missing": 0.0
+    }
+  },
+  "H5_positive_rule_met": false,
+  "api_attempts": 2435,
+  "returned_responses": 2435,
+  "registration_sha256": "ab45cfacd26e988bca7ccc386e7e7991bc56fec05c07a21608d7c29657d578a6",
+  "protocol_lock_sha256": "3a2d9c6bf399e642a0249177f33dda308cc0d57b711b91bd2969d36c0eae3e84",
+  "costs": {
+    "measurement_scope": "API: actual HTTP bodies, excluding headers/TLS. MCP: reserialized observed messages, not exact wire framing. Logical: unique shared content+object metadata+current index, plus all proposed memory messages including rejected attempts; optimistic cached-state scenario, not actual network caching. Human design labor and monetary price unknown.",
+    "api_measurements_available": true,
+    "api_measurements_complete": true,
+    "development_setup": {
+      "p1": {
+        "unique_content_bytes": 29351,
+        "object_metadata_bytes": 4305,
+        "current_index_bytes": 848,
+        "logical_bytes": 34504,
+        "api_body_bytes": 1318002,
+        "mcp_reencoded_bytes": 2154915,
+        "input_tokens": 208272,
+        "output_tokens": 19704,
+        "protocol_versions": 3,
+        "unique_objects": 13
+      },
+      "p2": {
+        "unique_content_bytes": 28615,
+        "object_metadata_bytes": 4305,
+        "current_index_bytes": 848,
+        "logical_bytes": 33768,
+        "api_body_bytes": 1165865,
+        "mcp_reencoded_bytes": 2095647,
+        "input_tokens": 191315,
+        "output_tokens": 11618,
+        "protocol_versions": 3,
+        "unique_objects": 13
+      },
+      "T1": {
+        "unique_content_bytes": 1347,
+        "object_metadata_bytes": 694,
+        "current_index_bytes": 89,
+        "logical_bytes": 2130,
+        "api_body_bytes": 0,
+        "mcp_reencoded_bytes": 22816,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "protocol_versions": 1,
+        "unique_objects": 2
+      },
+      "C1": {
+        "unique_content_bytes": 0,
+        "object_metadata_bytes": 0,
+        "current_index_bytes": 0,
+        "logical_bytes": 0,
+        "api_body_bytes": 0,
+        "mcp_reencoded_bytes": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "protocol_versions": 0,
+        "unique_objects": 0
+      }
+    },
+    "scenarios": {
+      "physical_api_body": {
+        "C1": {
+          "setup_bytes": 0,
+          "per_use_bytes": 63244.5,
+          "probability": 0.041666666666666664,
+          "denominator_worlds": 24,
+          "amortization": {
+            "1": {
+              "total_bytes": 63244.5,
+              "expected_correct": 0.041666666666666664,
+              "bytes_per_correct": 1517868.0
+            },
+            "10": {
+              "total_bytes": 632445.0,
+              "expected_correct": 0.41666666666666663,
+              "bytes_per_correct": 1517868.0000000002
+            },
+            "100": {
+              "total_bytes": 6324450.0,
+              "expected_correct": 4.166666666666666,
+              "bytes_per_correct": 1517868.0000000002
+            },
+            "1000": {
+              "total_bytes": 63244500.0,
+              "expected_correct": 41.666666666666664,
+              "bytes_per_correct": 1517868.0
+            }
+          }
+        },
+        "T1": {
+          "setup_bytes": 0,
+          "per_use_bytes": 41130.083333333336,
+          "probability": 1.0,
+          "denominator_worlds": 24,
+          "amortization": {
+            "1": {
+              "total_bytes": 41130.083333333336,
+              "expected_correct": 1.0,
+              "bytes_per_correct": 41130.083333333336
+            },
+            "10": {
+              "total_bytes": 411300.8333333334,
+              "expected_correct": 10.0,
+              "bytes_per_correct": 41130.083333333336
+            },
+            "100": {
+              "total_bytes": 4113008.3333333335,
+              "expected_correct": 100.0,
+              "bytes_per_correct": 41130.083333333336
+            },
+            "1000": {
+              "total_bytes": 41130083.333333336,
+              "expected_correct": 1000.0,
+              "bytes_per_correct": 41130.083333333336
+            }
+          }
+        },
+        "p1": {
+          "setup_bytes": 1318002,
+          "per_use_bytes": 49215.083333333336,
+          "probability": 1.0,
+          "denominator_worlds": 24,
+          "amortization": {
+            "1": {
+              "total_bytes": 1367217.0833333333,
+              "expected_correct": 1.0,
+              "bytes_per_correct": 1367217.0833333333
+            },
+            "10": {
+              "total_bytes": 1810152.8333333335,
+              "expected_correct": 10.0,
+              "bytes_per_correct": 181015.28333333335
+            },
+            "100": {
+              "total_bytes": 6239510.333333334,
+              "expected_correct": 100.0,
+              "bytes_per_correct": 62395.10333333334
+            },
+            "1000": {
+              "total_bytes": 50533085.333333336,
+              "expected_correct": 1000.0,
+              "bytes_per_correct": 50533.085333333336
+            }
+          },
+          "break_even": {
+            "C1": {
+              "first_positive_integer_N": 1,
+              "reason": "strict cost/correct crossing",
+              "slope": 61193.87152777778,
+              "intercept": 54916.75
+            },
+            "T1": {
+              "first_positive_integer_N": null,
+              "reason": "no eventual amortization advantage; possible bounded small-N advantage only",
+              "last_advantage_N_exclusive": -163.01818181818183,
+              "slope": -8085.0,
+              "intercept": 1318002.0
+            }
+          }
+        },
+        "p2": {
+          "setup_bytes": 1165865,
+          "per_use_bytes": 43234.75,
+          "probability": 1.0,
+          "denominator_worlds": 24,
+          "amortization": {
+            "1": {
+              "total_bytes": 1209099.75,
+              "expected_correct": 1.0,
+              "bytes_per_correct": 1209099.75
+            },
+            "10": {
+              "total_bytes": 1598212.5,
+              "expected_correct": 10.0,
+              "bytes_per_correct": 159821.25
+            },
+            "100": {
+              "total_bytes": 5489340.0,
+              "expected_correct": 100.0,
+              "bytes_per_correct": 54893.4
+            },
+            "1000": {
+              "total_bytes": 44400615.0,
+              "expected_correct": 1000.0,
+              "bytes_per_correct": 44400.615
+            }
+          },
+          "break_even": {
+            "C1": {
+              "first_positive_integer_N": 1,
+              "reason": "strict cost/correct crossing",
+              "slope": 61443.052083333336,
+              "intercept": 48577.70833333333
+            },
+            "T1": {
+              "first_positive_integer_N": null,
+              "reason": "no eventual amortization advantage; possible bounded small-N advantage only",
+              "last_advantage_N_exclusive": -553.9428254672164,
+              "slope": -2104.6666666666642,
+              "intercept": 1165865.0
+            }
+          }
+        },
+        "T2_mean_line": {
+          "setup_bytes": 1241933.5,
+          "per_use_bytes": 46224.91666666667,
+          "probability": 1.0,
+          "interpretation": "Mean cost/outcome for a randomly selected independent development line; not best-line selection. Real experiment paid for both lines.",
+          "amortization": {
+            "1": {
+              "total_bytes": 1288158.4166666667,
+              "expected_correct": 1.0,
+              "bytes_per_correct": 1288158.4166666667
+            },
+            "10": {
+              "total_bytes": 1704182.6666666667,
+              "expected_correct": 10.0,
+              "bytes_per_correct": 170418.26666666666
+            },
+            "100": {
+              "total_bytes": 5864425.166666667,
+              "expected_correct": 100.0,
+              "bytes_per_correct": 58644.25166666667
+            },
+            "1000": {
+              "total_bytes": 47466850.16666667,
+              "expected_correct": 1000.0,
+              "bytes_per_correct": 47466.85016666667
+            }
+          },
+          "break_even": {
+            "C1": {
+              "first_positive_integer_N": 1,
+              "reason": "strict cost/correct crossing",
+              "slope": 61318.461805555555,
+              "intercept": 51747.229166666664
+            },
+            "T1": {
+              "first_positive_integer_N": null,
+              "reason": "no eventual amortization advantage; possible bounded small-N advantage only",
+              "last_advantage_N_exclusive": -243.76332231999726,
+              "slope": -5094.833333333336,
+              "intercept": 1241933.5
+            }
+          }
+        },
+        "T2_both_lines": {
+          "setup_bytes": 2483867,
+          "per_use_bytes": 46224.91666666667,
+          "probability": 1.0,
+          "interpretation": "Both development campaigns paid; equal mixture, no outcome selection.",
+          "amortization": {
+            "1": {
+              "total_bytes": 2530091.9166666665,
+              "expected_correct": 1.0,
+              "bytes_per_correct": 2530091.9166666665
+            },
+            "10": {
+              "total_bytes": 2946116.166666667,
+              "expected_correct": 10.0,
+              "bytes_per_correct": 294611.6166666667
+            },
+            "100": {
+              "total_bytes": 7106358.666666667,
+              "expected_correct": 100.0,
+              "bytes_per_correct": 71063.58666666667
+            },
+            "1000": {
+              "total_bytes": 48708783.66666667,
+              "expected_correct": 1000.0,
+              "bytes_per_correct": 48708.78366666667
+            }
+          },
+          "break_even": {
+            "C1": {
+              "first_positive_integer_N": 2,
+              "reason": "strict cost/correct crossing",
+              "slope": 61318.461805555555,
+              "intercept": 103494.45833333333
+            },
+            "T1": {
+              "first_positive_integer_N": null,
+              "reason": "no eventual amortization advantage; possible bounded small-N advantage only",
+              "last_advantage_N_exclusive": -487.5266446399945,
+              "slope": -5094.833333333336,
+              "intercept": 2483867.0
+            }
+          }
+        }
+      },
+      "physical_api_plus_mcp_reencoded": {
+        "C1": {
+          "setup_bytes": 0,
+          "per_use_bytes": 92827.25,
+          "probability": 0.041666666666666664,
+          "denominator_worlds": 24,
+          "amortization": {
+            "1": {
+              "total_bytes": 92827.25,
+              "expected_correct": 0.041666666666666664,
+              "bytes_per_correct": 2227854.0
+            },
+            "10": {
+              "total_bytes": 928272.5,
+              "expected_correct": 0.41666666666666663,
+              "bytes_per_correct": 2227854.0
+            },
+            "100": {
+              "total_bytes": 9282725.0,
+              "expected_correct": 4.166666666666666,
+              "bytes_per_correct": 2227854.0000000005
+            },
+            "1000": {
+              "total_bytes": 92827250.0,
+              "expected_correct": 41.666666666666664,
+              "bytes_per_correct": 2227854.0
+            }
+          }
+        },
+        "T1": {
+          "setup_bytes": 22816,
+          "per_use_bytes": 92019.08333333334,
+          "probability": 1.0,
+          "denominator_worlds": 24,
+          "amortization": {
+            "1": {
+              "total_bytes": 114835.08333333334,
+              "expected_correct": 1.0,
+              "bytes_per_correct": 114835.08333333334
+            },
+            "10": {
+              "total_bytes": 943006.8333333335,
+              "expected_correct": 10.0,
+              "bytes_per_correct": 94300.68333333335
+            },
+            "100": {
+              "total_bytes": 9224724.333333334,
+              "expected_correct": 100.0,
+              "bytes_per_correct": 92247.24333333335
+            },
+            "1000": {
+              "total_bytes": 92041899.33333334,
+              "expected_correct": 1000.0,
+              "bytes_per_correct": 92041.89933333335
+            }
+          }
+        },
+        "p1": {
+          "setup_bytes": 3472917,
+          "per_use_bytes": 129873.08333333334,
+          "probability": 1.0,
+          "denominator_worlds": 24,
+          "amortization": {
+            "1": {
+              "total_bytes": 3602790.0833333335,
+              "expected_correct": 1.0,
+              "bytes_per_correct": 3602790.0833333335
+            },
+            "10": {
+              "total_bytes": 4771647.833333334,
+              "expected_correct": 10.0,
+              "bytes_per_correct": 477164.7833333334
+            },
+            "100": {
+              "total_bytes": 16460225.333333334,
+              "expected_correct": 100.0,
+              "bytes_per_correct": 164602.25333333333
+            },
+            "1000": {
+              "total_bytes": 133346000.33333334,
+              "expected_correct": 1000.0,
+              "bytes_per_correct": 133346.00033333333
+            }
+          },
+          "break_even": {
+            "C1": {
+              "first_positive_integer_N": 2,
+              "reason": "strict cost/correct crossing",
+              "slope": 87415.87152777778,
+              "intercept": 144704.875
+            },
+            "T1": {
+              "first_positive_integer_N": null,
+              "reason": "no eventual amortization advantage; possible bounded small-N advantage only",
+              "last_advantage_N_exclusive": -91.14230992761664,
+              "slope": -37854.0,
+              "intercept": 3450101.0
+            }
+          }
+        },
+        "p2": {
+          "setup_bytes": 3261512,
+          "per_use_bytes": 123528.75,
+          "probability": 1.0,
+          "denominator_worlds": 24,
+          "amortization": {
+            "1": {
+              "total_bytes": 3385040.75,
+              "expected_correct": 1.0,
+              "bytes_per_correct": 3385040.75
+            },
+            "10": {
+              "total_bytes": 4496799.5,
+              "expected_correct": 10.0,
+              "bytes_per_correct": 449679.95
+            },
+            "100": {
+              "total_bytes": 15614387.0,
+              "expected_correct": 100.0,
+              "bytes_per_correct": 156143.87
+            },
+            "1000": {
+              "total_bytes": 126790262.0,
+              "expected_correct": 1000.0,
+              "bytes_per_correct": 126790.262
+            }
+          },
+          "break_even": {
+            "C1": {
+              "first_positive_integer_N": 2,
+              "reason": "strict cost/correct crossing",
+              "slope": 87680.21875,
+              "intercept": 135896.3333333333
+            },
+            "T1": {
+              "first_positive_integer_N": null,
+              "reason": "no eventual amortization advantage; possible bounded small-N advantage only",
+              "last_advantage_N_exclusive": -102.78420378931337,
+              "slope": -31509.666666666657,
+              "intercept": 3238696.0
+            }
+          }
+        },
+        "T2_mean_line": {
+          "setup_bytes": 3367214.5,
+          "per_use_bytes": 126700.91666666667,
+          "probability": 1.0,
+          "interpretation": "Mean cost/outcome for a randomly selected independent development line; not best-line selection. Real experiment paid for both lines.",
+          "amortization": {
+            "1": {
+              "total_bytes": 3493915.4166666665,
+              "expected_correct": 1.0,
+              "bytes_per_correct": 3493915.4166666665
+            },
+            "10": {
+              "total_bytes": 4634223.666666667,
+              "expected_correct": 10.0,
+              "bytes_per_correct": 463422.3666666667
+            },
+            "100": {
+              "total_bytes": 16037306.166666668,
+              "expected_correct": 100.0,
+              "bytes_per_correct": 160373.06166666668
+            },
+            "1000": {
+              "total_bytes": 130068131.16666667,
+              "expected_correct": 1000.0,
+              "bytes_per_correct": 130068.13116666667
+            }
+          },
+          "break_even": {
+            "C1": {
+              "first_positive_integer_N": 2,
+              "reason": "strict cost/correct crossing",
+              "slope": 87548.04513888889,
+              "intercept": 140300.60416666666
+            },
+            "T1": {
+              "first_positive_integer_N": null,
+              "reason": "no eventual amortization advantage; possible bounded small-N advantage only",
+              "last_advantage_N_exclusive": -96.43084515908906,
+              "slope": -34681.83333333333,
+              "intercept": 3344398.5
+            }
+          }
+        },
+        "T2_both_lines": {
+          "setup_bytes": 6734429,
+          "per_use_bytes": 126700.91666666667,
+          "probability": 1.0,
+          "interpretation": "Both development campaigns paid; equal mixture, no outcome selection.",
+          "amortization": {
+            "1": {
+              "total_bytes": 6861129.916666667,
+              "expected_correct": 1.0,
+              "bytes_per_correct": 6861129.916666667
+            },
+            "10": {
+              "total_bytes": 8001438.166666667,
+              "expected_correct": 10.0,
+              "bytes_per_correct": 800143.8166666667
+            },
+            "100": {
+              "total_bytes": 19404520.666666668,
+              "expected_correct": 100.0,
+              "bytes_per_correct": 194045.20666666667
+            },
+            "1000": {
+              "total_bytes": 133435345.66666667,
+              "expected_correct": 1000.0,
+              "bytes_per_correct": 133435.34566666666
+            }
+          },
+          "break_even": {
+            "C1": {
+              "first_positive_integer_N": 4,
+              "reason": "strict cost/correct crossing",
+              "slope": 87548.04513888889,
+              "intercept": 280601.2083333333
+            },
+            "T1": {
+              "first_positive_integer_N": null,
+              "reason": "no eventual amortization advantage; possible bounded small-N advantage only",
+              "last_advantage_N_exclusive": -193.51955634794396,
+              "slope": -34681.83333333333,
+              "intercept": 6711613.0
+            }
+          }
+        }
+      },
+      "logical_shared_state": {
+        "C1": {
+          "setup_bytes": 0,
+          "per_use_bytes": 47.041666666666664,
+          "probability": 0.041666666666666664,
+          "denominator_worlds": 24,
+          "amortization": {
+            "1": {
+              "total_bytes": 47.041666666666664,
+              "expected_correct": 0.041666666666666664,
+              "bytes_per_correct": 1129.0
+            },
+            "10": {
+              "total_bytes": 470.41666666666663,
+              "expected_correct": 0.41666666666666663,
+              "bytes_per_correct": 1129.0
+            },
+            "100": {
+              "total_bytes": 4704.166666666666,
+              "expected_correct": 4.166666666666666,
+              "bytes_per_correct": 1129.0
+            },
+            "1000": {
+              "total_bytes": 47041.666666666664,
+              "expected_correct": 41.666666666666664,
+              "bytes_per_correct": 1129.0
+            }
+          }
+        },
+        "T1": {
+          "setup_bytes": 2130,
+          "per_use_bytes": 24.0,
+          "probability": 1.0,
+          "denominator_worlds": 24,
+          "amortization": {
+            "1": {
+              "total_bytes": 2154.0,
+              "expected_correct": 1.0,
+              "bytes_per_correct": 2154.0
+            },
+            "10": {
+              "total_bytes": 2370.0,
+              "expected_correct": 10.0,
+              "bytes_per_correct": 237.0
+            },
+            "100": {
+              "total_bytes": 4530.0,
+              "expected_correct": 100.0,
+              "bytes_per_correct": 45.3
+            },
+            "1000": {
+              "total_bytes": 26130.0,
+              "expected_correct": 1000.0,
+              "bytes_per_correct": 26.13
+            }
+          }
+        },
+        "p1": {
+          "setup_bytes": 34504,
+          "per_use_bytes": 19.0,
+          "probability": 1.0,
+          "denominator_worlds": 24,
+          "amortization": {
+            "1": {
+              "total_bytes": 34523.0,
+              "expected_correct": 1.0,
+              "bytes_per_correct": 34523.0
+            },
+            "10": {
+              "total_bytes": 34694.0,
+              "expected_correct": 10.0,
+              "bytes_per_correct": 3469.4
+            },
+            "100": {
+              "total_bytes": 36404.0,
+              "expected_correct": 100.0,
+              "bytes_per_correct": 364.04
+            },
+            "1000": {
+              "total_bytes": 53504.0,
+              "expected_correct": 1000.0,
+              "bytes_per_correct": 53.504
+            }
+          },
+          "break_even": {
+            "C1": {
+              "first_positive_integer_N": 32,
+              "reason": "strict cost/correct crossing",
+              "slope": 46.25,
+              "intercept": 1437.6666666666665
+            },
+            "T1": {
+              "first_positive_integer_N": 6475,
+              "reason": "strict cost/correct crossing",
+              "slope": 5.0,
+              "intercept": 32374.0
+            }
+          }
+        },
+        "p2": {
+          "setup_bytes": 33768,
+          "per_use_bytes": 23.0,
+          "probability": 1.0,
+          "denominator_worlds": 24,
+          "amortization": {
+            "1": {
+              "total_bytes": 33791.0,
+              "expected_correct": 1.0,
+              "bytes_per_correct": 33791.0
+            },
+            "10": {
+              "total_bytes": 33998.0,
+              "expected_correct": 10.0,
+              "bytes_per_correct": 3399.8
+            },
+            "100": {
+              "total_bytes": 36068.0,
+              "expected_correct": 100.0,
+              "bytes_per_correct": 360.68
+            },
+            "1000": {
+              "total_bytes": 56768.0,
+              "expected_correct": 1000.0,
+              "bytes_per_correct": 56.768
+            }
+          },
+          "break_even": {
+            "C1": {
+              "first_positive_integer_N": 31,
+              "reason": "strict cost/correct crossing",
+              "slope": 46.08333333333333,
+              "intercept": 1407.0
+            },
+            "T1": {
+              "first_positive_integer_N": 31639,
+              "reason": "strict cost/correct crossing",
+              "slope": 1.0,
+              "intercept": 31638.0
+            }
+          }
+        },
+        "T2_mean_line": {
+          "setup_bytes": 34136.0,
+          "per_use_bytes": 21.0,
+          "probability": 1.0,
+          "interpretation": "Mean cost/outcome for a randomly selected independent development line; not best-line selection. Real experiment paid for both lines.",
+          "amortization": {
+            "1": {
+              "total_bytes": 34157.0,
+              "expected_correct": 1.0,
+              "bytes_per_correct": 34157.0
+            },
+            "10": {
+              "total_bytes": 34346.0,
+              "expected_correct": 10.0,
+              "bytes_per_correct": 3434.6
+            },
+            "100": {
+              "total_bytes": 36236.0,
+              "expected_correct": 100.0,
+              "bytes_per_correct": 362.36
+            },
+            "1000": {
+              "total_bytes": 55136.0,
+              "expected_correct": 1000.0,
+              "bytes_per_correct": 55.136
+            }
+          },
+          "break_even": {
+            "C1": {
+              "first_positive_integer_N": 31,
+              "reason": "strict cost/correct crossing",
+              "slope": 46.166666666666664,
+              "intercept": 1422.3333333333333
+            },
+            "T1": {
+              "first_positive_integer_N": 10669,
+              "reason": "strict cost/correct crossing",
+              "slope": 3.0,
+              "intercept": 32006.0
+            }
+          }
+        },
+        "T2_both_lines": {
+          "setup_bytes": 68272,
+          "per_use_bytes": 21.0,
+          "probability": 1.0,
+          "interpretation": "Both development campaigns paid; equal mixture, no outcome selection.",
+          "amortization": {
+            "1": {
+              "total_bytes": 68293.0,
+              "expected_correct": 1.0,
+              "bytes_per_correct": 68293.0
+            },
+            "10": {
+              "total_bytes": 68482.0,
+              "expected_correct": 10.0,
+              "bytes_per_correct": 6848.2
+            },
+            "100": {
+              "total_bytes": 70372.0,
+              "expected_correct": 100.0,
+              "bytes_per_correct": 703.72
+            },
+            "1000": {
+              "total_bytes": 89272.0,
+              "expected_correct": 1000.0,
+              "bytes_per_correct": 89.272
+            }
+          },
+          "break_even": {
+            "C1": {
+              "first_positive_integer_N": 62,
+              "reason": "strict cost/correct crossing",
+              "slope": 46.166666666666664,
+              "intercept": 2844.6666666666665
+            },
+            "T1": {
+              "first_positive_integer_N": 22048,
+              "reason": "strict cost/correct crossing",
+              "slope": 3.0,
+              "intercept": 66142.0
+            }
+          }
+        }
+      }
+    },
+    "actual_totals": {
+      "api_body_bytes": 23690918,
+      "mcp_reencoded_bytes": 33398620,
+      "raw_worker_logs_bytes": 49429558,
+      "input_tokens": 2964813,
+      "output_tokens": 339116
+    }
+  },
+  "execution_audit": {
+    "pass": true,
+    "preregistration_commit": "e68564738c03855d2b3ea6222e19fd1ecc946b7e",
+    "preregistration_commit_record_at": 1792436357.9405591,
+    "command_started_at": 1792436370.9685411,
+    "first_reserved_API_at": 1792436371.632997,
+    "exit_status": 0,
+    "literal_stderr": "",
+    "live_seconds": 14149.529660701752,
+    "positions": 991,
+    "model_positions": 984,
+    "actual_isolated_model_containers": 983,
+    "full_success_or_rejection_or_injected_crash_lineages_verified": 980,
+    "failed_tool_protocol_contexts": 3,
+    "dependent_skips": 1,
+    "API_attempts": 2435,
+    "API_responses": 2435,
+    "API_failed_or_unknown": 0,
+    "returned_models": {
+      "gpt-6-sol": 2409,
+      "gpt-6-luna": 26
+    },
+    "smoke_contexts": 2,
+    "worker_retries": 0,
+    "writer_second_attempts": 33,
+    "cross_model_by_line": {
+      "p1": {
+        "rule_correct": 2,
+        "numeric_correct": 2,
+        "arithmetic_error_with_correct_rule": 0
+      },
+      "p2": {
+        "rule_correct": 5,
+        "numeric_correct": 4,
+        "arithmetic_error_with_correct_rule": 1
+      }
+    },
+    "exceptions": [
+      {
+        "job": {
+          "id": "j0028",
+          "world": "validation-08",
+          "condition": "T2",
+          "branch": "j0028",
+          "stage": "C",
+          "role": "reader",
+          "source": "j0027",
+          "phase": "development",
+          "campaign": "p1",
+          "protocol_version": "p1-v2",
+          "budget": 32,
+          "split": "validation"
+        },
+        "status": "failed",
+        "failure_type": "ValueError",
+        "failure": "duplicate retrieval",
+        "exit_status": 137,
+        "save_attempts": 0
+      },
+      {
+        "job": {
+          "id": "j0554",
+          "world": "test-04",
+          "condition": "C1",
+          "branch": "j0554",
+          "stage": "A",
+          "role": "writer",
+          "phase": "test",
+          "protocol_version": null,
+          "campaign": "C1",
+          "budget": 32,
+          "split": "test"
+        },
+        "status": "budget_rejected",
+        "failure_type": null,
+        "failure": null,
+        "exit_status": 0,
+        "save_attempts": 2
+      },
+      {
+        "job": {
+          "id": "j0555",
+          "world": "test-04",
+          "condition": "C1",
+          "branch": "j0555",
+          "stage": "C",
+          "role": "reader",
+          "source": "j0554",
+          "phase": "test",
+          "protocol_version": null,
+          "campaign": "C1",
+          "budget": 32,
+          "split": "test"
+        },
+        "status": "skipped_dependency",
+        "failure_type": null,
+        "failure": null,
+        "exit_status": null,
+        "save_attempts": null
+      },
+      {
+        "job": {
+          "id": "j0884",
+          "world": "test-18",
+          "condition": "T2",
+          "branch": "j0884",
+          "stage": "C",
+          "role": "reader",
+          "phase": "control",
+          "campaign": "p1",
+          "protocol_version": "p1-v3",
+          "budget": 32,
+          "control": "cross_model",
+          "source": "j0250",
+          "split": "test"
+        },
+        "status": "failed",
+        "failure_type": "ValueError",
+        "failure": "duplicate retrieval",
+        "exit_status": 137,
+        "save_attempts": 0
+      },
+      {
+        "job": {
+          "id": "j0901",
+          "world": "test-17",
+          "condition": "T2",
+          "branch": "j0901",
+          "stage": "C",
+          "role": "reader",
+          "phase": "control",
+          "campaign": "p1",
+          "protocol_version": "p1-v3",
+          "budget": 32,
+          "control": "cross_model",
+          "source": "j0302",
+          "split": "test"
+        },
+        "status": "failed",
+        "failure_type": "ValueError",
+        "failure": "duplicate retrieval",
+        "exit_status": 137,
+        "save_attempts": 0
+      }
+    ],
+    "known_concurrency": 1,
+    "recovery_file_present": false,
+    "registration_sha256": "ab45cfacd26e988bca7ccc386e7e7991bc56fec05c07a21608d7c29657d578a6",
+    "raw_report_sha256": "818ea8ee997bab0b4308a5363a266145d195d7f196bf11a90a80e095be966d20"
+  },
+  "posthoc_error_decomposition": {
+    "posthoc": true,
+    "scope": "Formal decoders independently transcribed only after protocol lock; never used for worker feedback, protocol selection, primary scoring or inference. C1 arbitrary self-contained text has no universal formal decoder; do not force a favorable classification.",
+    "lock_sha256": "3a2d9c6bf399e642a0249177f33dda308cc0d57b711b91bd2969d36c0eae3e84",
+    "protocol_proof_sha256": "6c027c58af7821bdf810070c44abe3d832c3660f99cd7dec945511ba65d1a3df",
+    "source_sha256": "1945f77f219c2000dab0db09c466f428b3c6b7a19ca743fef2956adf1c447199",
+    "groups": {
+      "p2-v3/32": {
+        "fully_correct": 24
+      },
+      "p2-v2/32": {
+        "fully_correct": 24
+      },
+      "p1-v3/24": {
+        "fully_correct": 22,
+        "writer_correct_reader_rule_wrong": 1,
+        "writer_wrong_rule_reader_matches_wire": 1
+      },
+      "p2-v1/32": {
+        "fully_correct": 24
+      },
+      "T1/24": {
+        "fully_correct": 24
+      },
+      "T1/32": {
+        "fully_correct": 24
+      },
+      "C1/24": {
+        "individual_format_not_formally_decodable_by_this_posthoc_audit": 24
+      },
+      "p1-v1/32": {
+        "fully_correct": 22,
+        "writer_correct_reader_rule_wrong": 1,
+        "writer_invalid_packet": 1
+      },
+      "p2-v3/48": {
+        "fully_correct": 23,
+        "correct_rule_arithmetic_error": 1
+      },
+      "p1-v3/32": {
+        "fully_correct": 23,
+        "correct_rule_arithmetic_error": 1
+      },
+      "T1/48": {
+        "fully_correct": 24
+      },
+      "C1/32": {
+        "individual_format_not_formally_decodable_by_this_posthoc_audit": 23,
+        "writer_failed_or_unsaved": 1
+      },
+      "C1/48": {
+        "individual_format_not_formally_decodable_by_this_posthoc_audit": 24
+      },
+      "p1-v2/32": {
+        "fully_correct": 24
+      },
+      "p2-v3/24": {
+        "fully_correct": 24
+      },
+      "p1-v3/48": {
+        "fully_correct": 22,
+        "writer_wrong_rule_reader_matches_wire": 2
+      }
+    },
+    "nontrivial_cases": [
+      {
+        "reader": "j0175",
+        "writer": "j0174",
+        "world": "test-08",
+        "condition": "p1-v1/32",
+        "category": "writer_correct_reader_rule_wrong"
+      },
+      {
+        "reader": "j0211",
+        "writer": "j0210",
+        "world": "test-21",
+        "condition": "p1-v3/24",
+        "category": "writer_correct_reader_rule_wrong"
+      },
+      {
+        "reader": "j0289",
+        "writer": "j0288",
+        "world": "test-14",
+        "condition": "p1-v3/32",
+        "category": "correct_rule_arithmetic_error"
+      },
+      {
+        "reader": "j0449",
+        "writer": "j0448",
+        "world": "test-01",
+        "condition": "p1-v3/24",
+        "category": "writer_wrong_rule_reader_matches_wire"
+      },
+      {
+        "reader": "j0477",
+        "writer": "j0476",
+        "world": "test-01",
+        "condition": "p1-v3/48",
+        "category": "writer_wrong_rule_reader_matches_wire"
+      },
+      {
+        "reader": "j0547",
+        "writer": "j0546",
+        "world": "test-11",
+        "condition": "p2-v3/48",
+        "category": "correct_rule_arithmetic_error"
+      },
+      {
+        "reader": "j0555",
+        "writer": "j0554",
+        "world": "test-04",
+        "condition": "C1/32",
+        "category": "writer_failed_or_unsaved"
+      },
+      {
+        "reader": "j0635",
+        "writer": "j0634",
+        "world": "test-05",
+        "condition": "p1-v3/48",
+        "category": "writer_wrong_rule_reader_matches_wire"
+      },
+      {
+        "reader": "j0685",
+        "writer": "j0684",
+        "world": "test-18",
+        "condition": "p1-v1/32",
+        "category": "writer_invalid_packet"
+      }
+    ]
+  },
+  "posthoc_protocol_proof": {
+    "pass": true,
+    "posthoc": true,
+    "scope": "Independent deterministic interpretation of frozen model-proposed formats, not LLM ability or a preregistered superiority endpoint.",
+    "protocol_lock_sha256": "3a2d9c6bf399e642a0249177f33dda308cc0d57b711b91bd2969d36c0eae3e84",
+    "protocol_sha256": {
+      "protocol:p1-v1": "f40b8a08577001056bd2cca50db873e740b2f82216c9d132b3aa20f394d70f72",
+      "protocol:p1-v2": "86ae1e1616585af9e760c092e03ef47dc028911ac0b421204988f3c7c1a6495c",
+      "protocol:p1-v3": "6656a6138aa2a6112d475d6f559574580089378b8181c3dd2ae6447fa9d7ef8b",
+      "protocol:p2-v1": "db355bc72f6764ae9dc8a4fd0cc97e2b5b82aa29a44f863efcdc96c30b2d84a1",
+      "protocol:p2-v2": "32d726a6fdeee0c947238f8b170015ce6fa9d9ebfd5d8123f5a92a15e8970a1a",
+      "protocol:p2-v3": "be4657946b7be561aaa1a39a121cce00461c864fe9574108dd7a4010d2e2cf15"
+    },
+    "counts": {
+      "linear": 233280,
+      "residue": 933120,
+      "switch": 933120
+    },
+    "p1_complete_message_bytes": 19,
+    "p2_complete_message_bytes": 23,
+    "p1_v1_claimed_bytes": 18,
+    "p1_v1_byte_claim_correct": false,
+    "wire_semantics_unchanged_across_versions_in_each_line": true,
+    "known_constructions": "p1: mixed-radix rank + standard base64url with prefix; p2: direct positional digit maps, no in-message version/checksum.",
+    "novel_coding_method_established": false,
+    "seconds": 28.53304999996908,
+    "analysis_source_sha256": "8fcd9abd36568b982e13dc1c62ac8012f400e5f5916507cb8026dc4efe6da1e3"
+  },
+  "preregistration_commit": "e68564738c03855d2b3ea6222e19fd1ecc946b7e",
+  "raw_report_sha256": "818ea8ee997bab0b4308a5363a266145d195d7f196bf11a90a80e095be966d20",
+  "raw_data_location": "C:\\Users\\User\\Documents\\ChatGPT\\ContinuumResearch\\runs\\e007-series-001",
+  "scope": "Curated synthetic aggregate results. Raw provider, MCP, DB, prompts and full individual answers remain outside Git."
+}
