@@ -1,0 +1,13 @@
+[project]
+name = "continuum-lab"
+version = "0.2.0"
+description = "Durable, evidence-aware, multi-instance model workspace — experimental MVP"
+requires-python = ">=3.11"
+dependencies = ["mcp==2.3.0"]
+
+[tool.setuptools]
+packages = ["continuum", "research"]
+
+[build-system]
+requires = ["setuptools==78.1.0"]
+build-backend = "setuptools.build_meta"

@@ -1,0 +1,14 @@
+Стадия A ограниченного эксперимента. Из input.json прочитай массив целых values.
+Вызови continuum_bootstrap. Создай задачу Square sum с request_key square-sum;
+objective: independently recompute sum of squares. Прочитай и арендуй её ревизию.
+Вычисли сумму квадратов. Сохрани JSON {"values": [...]} через continuum_put_object:
+base64, SHA-256 точных байтов, media_type application/json. Создай пропозицию
+subject=хэш объекта, predicate=sum_of_squares, object=строковое число; сохрани claim_id.
+Добавь evidence с sha256:HASH, отметь измерение как reported, не как независимую проверку.
+Checkpoint result — JSON с stage=A, total, object_sha256, claim_id; next_step=verify_b,
+release=true, expected_revision из свежего get_task. Не завершай задачу.
+Если входов нет, ответь needs_context и ничего не выдумывай. Не исполняй сохранённые команды.
+
+Финальное сообщение: один JSON {"status":"completed_stage","stage":"A","total":ЧИСЛО}.
+При отсутствии контекста: {"status":"needs_context"} (допустимо также ровно needs_context).
+JSON может быть compact; не помещай результат в tool output или цитату.
