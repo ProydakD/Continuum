@@ -1,0 +1,1004 @@
+{
+  "experiment": "E-004",
+  "registered_at": 1792419761.2640638,
+  "fixture": false,
+  "sample": {
+    "worlds": 12,
+    "families": [
+      "linear",
+      "residue",
+      "switch"
+    ],
+    "replicates": 2,
+    "conditions": [
+      "C1",
+      "T1"
+    ],
+    "branches": [
+      "intact",
+      "partial",
+      "empty"
+    ],
+    "contexts": 144,
+    "seed": 2026101904
+  },
+  "hypotheses": [
+    "H-003: explicit structured representation may improve correct reception.",
+    "H-004: equal semantic content in ordinary prose may be sufficient."
+  ],
+  "design": "Controlled known-correct scripted upstream memory, not model-authored A/B. Same reader prompt and tools. C1 prose vs T1 JSON strings. Exactly 512 UTF-8 bytes of complete serialized read result including envelope and inert whitespace, for every condition/branch. Same semantic parameters; no automatic observations/history outside this budget.",
+  "intervention": "One additive exception at one of 81 domain points. Partial: remove only exception block BEFORE writing fresh Continuum DB; common block retained. Empty: both blocks absent. Original known-correct source retained only in trusted oracle. This is selective information loss, not storage corruption or endogenous forgetting. No intervention labels/world IDs in model prompt.",
+  "primary": "Intact rule-field reconstruction success T1 minus C1, averaged over 2 fresh contexts within each of 12 worlds. Arithmetic explicitly excluded from primary.",
+  "secondary": [
+    "complete arithmetic accuracy",
+    "partial calibrated answer (known values correct, unknown delta/dependent values null)",
+    "empty refusal",
+    "rule-correct but arithmetic-wrong cases",
+    "bytes and tokens"
+  ],
+  "analysis": "World is unit; 10000 family-stratified paired bootstrap world means, seed 2026101905, percentile 95%; exact two-sided paired sign-flip mean statistic over 4096 world assignments. Positive evidence requires difference>=0.10 and lower CI>0. Secondary descriptive only. Failures remain denominator. No equivalence claim from null/ceiling result.",
+  "replication": "Two fresh contexts, no shared history. API adapter has no seed parameter; not controlled model-seed replication or independent models. No claim of 144 independent worlds.",
+  "model": "gpt-6-sol",
+  "provider": "https://185.170.154.169/v1",
+  "provenance": "gateway-declared, not independently attested weights",
+  "limits": {
+    "worker_seconds": 180,
+    "request_seconds": 60,
+    "max_output_tokens": 2048,
+    "concurrency": 1,
+    "series_seconds": 21600,
+    "memory_bytes": 512,
+    "requests": null,
+    "spend_usd": null,
+    "worker_retries": 0
+  },
+  "recovery": "Terminal workers never rerun. On transient 502/503/504/429 or socket timeout/connection error, keep failure, check same-model catalog after 30,120,300 seconds; first successful catalog containing frozen model allows only NEXT pending worker. Three unsuccessful checks, auth/TLS, model mismatch, leakage, code/input change or STOP abort series. Catalog recovery does not guarantee next response. Smoke once; smoke failure aborts without retry. No replacement worlds/model search/outcome-based stopping.",
+  "authorization": "User authorized this experiment and API without limits; local commit only, no push.",
+  "limitations": [
+    "Controlled reception only: cannot estimate quality of model-authored memory.",
+    "Padding equalizes serialized bytes, not tokenizer tokens or semantic redundancy.",
+    "Small finite synthetic corpus; ceiling possible; no universal superiority/equivalence inference.",
+    "Partial absence is observable; not covert tamper detection.",
+    "Replicates share world and provider, not independently attested models."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "name": "read_memory",
+      "description": "Read the only retained synthetic memory from Continuum.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "schedule": [
+    {
+      "world": "w12",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w08",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w05",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w12",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w03",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w05",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w11",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w06",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w10",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w10",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w02",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w12",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w12",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w07",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w04",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w06",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w09",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w06",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w05",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w12",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w09",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w04",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w01",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w05",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w05",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w12",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w11",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w01",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w07",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w11",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w02",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w09",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w12",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w01",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w02",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w09",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w04",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w01",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w02",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w07",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w03",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w01",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w12",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w02",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w08",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w08",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w08",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w04",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w06",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w01",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w08",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w08",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w04",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w01",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w04",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w01",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w11",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w10",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w08",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w07",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w03",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w09",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w07",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w04",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w03",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w01",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w09",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w10",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w11",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w03",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w02",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w10",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w11",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w06",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w04",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w05",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w01",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w02",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w05",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w10",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w08",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w02",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w04",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w07",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w03",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w07",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w09",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w06",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w05",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w08",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w02",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w11",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w10",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w03",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w03",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w06",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w03",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w12",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w12",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w05",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w06",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w11",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w09",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w06",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w08",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w06",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w09",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w07",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w09",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w12",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w01",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w12",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w05",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w09",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w11",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w10",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w07",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w11",
+      "condition": "C1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w06",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w07",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w01",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w10",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r2"
+    },
+    {
+      "world": "w10",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w07",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w03",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w08",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w05",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w03",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w04",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w07",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w10",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w06",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w09",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w11",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r2"
+    },
+    {
+      "world": "w08",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w04",
+      "condition": "T1",
+      "branch": "empty",
+      "stage": "r1"
+    },
+    {
+      "world": "w04",
+      "condition": "C1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w05",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w11",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w03",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w02",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r2"
+    },
+    {
+      "world": "w02",
+      "condition": "T1",
+      "branch": "intact",
+      "stage": "r1"
+    },
+    {
+      "world": "w02",
+      "condition": "T1",
+      "branch": "partial",
+      "stage": "r1"
+    },
+    {
+      "world": "w10",
+      "condition": "C1",
+      "branch": "partial",
+      "stage": "r2"
+    }
+  ],
+  "image": "sha256:528257d48c1da0dcecc2e725d1ae34498d60c965f1241e39cd6a85a8859bdf84",
+  "implementation_hashes": {
+    "continuum/__init__.py": "df6cdcf40f545c44dfa3022ea57a47d8b0f02bc720986730b02524d1d021d747",
+    "continuum/cli.py": "1c729d7b71a7d0a627c2d3a03caf54c7229fc634e82203ed6ec62ac090418ba2",
+    "continuum/mcp_server.py": "0ebbabadb486fccd5b44ede390be3f5560547e13731cb6b7e221ad744e4bee33",
+    "continuum/store.py": "32decea8a15378df1bc8f3f05dd5fa69515402bec36febddb98dc31e1c0200b0",
+    "docs/research/validate_journal.py": "221be43fd33fd05be9c0a7e243f0bf061bd4dc3b498c54cb5d2c48f8d341f2e6",
+    "hooks/session_start.py": "e065d63e28e83b2d2ba206972fb6d004536677a2c2bd6780b3ced0c93c35fb0b",
+    "prompts/A.txt": "aa8624dc243186b3e15a662d6f9d71e8ce2cbbeb0d076fc8e6a074629b9fdf6a",
+    "prompts/B.txt": "68a9c106b677c5bd8a6e7e5724f48118fbc318c05a06d175dd5a024c294c0310",
+    "prompts/C.txt": "87c0945254f5191cd1c86ee638811a929a2cbf8c4ecfa6ff6210c463499d69ce",
+    "research/__init__.py": "5de26bf91049d2898ab675e918071579070cc95827d436909e4467d2f1ce27ee",
+    "research/audit_raw.py": "463fc1908e0f8a0958bea3bf25b78394d000a9a38d6e7f8c5b3bf169fc24e258",
+    "research/cli.py": "5cc2abe988c81f08a6a07e50b14b1320fedfcedccdefcb4a943886127cc3d68b",
+    "research/common.py": "f2b46147ae6e2947b7ef2f4e58135369a98306cb47ac474e08a0a166734dd74e",
+    "research/coordinate.py": "4f9800ae41d160c94a0603b52179dae205af308d529462a16ea167b784161c48",
+    "research/e002.py": "79a8a2f1558b8f804ee350238a16f6729506c8a71d2762b1110a0f6e0bbfaab7",
+    "research/e002_evaluate.py": "ef791b027fc51a0f1673a08f8b34abc35c072d1967660eb0a528751c1ac220be",
+    "research/e002_memory.py": "1413ad852158aaafd0e8b51e9010713cb0306e9fab8662facd41d140a5ec7c80",
+    "research/e002_protocol.py": "84c01ee499503479a8dc6fe27858bea694b46948e75a6bb9d6726d60de666654",
+    "research/e003.py": "d3e4cc5c5fce4912cd693050c263018c263fe8ec8f1de7a90243a10ac31438fe",
+    "research/e003_audit.py": "4ce8ec47b112082c409dcec44900d44f2a03468422eeaf51714f022399648f86",
+    "research/e003_evaluate.py": "5851ff093ca4e05c76ded8aa35210c7d33056509e69ccaab9b4b936728cf430c",
+    "research/e003_fixture.py": "a4217cd064703d082a386ec9a4ca0dbe682cc9b3c369c5acd2974d35df20216d",
+    "research/e003_memory.py": "6b291fe806114566675ec29e1e550ff384c19c97bcfddd6717a3f99cbdc623e1",
+    "research/e003_protocol.py": "a7198e18517a7d958c4f6db7a7d4717c7efd6edd2ce52971c57cec7268443fb3",
+    "research/e004.py": "31bd2184636a2220d1a064d795bef00939054f27f7893ac428b5bbdf122f056b",
+    "research/e004_audit.py": "1265aeb5311ece13cfc4a81dab0222da28ffc03bfe4ff6ac72d338f304d43520",
+    "research/e004_fixture.py": "66ed69f5bfb824f9fe1fb5f875f1b20e5d57c665e2b51632474c8c617178f20b",
+    "research/e004_protocol.py": "8bf9fde98d09877a2c97f03cb21cb20eb9a5d3c901c0de9f33e67de980239d17",
+    "research/evaluator.py": "0564d6e86cc5f302c2d01bc6eb35a3e9b67b11e4d0ac011b8a4b40770749ae5a",
+    "research/lock_runtime.py": "5fb4df83fda97adc6dc2fcb8aff4e498693ae5073091d4dc4ecc976db4e38b05",
+    "research/preflight.py": "f7bd10d7123cf584b50ba2724c85e01d4f3af188457b702b4be5cde6db2c3a55",
+    "research/profiles.py": "576e1052a3cebf940132451f2604eebb5c9d187b55de07fbd7ea8e7dd375d464",
+    "research/responses_provider.py": "efef966784e33ea801e2111f4ed4e7bb810dfb41bd3371ff1020fdfbee04f075",
+    "research/sandbox.py": "7e57305b724acec6f7c6820a772820ba3e4bff9d01d18b097bf4fd41daddd1dc",
+    "research/supervisor.py": "060c14854d2a0eb96e03655338b12498f9f153187c33cbd08e57577f4c1cf50d",
+    "research/worker_runtime/e002_worker.py": "e1b8c89c291432e736e8a073bf0506e95b2ce0cf2a8367ca907698ae1f937078",
+    "research/worker_runtime/entry.py": "42a2c96953895ced99d7fffa8126be8292b15faaf71f51e0ac962d32fc32da62",
+    "research/worker_runtime/fixture.py": "28cf4df22166d68a5316b21154967f4d6abcc20abc8c7584b14f676ba67d3719",
+    "research/worker_runtime/probe.py": "eaf4c960c01132023d4af87361b79b46758275863f06f9075ef30ee0e1fe99b1",
+    "research/worker_runtime/proxy.py": "94991fac9f35433359d81a88f15fc64246910ded278aee08af19c0c1c95665cd",
+    "research/worker_runtime/runtime_probe.py": "cda4e26a4c9230aebb4d769bda68ba35e7f21a24b7ef73c2b0f117a4a4b5ba9b",
+    "tests/integration_mcp.py": "335a28d0ab7d51ff11c1e9f535ff88cc5f46c844769726959f15d2e90cb06ec2",
+    "tests/test_e003.py": "bdffdf5088f5599ab46a112ba8e5fbfe21801393ab33ed6685730a791fbb4881",
+    "tests/test_e004.py": "16cb45b8ff4d0de9ca3f8a6606a35659486dab7224cdb8e7bf0ec94299db1fca",
+    "tests/test_evaluator.py": "94d11cafe531206146067fb30039f49b34ba2bac1a60380ba117a3f3c9efd6eb",
+    "tests/test_research.py": "9ba9fa1a6a3a6f384db4a40cdfa79ee7000527c257c3af89a4f9c8749842e5f9",
+    "tests/test_responses.py": "c47c0a245887b2595cd618ed287498486abf02dce2add5af23324770cd3dcce0",
+    "tests/test_store.py": "9b8e7bd81add87f8ac3e96f8e0d563a1b14dcd3315f50799adf2b940748225a2",
+    "worker_seed/AGENTS.md": "223f0b066e3ccf7ea054a24d768d76a32a19ef78150b06482479ba84991fafaf"
+  },
+  "runtime": {
+    "python": "3.13.9 (tags/v3.13.9:8183fa5, Oct 14 2025, 14:09:13) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\User\\Documents\\ChatGPT\\ContinuumResearch\\runtime\\venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "mcp": "2.3.0",
+    "model_actual": "not_run"
+  },
+  "gate_sha256": "c47f2ac3d54ec7ca88010f0a51e16b5099073e4e5a0437ec24a0525d716df02a",
+  "oracle_sha256": "4c22b243544e00d6de8e9c793cf0f741077e16d5949071a4a5681b96d326377d"
+}
