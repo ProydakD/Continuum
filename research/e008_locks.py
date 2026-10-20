@@ -78,6 +78,19 @@ def load_outcome(study, identity):
     return value
 
 
+def validate_assignment(job, value):
+    resolved = value["job"]
+    dynamic = {"budget", "protocol_version", "bulletin", "verification_disabled", "crash_after_commit"}
+    if any(resolved.get(k) != v for k, v in job.items() if k not in dynamic):
+        raise PermissionError("outcome not bound to its assigned condition/split/lineage")
+    if set(resolved) - set(job) - dynamic:
+        raise PermissionError("unregistered input in resolved position")
+    for key in ("budget", "protocol_version"):
+        if job.get(key) is not None and resolved.get(key) != job[key]:
+            raise PermissionError("fixed assignment changed")
+    return value
+
+
 def publication_value(study, row):
     job = row["job"]
     if row["status"] != "completed" or row["audit"].get("pass") is not True or not row["result"].get("saved"):
@@ -121,17 +134,7 @@ class DecisionStore:
 
     def _outcome(self, job):
         self._check_binding()
-        value = load_outcome(self.study, job["id"])
-        resolved = value["job"]
-        dynamic = {"budget", "protocol_version", "bulletin", "verification_disabled", "crash_after_commit"}
-        if any(resolved.get(k) != v for k, v in job.items() if k not in dynamic):
-            raise PermissionError("outcome not bound to its assigned condition/split/lineage")
-        if set(resolved) - set(job) - dynamic:
-            raise PermissionError("unregistered input in resolved position")
-        for key in ("budget", "protocol_version"):
-            if job.get(key) is not None and resolved.get(key) != job[key]:
-                raise PermissionError("fixed assignment changed")
-        return value
+        return validate_assignment(job, load_outcome(self.study, job["id"]))
 
     def _sources(self, jobs):
         for job in jobs:
