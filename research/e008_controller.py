@@ -16,6 +16,7 @@ from .e008_development_audit import audit as audit_development
 from .e008_execute import copy_predecessor, execute, ledger_key, make_unit, seed_archive
 from .e008_locks import DecisionStore, load_outcome, read, seal_outcome, unit_path, write_once
 from .e008_memory import KnowledgeArchive
+from .e008_network import context_span
 from . import e008_oracle as oracle
 from .e008_protocol import TYPED_SPEC, source_ids
 from .e008_resources import SeriesLedger, SeriesStopped, resource_policy
@@ -181,7 +182,10 @@ def run_next(study, registration, store, gold, provider, *, guard, authorize_api
         execution_registration = copy.deepcopy(registration)
         execution_registration["limits"]["investigator_seconds"] = min(
             registration["limits"]["investigator_seconds"], guard.remaining())
+        provider_log = study / "provider.jsonl"
+        network_start = provider_log.stat().st_size if provider_log.exists() else 0
         result = execute(study, execution_registration, resolved, world, provider)
+        write_once(run / "provider-span.json", context_span(provider_log, network_start, job["id"]))
         score = None
         if job["role"] in ("designer", "critic"):
             verified = audit_development(study, resolved, supplied, provider.model)

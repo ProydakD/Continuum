@@ -3,7 +3,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from research.e008_network import NetworkIndex
+from research.e008_network import NetworkIndex, context_span, span_events
 
 
 class NetworkIndexTests(unittest.TestCase):
@@ -43,6 +43,25 @@ class NetworkIndexTests(unittest.TestCase):
         self.path.write_bytes(self.path.read_bytes()[:-1])
         with self.assertRaises(ValueError):
             NetworkIndex(self.path)
+
+    def test_new_context_span_does_not_include_previous_context_or_later_append(self):
+        prefix = b"".join(json.dumps(r).encode() + b"\n" for r in self.events[:2])
+        proof = context_span(self.path, len(prefix), "two")
+        self.assertEqual(span_events(self.path, proof, "two"), self.events[2:])
+        with self.path.open("ab") as f:
+            f.write(b'{"event":"later","worker":"future"}\n')
+        self.assertEqual(span_events(self.path, proof, "two"), self.events[2:])
+        self.path.write_bytes(self.path.read_bytes().replace(b'"two"', b'"bad"', 1))
+        with self.assertRaises(PermissionError):
+            span_events(self.path, proof, "two")
+
+    def test_foreign_event_or_shrunken_trace_cannot_be_sealed(self):
+        with self.assertRaises(PermissionError):
+            context_span(self.path, 0, "two")
+        with self.assertRaises(PermissionError):
+            context_span(self.path, self.path.stat().st_size + 1, "two")
+        with self.assertRaises(PermissionError):
+            span_events(self.path, context_span(self.path, self.path.stat().st_size, "two"), "one")
 
 
 if __name__ == "__main__":

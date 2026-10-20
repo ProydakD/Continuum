@@ -10,6 +10,55 @@ import json
 from .common import digest
 
 
+def context_span(path, offset, worker):
+    """Seal only the just-finished serial context, never re-read its prefix."""
+    size = path.stat().st_size if path.exists() else 0
+    if type(offset) is not int or not 0 <= offset <= size:
+        raise PermissionError("provider journal shrank or invalid start offset")
+    raw = b""
+    if path.exists():
+        with path.open("rb") as stream:
+            stream.seek(offset)
+            raw = stream.read(size - offset)
+    proof = {"offset": offset, "length": len(raw), "sha256": hashlib.sha256(raw).hexdigest(), "worker": worker}
+    _context_events(raw, worker)
+    return proof
+
+
+def _context_events(raw, worker):
+    if raw and not raw.endswith(b"\n"):
+        raise PermissionError("partial context network event")
+    events, attempts = [], set()
+    for line in raw.splitlines():
+        event = json.loads(line)
+        if event.get("event") == "request_failed":
+            if event["attempt"] not in attempts:
+                raise PermissionError("foreign failed attempt in context span")
+        elif event.get("worker") != worker:
+            raise PermissionError("foreign network event in context span")
+        if event.get("event") == "request_started":
+            attempts.add(event["attempt"])
+        events.append(event)
+    return events
+
+
+def span_events(path, proof, worker):
+    if (proof["worker"] != worker or type(proof["offset"]) is not int or proof["offset"] < 0
+            or type(proof["length"]) is not int or proof["length"] < 0):
+        raise PermissionError("invalid context network binding")
+    if not path.exists():
+        raw = b""
+        if proof["offset"] or proof["length"]:
+            raise PermissionError("context provider trace disappeared")
+    else:
+        with path.open("rb") as stream:
+            stream.seek(proof["offset"])
+            raw = stream.read(proof["length"])
+    if len(raw) != proof["length"] or hashlib.sha256(raw).hexdigest() != proof["sha256"]:
+        raise PermissionError("original context provider bytes changed")
+    return _context_events(raw, worker)
+
+
 class NetworkIndex:
     def __init__(self, path):
         self.path = path

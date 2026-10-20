@@ -15,6 +15,15 @@ def rows(path):
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
 
 
+def context_network(study, job):
+    from .e008_network import span_events
+    path = study / "units" / job["id"] / "provider-span.json"
+    if path.exists():
+        return span_events(study / "provider.jsonl", json.loads(path.read_text(encoding="utf-8")), job["id"])
+    # Historical immutable fixtures predate spans; do not rewrite their files.
+    return rows(study / "provider.jsonl")
+
+
 def snapshot(path):
     db = read_db(path)
     objects = {obj["sha256"]: obj for obj in db["knowledge_objects"]}
@@ -158,7 +167,7 @@ def audit(study, job, world, model, network=None, *, execution_study=None):
         events = rows(run / "supervisor/session.jsonl")
         registration = json.loads((study / "registration.json").read_text())
         verify_container(study, job, events, registration, execution_study=execution_study)
-        receipts = network_chain(run, result, events, network if network is not None else rows(study / "provider.jsonl"),
+        receipts = network_chain(run, result, events, network if network is not None else context_network(study, job),
                                  model, tools_for(job["stage"]), registration["limits"])
         calls = pairs(events)
         db, index, objects = snapshot(run / "state/continuum.sqlite3")

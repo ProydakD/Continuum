@@ -239,9 +239,13 @@ def last_http_status(provider, offset, worker=None):
         return None
     with provider.log.open("rb") as stream:
         stream.seek(offset)
-        rows = [json.loads(line) for line in stream if line.strip()]
-    matches = [r for r in rows if r.get("event") == "transport_bytes" and r.get("worker") == worker]
-    return matches[-1]["http_status"] if matches else None
+        status = None
+        for line in stream:
+            if line.strip():
+                row = json.loads(line)
+                if row.get("event") == "transport_bytes" and row.get("worker") == worker:
+                    status = row["http_status"]
+    return status
 
 
 SMOKE_TOOLS = [{"type": "function", "name": "echo", "description": "Return the supplied integer.",

@@ -5,7 +5,7 @@ import json
 
 from .common import source_hashes
 from .e003_audit import pairs
-from .e008_audit import json_bytes, network_chain, rows, snapshot, verify_container
+from .e008_audit import context_network, json_bytes, network_chain, rows, snapshot, verify_container
 from .e008_development import DEVELOPMENT_TOOLS, development_prompt
 
 
@@ -25,7 +25,7 @@ def audit(study, job, expected_input, model, network=None, *, execution_study=No
         registration = json.loads((study / "registration.json").read_text())
         events = rows(run / "supervisor/session.jsonl")
         verify_container(study, job, events, registration, execution_study=execution_study)
-        receipts = network_chain(run, result, events, network if network is not None else rows(study / "provider.jsonl"),
+        receipts = network_chain(run, result, events, network if network is not None else context_network(study, job),
                                  model, DEVELOPMENT_TOOLS[job["role"]], registration["limits"])
         calls = pairs(events)
         db, index, objects = snapshot(run / "state/continuum.sqlite3")
