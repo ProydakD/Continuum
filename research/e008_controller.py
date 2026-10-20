@@ -37,7 +37,13 @@ def resolve_job(store, job):
     elif job["condition"] == "T2" and job["role"] == "investigator":
         protocol = (locked["lineages"][job["lineage"]]["protocol"] if locked else
                     store.publication(job["lineage"], job["version"]))
-        resolved["protocol_version"] = protocol["version"] if protocol else None
+        if job.get("protocol_version") is not None:
+            if protocol is not None and protocol["version"] != job["protocol_version"]:
+                raise PermissionError("publication differs from fixed assigned version")
+            # An unavailable proposal is still the assigned version. Preserve it
+            # in dependent skips so feedback can verify the frozen assignment.
+        else:
+            resolved["protocol_version"] = protocol["version"] if protocol else None
     control = job.get("control")
     if control == "crash" and job["stage"] == "C":
         resolved["crash_after_commit"] = True

@@ -48,6 +48,20 @@ class ResolutionTests(unittest.TestCase):
         self.store.publication.assert_called_once_with("L1", 1)
         self.store.protocol_lock.assert_not_called()
 
+    def test_unavailable_validation_keeps_immutable_assigned_version(self):
+        self.job.update(phase="validation", version=2, lineage="L2", protocol_version="L2-v2")
+        self.store.publication.return_value = None
+        before = copy.deepcopy(self.job)
+        resolved, protocol = resolve_job(self.store, self.job)
+        self.assertIsNone(protocol)
+        self.assertEqual(resolved["protocol_version"], "L2-v2")
+        self.assertEqual(self.job, before)
+
+    def test_publication_cannot_replace_fixed_validation_assignment(self):
+        self.job.update(phase="validation", version=2, lineage="L2", protocol_version="L2-v2")
+        with self.assertRaises(PermissionError):
+            resolve_job(self.store, self.job)
+
     def test_crash_only_on_assigned_c_and_authentication_ablation_persists(self):
         self.job.update(stage="C", condition="C1", phase="robustness", control="crash")
         resolved, _ = resolve_job(self.store, self.job)
