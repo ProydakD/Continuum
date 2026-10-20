@@ -76,6 +76,28 @@ class RevisionTests(unittest.TestCase):
         self.assertEqual(result["groups"]["deliberate_injection"]["root_rejections"], 1)
         self.assertEqual(result["groups"]["deliberate_injection"]["dependent_corrections"], 1)
 
+    def test_retained_injection_stays_separate_in_c_and_d(self):
+        bulletin = {"hypothesis": {k: self.h[k] for k in ("family", "order", "gate", "flips")},
+                    "claims": [{"id": "probe:P01", "question_id": "P01", "value": "1",
+                                "depends_on": ["probe:H0"]}]}
+        retained = {"answers": [{"id": "P01", "value": "1", "depends_on": ["probe:H0"]}],
+                    "hypotheses": [dict(self.h, id="probe:H0")]}
+        b = {"job": dict(self.job, bulletin=bulletin), "result": {"answer": retained}}
+        for stage, previous in (("C", "B"), ("D", "C")):
+            with self.subTest(stage=stage):
+                self.chain = [b]
+                if previous == "C":
+                    self.chain.append({"job": dict(self.job, id="c", stage="C"),
+                                       "result": {"answer": copy.deepcopy(retained)}})
+                self.job.update(id=stage.lower(), stage=stage, source=previous.lower())
+                self.answer["hypotheses"][0]["id"] = "probe:H0"
+                self.answer["revisions"][0]["claim_id"] = previous + ":P01"
+                result = revision_metrics(self.job, self.score(), self.chain, self.world, self.gold)
+                self.assertEqual(result["groups"]["natural"]["root_opportunities"], 0)
+                self.assertEqual(result["groups"]["natural"]["claim_error_opportunities"], 0)
+                self.assertEqual(result["groups"]["deliberate_injection"]["root_rejections"], 1)
+                self.assertEqual(result["groups"]["deliberate_injection"]["dependent_corrections"], 1)
+
     def test_false_correction_uses_correct_prior_claim_denominator(self):
         self.chain[0]["result"]["answer"]["answers"][0]["value"] = "1/2"
         self.answer["answers"][0]["value"] = "1"

@@ -28,6 +28,12 @@ def revision_metrics(job, score, chain, world, gold):
     changes = (score or {}).get("revisions", [])
     observed = (previous or {}).get("result", {}).get("answer")
     prior_observable = isinstance(observed, dict) and isinstance(observed.get("answers"), list)
+    injected_roots = {}
+    for entry in chain:
+        injection = (entry["job"].get("bulletin") or {}).get("hypothesis")
+        if injection:
+            h = dict(injection, id="probe:H0", status="preferred", confidence=.95, evidence=["EA"])
+            injected_roots["probe:H0"] = hypothesis_index()[hypothesis_key(h)]
     old_roots = {}
     if prior_observable and isinstance(observed.get("hypotheses"), list):
         for h in observed["hypotheses"]:
@@ -37,7 +43,8 @@ def revision_metrics(job, score, chain, world, gold):
                     if h["id"] in old_roots:
                         old_roots[h["id"]] = None  # Ambiguous identity is not evidence.
                     else:
-                        old_roots[h["id"]] = (index, "natural")
+                        origin = ("deliberate_injection" if injected_roots.get(h["id"]) == index else "natural")
+                        old_roots[h["id"]] = (index, origin)
             except (ValueError, KeyError, TypeError):
                 continue
     bulletin = job.get("bulletin") or {}
@@ -78,6 +85,14 @@ def revision_metrics(job, score, chain, world, gold):
             old = exact_value(prior["value"], questions[qid]["kind"])
         except ValueError:
             continue
+        # B/C can explicitly retain an injected premise. Its same-ID, same-SCM
+        # consequence must not become a "natural" error merely by changing stage.
+        # Do not infer this origin from equality of values alone.
+        if any(prior.get("dependency_hypothesis_indices", {}).get(root) == index
+               and root in prior.get("depends_on", [])
+               and equal(encoded_value(oracle.answer(candidates()[index], questions[qid])), old)
+               for root, index in injected_roots.items()):
+            origin = "deliberate_injection"
         wanted = current["questions"][qid]
         matched = [change for change in changes if change.get("claim_id") == identity
                    and change.get("valid") and change.get("matches_observed_prior")]

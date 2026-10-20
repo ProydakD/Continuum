@@ -151,6 +151,10 @@ class AnalysisTests(unittest.TestCase):
         report = summarize(data, jobs, outcomes, bootstrap_samples=100)
         self.assertEqual(report["failed_or_unverified"], 1)
         self.assertEqual(report["world_scores"][failed["world"]]["C1"], .4)
+        outcomes[failed["id"]] = {"status": "failed_controller"}
+        report = summarize(data, jobs, outcomes, bootstrap_samples=100)
+        self.assertEqual(report["failed_or_unverified"], 1)
+        self.assertEqual(report["world_scores"][failed["world"]]["C1"], .4)
         outcomes[failed["id"]] = {"status": "running"}
         with self.assertRaises(ValueError):
             summarize(data, jobs, outcomes, bootstrap_samples=100)

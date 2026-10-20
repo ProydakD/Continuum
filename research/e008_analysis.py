@@ -16,7 +16,7 @@ CONTRASTS = (
     ("T2-FULL-JOURNAL", "T2", "FULL-JOURNAL"),
 )
 CONDITIONS = ("C0", "C1", "T1", "T2", "SINGLE-A", "SINGLE-B", "FULL-JOURNAL")
-TERMINAL = {"completed", "budget_rejected", "failed", "skipped_dependency",
+TERMINAL = {"completed", "budget_rejected", "failed", "failed_controller", "skipped_dependency",
             "protocol_unavailable", "secondary_unavailable", "injected_crash_after_commit"}
 
 
