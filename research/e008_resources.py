@@ -31,14 +31,32 @@ def resource_policy(jobs):
     }
 
 
-def directory_bytes(path):
+def directory_bytes(path, *, evidence=None):
     """Fail closed on a symlink/reparse point rather than traversing outside study."""
+    path = Path(path)
+    if path.is_symlink() or getattr(path, "is_junction", lambda: False)():
+        raise SeriesStopped("study contains a redirected root")
     total = 0
     for directory, folders, files in os.walk(path, followlinks=False):
         for name in folders + files:
             item = Path(directory) / name
             if item.is_symlink() or (hasattr(item, "is_junction") and item.is_junction()):
                 raise SeriesStopped("study contains a redirected filesystem entry")
+        if evidence is not None and Path(directory) == path:
+            if evidence.study != path:
+                raise SeriesStopped("space snapshot belongs to another study")
+            if evidence.unit_sizes and "units" not in folders:
+                raise SeriesStopped("sealed units directory disappeared")
+            if "units" in folders:
+                folders.remove("units")
+                total += sum(evidence.unit_sizes.values())
+                if evidence.active is not None:
+                    total += directory_bytes(path / "units" / evidence.active)
+            for name, size in evidence.frozen_input_sizes.items():
+                if name not in folders:
+                    raise SeriesStopped("frozen input directory disappeared")
+                folders.remove(name)
+                total += size
         total += sum((Path(directory) / name).stat().st_size for name in files)
     return total
 
@@ -53,6 +71,7 @@ class SeriesLedger(SpendLedger):
 
     def __init__(self, study, policy):
         self.study = Path(study).resolve(strict=True)
+        self.evidence = None
         if (not isinstance(policy.get("workers"), dict) or not policy["workers"]
                 or any(not isinstance(k, str) or type(v) is not int or v <= 0 for k, v in policy["workers"].items())):
             raise ValueError("positive per-context request ceilings required")
@@ -107,13 +126,19 @@ class SeriesLedger(SpendLedger):
         return remaining
 
     def check_space(self):
-        used = directory_bytes(self.study)
+        used = directory_bytes(self.study, evidence=self.evidence)
         reserve = self.limits["reserve_bytes"]
         if used + reserve > self.limits["artifact_bytes"]:
             raise SeriesStopped("artifact ceiling including next-operation reserve")
         if shutil.disk_usage(self.study).free < reserve:
             raise SeriesStopped("insufficient free space for next-operation reserve")
         return used
+
+    def use_evidence(self, evidence):
+        from .e008_locks import EvidenceSnapshot
+        if not isinstance(evidence, EvidenceSnapshot) or evidence.study.resolve() != self.study:
+            raise SeriesStopped("verified current-study snapshot required")
+        self.evidence = evidence
 
     @staticmethod
     def require_no_pending(db):

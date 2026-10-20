@@ -19,8 +19,8 @@ from .e003 import Jobs, implementation_hashes
 from .e008_controller import run_next
 from .e008_design import bounds, schedule
 from .e008_design import signature
-from .e008_execute import ledger_key, ledger_record
-from .e008_locks import DecisionStore, load_outcome, read, write_once
+from .e008_execute import ledger_record
+from .e008_locks import EvidenceSnapshot, SnapshotDecisions, read, write_once
 from .e008_resources import BoundedProvider, SeriesLedger, SeriesStopped, provider_failure_action, resource_policy
 from .sandbox import image_id
 
@@ -371,57 +371,52 @@ def run(study, *, authorize_api=False, max_positions=None):
     with controller_lock(study):
         reg, corpus, gold = load(study)
         jobs = reg["schedule"]
-        states = Jobs(study / "jobs.sqlite3").state()
-        if set(states) != {ledger_key(j) for j in jobs}:
-            raise PermissionError("job ledger differs from registered schedule")
-        if any(row["status"] == "running" for row in states.values()):
-            raise SeriesStopped("running/orphan context; inspect actual handle, do not relaunch")
+        evidence = EvidenceSnapshot(study, jobs)
         # A terminal invocation is a verification, not a new smoke or API request.
-        if all(row["status"] != "pending" for row in states.values()):
-            for job in jobs:
-                row = load_outcome(study, job["id"])
-                if row["result"] != states[ledger_key(job)]["report"]:
-                    raise PermissionError("terminal outcome and ledger disagree")
+        if evidence.next_job() is None:
             return {"terminal": True, "new_positions": 0, "new_network_requests": 0,
                     "research_complete": False}
         guard = SeriesLedger(study, reg["resources"])
-        guard.start()
-        guard.check_context()
-        if not (study / "network-start.json").exists():
-            with closing(sqlite3.connect(guard.path)) as db:
-                if db.execute("SELECT COUNT(*) FROM attempts").fetchone()[0] or db.execute(
-                        "SELECT COUNT(*) FROM metadata_attempts").fetchone()[0]:
-                    raise SeriesStopped("network attempts exist without their admission record")
-            write_once(study / "network-start.json", {"at": time.time(), "gate_sha256": digest(study / "live-gate.json")})
-        providers = {role: BoundedProvider(reg["provider"], model, guard, study / "provider.jsonl", authorize=True)
-                     for role, model in reg["models"].items()}
-        for role in ("primary", "secondary"):
-            checked = compatibility(study, role, providers[role])
-            if not checked["pass"]:
-                if role == "primary" or checked["action"] != "unavailable":
-                    raise SeriesStopped("compatibility gate failed; no repeat")
-                providers[role] = None
-        store = DecisionStore(study, corpus["worlds"], jobs)
-        # Recovery state survives termination between finishing a failed job and
-        # scheduling its peer. Earlier terminal stop conditions cannot disappear.
-        prior = [j for j in jobs if states[ledger_key(j)]["status"] != "pending"]
-        for finished in prior:
-            resume_failure(study, finished, states[ledger_key(finished)]["report"],
-                           providers[finished["model_role"]])
-        count = 0
-        while max_positions is None or count < max_positions:
-            states = Jobs(study / "jobs.sqlite3").state()
-            job = next((j for j in jobs if states[ledger_key(j)]["status"] == "pending"), None)
-            if job is None:
-                break
-            provider = providers[job["model_role"]]
-            result = run_next(study, reg, store, gold, provider, guard=guard, authorize_api=True)
-            count += 1
-            print(json.dumps({"event": "position_terminal", "job": job["id"], "status": result["status"]}), flush=True)
-            resume_failure(study, job, result, provider)
-        terminal = all(row["status"] != "pending" for row in Jobs(study / "jobs.sqlite3").state().values())
-        return {"terminal": terminal, "new_positions": count, "research_complete": False,
-                "next": "independent raw audit/REF/full report" if terminal else "resume first pending position"}
+        guard.use_evidence(evidence)
+        try:
+            guard.start()
+            guard.check_context()
+            if not (study / "network-start.json").exists():
+                with closing(sqlite3.connect(guard.path)) as db:
+                    if db.execute("SELECT COUNT(*) FROM attempts").fetchone()[0] or db.execute(
+                            "SELECT COUNT(*) FROM metadata_attempts").fetchone()[0]:
+                        raise SeriesStopped("network attempts exist without their admission record")
+                write_once(study / "network-start.json", {"at": time.time(), "gate_sha256": digest(study / "live-gate.json")})
+            providers = {role: BoundedProvider(reg["provider"], model, guard, study / "provider.jsonl", authorize=True)
+                         for role, model in reg["models"].items()}
+            for role in ("primary", "secondary"):
+                checked = compatibility(study, role, providers[role])
+                if not checked["pass"]:
+                    if role == "primary" or checked["action"] != "unavailable":
+                        raise SeriesStopped("compatibility gate failed; no repeat")
+                    providers[role] = None
+            store = SnapshotDecisions(study, corpus["worlds"], jobs, evidence)
+            # Recovery survives process death; a previous fatal error cannot
+            # disappear just because its completed row is now in the snapshot.
+            for finished in jobs[:len(evidence.outcomes)]:
+                resume_failure(study, finished, evidence.get(finished)["result"],
+                               providers[finished["model_role"]])
+            count = 0
+            while max_positions is None or count < max_positions:
+                job = evidence.next_job()
+                if job is None:
+                    break
+                provider = providers[job["model_role"]]
+                result = run_next(study, reg, store, gold, provider, guard=guard,
+                                  authorize_api=True, evidence=evidence)
+                count += 1
+                print(json.dumps({"event": "position_terminal", "job": job["id"], "status": result["status"]}), flush=True)
+                resume_failure(study, job, result, provider)
+            terminal = evidence.next_job() is None
+            return {"terminal": terminal, "new_positions": count, "research_complete": False,
+                    "next": "independent raw audit/REF/full report" if terminal else "resume first pending position"}
+        finally:
+            evidence.verify_all()
 
 
 def main():

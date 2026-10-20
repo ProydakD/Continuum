@@ -7,6 +7,9 @@ import json
 import os
 from pathlib import Path
 import re
+import sqlite3
+from contextlib import closing
+import copy
 import time
 
 from .common import digest
@@ -44,6 +47,8 @@ def unit_path(study, identity):
 
 
 def file_manifest(run):
+    if run.is_symlink() or getattr(run, "is_junction", lambda: False)():
+        raise PermissionError("redirected unit root")
     files = {}
     for path in sorted(run.rglob("*")):
         if path.is_symlink() or (hasattr(path, "is_junction") and path.is_junction()):
@@ -90,6 +95,116 @@ def validate_assignment(job, value):
             raise PermissionError("fixed assignment changed")
     return value
 
+
+class EvidenceSnapshot:
+    """Process-local verified terminal prefix, never persisted as a trust cache.
+
+    Selection uses copies of these already verified values, not re-read mutable
+    files. Archive copying and prior-chain scoring still verify consumed bytes.
+    Every raw file and ledger row is rechecked on resume and batch exit.
+    """
+
+    def __init__(self, study, jobs):
+        from .e003 import Jobs
+        from .e008_execute import ledger_key
+        self.study, self.jobs = Path(study), copy.deepcopy(list(jobs))
+        self.assignments = {j["id"]: j for j in self.jobs}
+        self.binding = signature(jobs)
+        self.outcomes, self.seals, self.unit_sizes = {}, {}, {}
+        self.active = None
+        states = Jobs(self.study / "jobs.sqlite3").state()
+        if set(states) != {ledger_key(j) for j in jobs}:
+            raise PermissionError("snapshot ledger differs from registered assignments")
+        pending = False
+        for ordinal, job in enumerate(jobs):
+            state = states[ledger_key(job)]
+            if state["ordinal"] != ordinal or state["status"] == "running":
+                raise PermissionError("wrong order or running/orphan context")
+            if state["status"] == "pending":
+                pending = True
+            elif pending:
+                raise PermissionError("terminal position after an unfinished assignment")
+            else:
+                self.record(job["id"])
+        self.verify_all()
+        self.frozen_input_sizes = {}
+        gold = self.study / "gold"
+        if gold.exists():
+            from .e008_resources import directory_bytes
+            self.frozen_input_sizes["gold"] = directory_bytes(gold)
+        self.input_manifest = {name: digest(self.study / name) for name in
+                               ("registration.json", "oracle.json", "gold/manifest.json")
+                               if (self.study / name).exists()}
+        if gold.exists():
+            from .common import source_hashes
+            self.input_manifest.update({"gold/" + name: sha for name, sha in source_hashes(gold).items()})
+
+    def record(self, identity):
+        from .e008_execute import ledger_key
+        from .e008_resources import directory_bytes
+        if len(self.outcomes) >= len(self.jobs) or self.jobs[len(self.outcomes)]["id"] != identity:
+            raise PermissionError("only next assigned terminal outcome can enter snapshot")
+        job = self.jobs[len(self.outcomes)]
+        value = validate_assignment(job, load_outcome(self.study, identity))
+        with closing(sqlite3.connect(self.study / "jobs.sqlite3")) as db:
+            row = db.execute("SELECT status,report FROM jobs WHERE id=?", (ledger_key(job),)).fetchone()
+        if not row or row[0] != value["status"] or json.loads(row[1]) != value["result"]:
+            raise PermissionError("snapshot outcome and job ledger disagree")
+        self.outcomes[identity] = value
+        self.seals[identity] = digest(unit_path(self.study, identity) / "outcome.json")
+        self.unit_sizes[identity] = directory_bytes(unit_path(self.study, identity))
+        self.active = None
+
+    def get(self, job):
+        if self.assignments.get(job["id"]) != job:
+            raise PermissionError("snapshot assignments changed")
+        if job["id"] not in self.outcomes:
+            raise PermissionError("unverified or unfinished selection source")
+        return validate_assignment(job, copy.deepcopy(self.outcomes[job["id"]]))
+
+    def next_job(self):
+        from .e008_execute import ledger_key
+        if signature(self.jobs) != self.binding:
+            raise PermissionError("snapshot schedule changed")
+        with closing(sqlite3.connect(self.study / "jobs.sqlite3")) as db:
+            if (db.execute("SELECT COUNT(*) FROM jobs").fetchone()[0] != len(self.jobs)
+                    or db.execute("SELECT 1 FROM jobs WHERE status='running' LIMIT 1").fetchone()):
+                raise PermissionError("changed ledger or live/orphan context")
+            if len(self.outcomes) == len(self.jobs):
+                return None
+            job = self.jobs[len(self.outcomes)]
+            row = db.execute("SELECT id,status FROM jobs WHERE ordinal=?", (len(self.outcomes),)).fetchone()
+        if row != (ledger_key(job), "pending"):
+            raise PermissionError("snapshot cursor differs from next pending assignment")
+        return job
+
+    def verify_all(self):
+        from .e003 import Jobs
+        from .e008_execute import ledger_key
+        states = Jobs(self.study / "jobs.sqlite3").state()
+        if set(states) != {ledger_key(j) for j in self.jobs}:
+            raise PermissionError("snapshot exit ledger assignment changed")
+        actual_units = self.study / "units"
+        if actual_units.is_symlink() or getattr(actual_units, "is_junction", lambda: False)():
+            raise PermissionError("redirected units root")
+        present = {p.name for p in actual_units.iterdir()} if actual_units.exists() else set()
+        if present != set(self.outcomes):
+            raise PermissionError("unsealed/orphan/foreign unit at snapshot boundary")
+        for ordinal, job in enumerate(self.jobs):
+            row = states[ledger_key(job)]
+            if row["ordinal"] != ordinal:
+                raise PermissionError("snapshot ledger ordinal changed")
+            if job["id"] in self.outcomes:
+                value = load_outcome(self.study, job["id"])
+                if (value != self.outcomes[job["id"]] or row["report"] != value["result"]
+                        or row["status"] != value["status"]
+                        or digest(unit_path(self.study, job["id"]) / "outcome.json") != self.seals[job["id"]]):
+                    raise PermissionError("original verified prefix changed")
+            elif row["status"] != "pending" or row["report"] is not None:
+                raise PermissionError("unrecorded terminal/orphan position")
+        for name, sha in getattr(self, "input_manifest", {}).items():
+            if digest(self.study / name) != sha:
+                raise PermissionError("frozen snapshot input changed")
 
 def publication_value(study, row):
     job = row["job"]
@@ -263,3 +378,46 @@ class DecisionStore:
             selected[lineage] = {**choice, "protocol": proposals.get(choice["version"])}
         return self._seal("protocol", {"lineages": selected, "memory_budget": calibration["decision"]["budget"],
                                       "calibration_lock_sha256": digest(self.study / "locks/calibration.json")}, sources)
+
+
+class SnapshotDecisions(DecisionStore):
+    """Immutable selection values for one verified controller batch only."""
+
+    def __init__(self, study, worlds, jobs, evidence):
+        super().__init__(study, worlds, jobs)
+        if evidence.study != self.study or evidence.jobs != self.jobs:
+            raise PermissionError("decision snapshot belongs to another study")
+        self.evidence, self.memo = evidence, {}
+
+    def _outcome(self, job):
+        return self.evidence.get(job)
+
+    def _sources(self, jobs):
+        for job in jobs:
+            self._outcome(job)
+        return {j["id"]: self.evidence.seals[j["id"]] for j in jobs}
+
+    def _cached(self, key, create):
+        self._check_binding()
+        if key not in self.memo:
+            value = create()
+            proof = {p.name: digest(p) for p in (self.study / "locks").glob("*.json")}
+            self.memo[key] = (copy.deepcopy(value), proof)
+        value, proof = self.memo[key]
+        if any(digest(self.study / "locks" / name) != sha for name, sha in proof.items()):
+            raise PermissionError("locked selection changed during controller batch")
+        return copy.deepcopy(value)
+
+    def calibration_lock(self):
+        return self._cached(("calibration",), super().calibration_lock)
+
+    def publication(self, lineage, version, role="designer"):
+        return self._cached(("publication", lineage, version, role),
+                            lambda: super(SnapshotDecisions, self).publication(lineage, version, role))
+
+    def validation_feedback(self, lineage, version):
+        return self._cached(("feedback", lineage, version),
+                            lambda: super(SnapshotDecisions, self).validation_feedback(lineage, version))
+
+    def protocol_lock(self):
+        return self._cached(("protocol",), super().protocol_lock)

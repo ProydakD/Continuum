@@ -90,7 +90,7 @@ def protocol_in_archive(run):
     return json.loads(objects[index["protocol"]]["content"]) if "protocol" in index else None
 
 
-def run_next(study, registration, store, gold, provider, *, guard, authorize_api=False):
+def run_next(study, registration, store, gold, provider, *, guard, authorize_api=False, evidence=None):
     """Dispatch only the first pending assignment, or return None if terminal.
 
     A controller error becomes a retained terminal failure and stops the caller.
@@ -117,20 +117,26 @@ def run_next(study, registration, store, gold, provider, *, guard, authorize_api
         if provider is not None and provider.ledger is not guard:
             raise PermissionError("provider does not share the registered resource guard")
     ledger = Jobs(study / "jobs.sqlite3")
-    states = ledger.state()
-    if set(states) != {ledger_key(j) for j in registration["schedule"]}:
-        raise PermissionError("job ledger differs from registration")
-    if any(row["status"] == "running" for row in states.values()):
-        raise SeriesStopped("running/orphan context; inspect actual handle, never relaunch")
-    for assigned in registration["schedule"]:
-        state = states[ledger_key(assigned)]
-        if state["status"] == "pending":
-            job = assigned
-            break
-        prior = load_outcome(study, assigned["id"])
-        if prior["result"] != state["report"] or prior["status"] != state["status"]:
-            raise PermissionError("terminal job ledger and sealed evidence disagree")
+    if evidence is not None:
+        if getattr(store, "evidence", None) is not evidence or guard.evidence is not evidence or evidence.study != study:
+            raise PermissionError("one verified snapshot must bind controller, decisions and space")
+        job = evidence.next_job()
     else:
+        states = ledger.state()
+        if set(states) != {ledger_key(j) for j in registration["schedule"]}:
+            raise PermissionError("job ledger differs from registration")
+        if any(row["status"] == "running" for row in states.values()):
+            raise SeriesStopped("running/orphan context; inspect actual handle, never relaunch")
+        job = None
+        for assigned in registration["schedule"]:
+            state = states[ledger_key(assigned)]
+            if state["status"] == "pending":
+                job = assigned
+                break
+            prior = load_outcome(study, assigned["id"])
+            if prior["result"] != state["report"] or prior["status"] != state["status"]:
+                raise PermissionError("terminal job ledger and sealed evidence disagree")
+    if job is None:
         return None
     guard.check_context()
     resolved, protocol = resolve_job(store, job)
@@ -140,6 +146,8 @@ def run_next(study, registration, store, gold, provider, *, guard, authorize_api
     if provider is not None and provider.model != registration["models"][job["model_role"]]:
         raise PermissionError("provider model differs from assigned role")
     ledger.claim(ledger_key(job))
+    if evidence is not None:
+        evidence.active = job["id"]
     make_unit(run)
     try:
         reason = None
@@ -159,6 +167,8 @@ def run_next(study, registration, store, gold, provider, *, guard, authorize_api
             write_once(run / "result.json", result)
             seal_outcome(study, resolved, {"pass": False, "executed_successfully": False, "reason": reason})
             ledger.finish(ledger_key(job), result)
+            if evidence is not None:
+                evidence.record(job["id"])
             return result
         world = store.worlds[job["world"]] if job.get("world") else None
         supplied = None
@@ -198,6 +208,8 @@ def run_next(study, registration, store, gold, provider, *, guard, authorize_api
                                inherited_answers=inherited_claims(prior_chain(study, resolved), world_gold))
         seal_outcome(study, resolved, verified, score)
         ledger.finish(ledger_key(job), result)
+        if evidence is not None:
+            evidence.record(job["id"])
         return result
     except Exception:
         # Do not rewrite an actual execution result or conceal its raw trace.
@@ -207,4 +219,6 @@ def run_next(study, registration, store, gold, provider, *, guard, authorize_api
             write_once(run / "result.json", result)
             seal_outcome(study, resolved, {"pass": False, "executed_successfully": False})
             ledger.finish(ledger_key(job), result)
+            if evidence is not None:
+                evidence.record(job["id"])
         raise

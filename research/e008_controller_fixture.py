@@ -11,11 +11,11 @@ from .e003 import Jobs, implementation_hashes
 from .e008_controller import run_next
 from .e008_execute import ledger_key, ledger_record
 from .e008_fixture import FixtureProvider
-from .e008_locks import DecisionStore, load_outcome, read, write_once
-from .e008_resources import SeriesLedger, SeriesStopped, resource_policy
+from .e008_locks import DecisionStore, EvidenceSnapshot, SnapshotDecisions, load_outcome, read, write_once
+from .e008_resources import SeriesLedger, SeriesStopped, directory_bytes, resource_policy
 
 
-def fixture(identity, original):
+def fixture(identity, original, *, snapshot=False):
     if not identity.startswith("e008-controller-fixture-") or not all(c.isalnum() or c == "-" for c in identity):
         raise ValueError("new controller fixture identity required")
     original = Path(original).resolve(strict=True)
@@ -48,18 +48,21 @@ def fixture(identity, original):
     write_once(study / "oracle.json", {"worlds": [world]})
     write_once(study / "gold.json", gold)
     Jobs(study / "jobs.sqlite3", [ledger_record(j) for j in jobs])
-    store = DecisionStore(study, [world], jobs)
+    evidence = EvidenceSnapshot(study, jobs) if snapshot else None
+    store = SnapshotDecisions(study, [world], jobs, evidence) if snapshot else DecisionStore(study, [world], jobs)
     guard = SeriesLedger(study, resource_policy(jobs))
+    if evidence is not None:
+        guard.use_evidence(evidence)
     guard.start()
     provider = FixtureProvider(study, jobs)
     started = time.monotonic()
-    results = [run_next(study, registration, store, gold, provider, guard=guard)]
+    results = [run_next(study, registration, store, gold, provider, guard=guard, evidence=evidence)]
     assert results[0]["status"] == "completed"
     first = digest(study / "units" / jobs[0]["id"] / "outcome.json")
     state_before_stop = copy.deepcopy(Jobs(study / "jobs.sqlite3").state())
     write_once(study / "STOP", {"fixture_injected_operator_stop": True})
     try:
-        run_next(study, registration, store, gold, provider, guard=guard)
+        run_next(study, registration, store, gold, provider, guard=guard, evidence=evidence)
     except SeriesStopped:
         pass
     else:
@@ -67,13 +70,19 @@ def fixture(identity, original):
     assert Jobs(study / "jobs.sqlite3").state() == state_before_stop
     (study / "STOP").unlink()
     # Reconstruct controller, provider and resource ledger; no prior Python state.
-    store = DecisionStore(study, read(study / "oracle.json")["worlds"], read(study / "registration.json")["schedule"])
+    if evidence is not None:
+        evidence.verify_all()
+        evidence = EvidenceSnapshot(study, jobs)
+    store = (SnapshotDecisions(study, [world], jobs, evidence) if snapshot else
+             DecisionStore(study, read(study / "oracle.json")["worlds"], read(study / "registration.json")["schedule"]))
     guard = SeriesLedger(study, resource_policy(jobs))
+    if evidence is not None:
+        guard.use_evidence(evidence)
     prior_attempt = provider.attempt
     provider = FixtureProvider(study, jobs)
     provider.attempt = prior_attempt  # Scripted event IDs only, never a model context/history.
     while True:
-        result = run_next(study, registration, store, gold, provider, guard=guard)
+        result = run_next(study, registration, store, gold, provider, guard=guard, evidence=evidence)
         if result is None:
             break
         results.append(result)
@@ -82,13 +91,17 @@ def fixture(identity, original):
     assert dict(Counter(r["status"] for r in results)) == {"completed": 4, "budget_rejected": 1, "skipped_dependency": 3}
     assert digest(study / "units" / jobs[0]["id"] / "outcome.json") == first
     completed_network = digest(study / "provider.jsonl")
-    assert run_next(study, registration, store, gold, provider, guard=guard) is None
+    assert run_next(study, registration, store, gold, provider, guard=guard, evidence=evidence) is None
     assert digest(study / "provider.jsonl") == completed_network
     outcomes = {j["id"]: load_outcome(study, j["id"]) for j in jobs}
     assert outcomes[jobs[3]["id"]]["score"]["new_target_correct"] == 10
     assert all(Jobs(study / "jobs.sqlite3").state()[ledger_key(j)]["status"] != "pending" for j in jobs)
     assert {p.relative_to(original).as_posix(): digest(p) for p in original.rglob("*") if p.is_file()} == original_files
+    if evidence is not None:
+        evidence.verify_all()
+        assert directory_bytes(study, evidence=evidence) == directory_bytes(study)
     report = {"pass": True, "fixture": True, "model_API_requests": 0, "positions": len(jobs),
+              "verified_snapshot": snapshot, "space_exact_at_completion": snapshot,
               "executed_contexts": 5, "dependent_skips": 3, "stop_before_next_claim": True,
               "first_context_unchanged_after_resume": True, "terminal_dispatch_does_not_repeat_network": True,
               "all_outcomes_sealed": True, "source_fixture_files_unchanged": len(original_files),
@@ -101,5 +114,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("identity")
     parser.add_argument("--original-fixture", type=Path, required=True)
+    parser.add_argument("--snapshot", action="store_true")
     args = parser.parse_args()
-    print(json.dumps(fixture(args.identity, args.original_fixture)))
+    print(json.dumps(fixture(args.identity, args.original_fixture, snapshot=args.snapshot)))
