@@ -254,8 +254,10 @@ def assess(answer, questions, gold, permitted, *, inherited_answers=None):
     new_rows = [r for r in results if r["id"].startswith("Q")]
     return {"schema_valid": bool(schema), "questions": results,
             "new_correct": sum(r["correct"] and r["target_correct"] for r in new_rows), "new_total": len(new_rows),
+            "new_target_correct": sum(r["target_correct"] for r in new_rows),
             "new_epistemic_correct": sum(r["correct"] for r in new_rows),
             "integrative_correct": sum(r["correct"] and r["target_correct"] and r["integrative"] for r in new_rows),
+            "target_integrative_correct": sum(r["target_correct"] and r["integrative"] for r in new_rows),
             "integrative_total": sum(r["integrative"] for r in new_rows),
             "supported_explanations": sum(r["supported_explanation"] for r in results),
             "hypotheses": hypotheses, "malformed_hypotheses": malformed_hypotheses, "revisions": revisions}

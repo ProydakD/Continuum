@@ -57,9 +57,9 @@ def summarize(worlds, jobs, outcomes, *, bootstrap_samples=10000):
         raise ValueError("unique independent test worlds required")
     if {j["world"] for j in selected} != {w["id"] for w in test}:
         raise ValueError("world assignment mismatch")
-    world_scores, integration_scores, invalid = {}, {}, 0
+    world_scores, epistemic_scores, integration_scores, invalid = {}, {}, {}, 0
     for world in test:
-        values, integrated = {}, {}
+        values, epistemic, integrated = {}, {}, {}
         integrative_total = len(world["design_audit"]["integrative_question_ids"])
         if not 2 <= integrative_total <= 10:
             raise ValueError("registered integrative question set required")
@@ -70,7 +70,7 @@ def summarize(worlds, jobs, outcomes, *, bootstrap_samples=10000):
                       for replicate in (1, 2)}
             if assignments != wanted or len(group) != len(wanted):
                 raise ValueError("registered repeats or T2 lineages missing/duplicated")
-            total = integrated_count = 0
+            total = epistemic_count = integrated_count = 0
             for job in group:
                 row = outcomes[job["id"]]
                 if row.get("status") not in TERMINAL:
@@ -79,18 +79,24 @@ def summarize(worlds, jobs, outcomes, *, bootstrap_samples=10000):
                     invalid += 1
                     continue
                 score = row["score"]
-                count = score["new_correct"]
+                count = score["new_target_correct"]
                 if type(count) is not int or not 0 <= count <= 10 or score["new_total"] != 10:
                     raise ValueError("expected ten newly assigned questions")
-                current = score["integrative_correct"]
+                epistemic_current = score["new_epistemic_correct"]
+                if type(epistemic_current) is not int or not 0 <= epistemic_current <= 10:
+                    raise ValueError("separate assigned-information correctness count required")
+                current = score["target_integrative_correct"]
                 if (type(current) is not int or not 0 <= current <= min(count, integrative_total)
                         or score["integrative_total"] != integrative_total):
                     raise ValueError("integrative denominator/count differs from registered world")
                 total += count
+                epistemic_count += epistemic_current
                 integrated_count += current
             values[condition] = Fraction(total, 10 * len(group))
+            epistemic[condition] = Fraction(epistemic_count, 10 * len(group))
             integrated[condition] = Fraction(integrated_count, integrative_total * len(group))
         world_scores[world["id"]] = values
+        epistemic_scores[world["id"]] = epistemic
         integration_scores[world["id"]] = integrated
     n = len(test)
     groups = [[i for i, w in enumerate(test) if w["truth"]["family"] == family]
@@ -129,7 +135,9 @@ def summarize(worlds, jobs, outcomes, *, bootstrap_samples=10000):
                    "world_scores": {w: {c: float(v) for c, v in cell.items()} for w, cell in integration_scores.items()}}
     return {"n_independent_worlds": n, "assigned_successors": len(selected), "failed_or_unverified": invalid,
             "primary_contrast": "T1-C1", "contrasts": results,
+            "prediction_metric": "Same ABC-identifiability target in every condition; a lucky single-source prediction can score here, not as verified knowledge.",
             "world_scores": {w: {c: float(v) for c, v in cell.items()} for w, cell in world_scores.items()},
+            "epistemic_world_scores": {w: {c: float(v) for c, v in cell.items()} for w, cell in epistemic_scores.items()},
             "world_scaled_differences": integer_differences,
             "primary_positive": results["T1-C1"]["positive_evidence"],
             "integration": integration,

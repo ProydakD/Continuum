@@ -161,6 +161,16 @@ class AssessmentTests(unittest.TestCase):
         self.assertEqual(score["new_epistemic_correct"], 1)
         self.assertEqual(score["new_correct"], 0)
 
+    def test_single_source_lucky_point_is_prediction_success_not_verified_knowledge(self):
+        q = self.world["successor"][0]
+        expected = self.gold["subsets"]["EA+EB+EC"]["questions"][q["id"]]["expected"]
+        answer = response(expected, ["EC"])
+        answer["answers"][0]["id"] = q["id"]
+        score = assess(answer, [q], self.gold, ["EC"])
+        self.assertEqual(score["new_target_correct"], 1)
+        self.assertEqual(score["new_correct"], 0)
+        self.assertEqual(score["new_epistemic_correct"], 0)
+
     def test_rejected_dependency_must_keep_original_assignment_not_just_id(self):
         base = {"id": "probe:H0", "family": "relay", "order": list(VARIABLES), "gate": "and",
                 "flips": [0, 0, 0], "status": "rejected", "confidence": 1, "evidence": ["EA", "EB", "EC"]}

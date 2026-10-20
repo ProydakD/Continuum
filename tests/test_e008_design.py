@@ -128,8 +128,10 @@ class AnalysisTests(unittest.TestCase):
             if job["phase"] == "test" and job["stage"] == "D":
                 count = (10 if job["lineage"] == "L1" else 0) if job["condition"] == "T2" else (8 if job["condition"] == "C1" else 9)
                 outcomes[job["id"]] = {"status": "completed", "audit": {"pass": True},
-                                       "score": {"new_correct": count, "new_total": 10,
-                                                 "integrative_correct": min(count, 2), "integrative_total": 2}}
+                                       "score": {"new_correct": count, "new_target_correct": count,
+                                                 "new_epistemic_correct": count, "new_total": 10,
+                                                 "integrative_correct": min(count, 2), "target_integrative_correct": min(count, 2),
+                                                 "integrative_total": 2}}
         return data, jobs, outcomes
 
     def test_world_is_unit_and_t2_lineages_average_inside_world(self):
@@ -157,9 +159,21 @@ class AnalysisTests(unittest.TestCase):
         data, jobs, outcomes = self.prepare()
         for row in outcomes.values():
             row["score"]["integrative_correct"] = 0
+            row["score"]["target_integrative_correct"] = 0
         result = summarize(data, jobs, outcomes, bootstrap_samples=100)
         self.assertEqual(result["integration"]["C1_mean"], 0)
         self.assertFalse(result["integration_positive"])
+
+    def test_control_prediction_is_not_zeroed_by_different_epistemic_target(self):
+        data, jobs, outcomes = self.prepare()
+        for assigned in jobs:
+            if assigned["phase"] == "test" and assigned["stage"] == "D" and assigned["condition"] == "C0":
+                score = outcomes[assigned["id"]]["score"]
+                score.update(new_correct=0, new_epistemic_correct=0)
+        result = summarize(data, jobs, outcomes, bootstrap_samples=100)
+        self.assertTrue(all(w["C0"] == .9 for w in result["world_scores"].values()))
+        self.assertTrue(all(w["C0"] == 0 for w in result["epistemic_world_scores"].values()))
+        self.assertEqual(result["contrasts"]["C1-C0"]["estimate"], -.1)
 
     def test_precision_is_explicit_assumption_not_claimed_power(self):
         plan = precision_plan()
