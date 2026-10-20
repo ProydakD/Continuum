@@ -17,7 +17,9 @@ from .e008_controller import resolve_job
 from .e008_design import schedule, signature
 from .e008_development_audit import audit as audit_development
 from .e008_execute import ledger_key
+from .e008_efficiency import summarize as summarize_efficiency
 from .e008_live import verified_gold
+from .e008_integrity import admission, job_timeline, reference_binding
 from .e008_locks import DecisionStore, load_outcome, read, unit_path, validate_assignment, write_once
 from .e008_measurements import resource_report
 from .e008_network import NetworkIndex
@@ -106,7 +108,7 @@ def control_report(records, worlds, *, draws=10000):
     return result
 
 
-def evaluate(study, gold, *, bootstrap_samples=10000):
+def evaluate(study, gold, *, bootstrap_samples=10000, reference=None):
     """Caller binds gold to the independent, hash-checked complete cache."""
     study = Path(study).resolve(strict=True)
     registration, corpus = read(study / "registration.json"), read(study / "oracle.json")
@@ -119,7 +121,12 @@ def evaluate(study, gold, *, bootstrap_samples=10000):
     binding = {"registration": digest(study / "registration.json"),
                "corpus": digest(study / "oracle.json"), "gold": signature(gold),
                "job_ledger": digest(study / "jobs.sqlite3"),
+               "provider_ledger": digest(study / "provider-ledger.sqlite3"),
+               "admission_files": {name: digest(study / name) for name in
+                                   ("manifest.json", "live-gate.json", "network-start.json")
+                                   if (study / name).exists()},
                "locks": {p.name: digest(p) for p in (study / "locks").glob("*.json")}}
+    evaluation_source = implementation_hashes()
     states = Jobs(study / "jobs.sqlite3").state()
     if set(states) != {ledger_key(j) for j in jobs}:
         raise PermissionError("assignment ledger differs")
@@ -173,19 +180,46 @@ def evaluate(study, gold, *, bootstrap_samples=10000):
                                           if j["phase"] == "test" and j["stage"] == "D"},
                             bootstrap_samples=bootstrap_samples)
     resources = resource_report(study, registration, verified, network.all())
+    timeline = job_timeline(study, jobs)
+    admitted = admission(study, registration, network, timeline)
+    if not registration["fixture"] and (reference is None or not reference.get("pass")
+                                         or reference.get("worlds") != len(worlds)):
+        raise PermissionError("full independent cold REF binding required for scientific analysis")
+    efficiency = summarize_efficiency(worlds, jobs, verified, resources, primary=primary,
+                                     fixture=registration["fixture"], draws=bootstrap_samples)
+    hypotheses = ({
+        "H1": {"status": "positive_finite_corpus_evidence" if primary["integration_positive"] else "not_established",
+               "source": "primary.integration_positive", "limitation": "Not a universal collective-intelligence claim."},
+        "H2": {"status": "descriptive_only", "source": "revision_and_uncertainty",
+               "limitation": "Natural and injected premise/dependent revisions separate; conditional on observable opportunities."},
+        "H3": {"status": "positive_finite_corpus_evidence" if primary["primary_positive"] else "not_established",
+               "source": "primary.contrasts.T1-C1"},
+        "H4": {"status": "positive_finite_corpus_evidence" if primary["model_protocol_positive"] else "not_established",
+               "source": "primary.contrasts.T2-T1", "limitation": "Two independent protocol lines averaged, not best-line selection."},
+        "H5": {"status": "descriptive_only", "source": "robustness",
+               "limitation": "Unavailable secondary and failed contexts explicitly retained."},
+        "H6": {"status": "favorable_secondary_descriptive_evidence" if efficiency["favorable_secondary_descriptive_evidence"]
+                        else "not_established",
+               "source": "efficiency", "limitation": "Operational resources only; not total economic/energy/GPU efficiency."},
+    } if primary else {f"H{i}": {"status": "not_tested_by_scripted_fixture"} for i in range(1, 7)})
     report = {
         "fixture": registration["fixture"], "research_complete": False,
-        "scientific_inference": False, "primary_analysis_available": not registration["fixture"],
+        "scientific_inference": bool(not registration["fixture"] and admitted["pass"]),
+        "primary_analysis_available": not registration["fixture"],
         "binding": binding, "provider_sha256": network.sha256,
         "execution_implementation_hashes": registration["implementation_hashes"],
-        "evaluator_implementation_hashes": implementation_hashes(),
+        "evaluator_implementation_hashes": evaluation_source,
         "evaluated_positions": len(verified), "statuses": dict(Counter(r["status"] for r in verified.values())),
         "primary": primary,
         "revision_and_uncertainty": aggregate_revision(list(verified.values()), worlds, draws=bootstrap_samples),
         "robustness": control_report(list(verified.values()), worlds, draws=bootstrap_samples),
         "resources": resources,
-        "remaining_final_gate": ["independent cold REF binding", "pre-API Git/lock time and ledger audit",
-                                 "registered H1-H6 decision synthesis and resource paired uncertainty"],
+        "efficiency": efficiency, "hypotheses": hypotheses, "admission": admitted, "reference": reference,
+        "timeline": {"serial_positions": len(timeline), "selection_locked_before_test": True},
+        "remaining_final_gate": (["scientific preregistration and full model series",
+                                  "actual live admission/spend-ledger audit"]
+                                 if registration["fixture"] else []) +
+                                ["human-readable interpretation, requirement audit and final result commit"],
         "scope": "Reconstructed raw traces and scores; not private reasoning. Fixture primary significance "
                  "is deliberately omitted, not computed from a reduced denominator.",
     }
@@ -198,8 +232,12 @@ def evaluate(study, gold, *, bootstrap_samples=10000):
     after = {"registration": digest(study / "registration.json"),
              "corpus": digest(study / "oracle.json"), "gold": signature(gold),
              "job_ledger": digest(study / "jobs.sqlite3"),
+             "provider_ledger": digest(study / "provider-ledger.sqlite3"),
+             "admission_files": {name: digest(study / name) for name in
+                                 ("manifest.json", "live-gate.json", "network-start.json")
+                                 if (study / name).exists()},
              "locks": {p.name: digest(p) for p in (study / "locks").glob("*.json")}}
-    if after != binding:
+    if after != binding or evaluation_source != implementation_hashes():
         raise PermissionError("study changed during evaluation")
     return report
 
@@ -210,6 +248,7 @@ def main():
     parser.add_argument("--gold-cache", type=Path, required=True)
     parser.add_argument("--corpus", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--reference-study", type=Path)
     args = parser.parse_args()
     corpus = read(args.corpus)
     _, gold = verified_gold(args.gold_cache, corpus, implementation_hashes())
@@ -220,7 +259,9 @@ def main():
     output = args.output.resolve()
     if output.exists() or output.is_relative_to(args.study.resolve()):
         raise ValueError("fresh report outside immutable study required")
-    report = evaluate(args.study, {w["id"]: gold[w["id"]] for w in actual})
+    reference = (reference_binding(args.reference_study, args.corpus, args.gold_cache / "manifest.json",
+                                   corpus["worlds"], gold) if args.reference_study else None)
+    report = evaluate(args.study, {w["id"]: gold[w["id"]] for w in actual}, reference=reference)
     write_once(output, report)
     if read(output) != report:
         raise OSError("report reopen differs")
