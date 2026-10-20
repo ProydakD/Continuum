@@ -6,12 +6,22 @@ import threading
 import time
 
 from .common import PROJECT, command, digest, source_hashes, write_json
-from .e003 import copy_database
+from .e003 import copy_database, job_id
 from .e008_memory import InvestigatorBridge, KnowledgeArchive
 from .e008_protocol import prompt, tools_for
 from .profiles import create_worker
 from .sandbox import container_command
 from .supervisor import read_lines
+
+
+def ledger_record(job):
+    """Adapt immutable E008 position IDs to the existing Jobs key schema."""
+    return {"world": job.get("world") or "development", "condition": job["condition"],
+            "branch": job["id"], "stage": job["stage"]}
+
+
+def ledger_key(job):
+    return job_id(ledger_record(job))
 
 
 def make_unit(path):
@@ -53,7 +63,16 @@ def execute(study, registration, job, world, provider):
     # The legacy profile scaffold has A/B/C templates. It supplies isolation only;
     # its temporary template is replaced before hashing/launching fresh stage D.
     create_worker(worker, "C" if stage == "D" else stage, "none")
-    write_json(worker / "repo/PROMPT.txt", {"prompt": prompt(job, world)})
+    development = job.get("role") in ("designer", "critic")
+    bridge_type = InvestigatorBridge
+    context_prompt, context_tools = None, None
+    if development:
+        from .e008_development import DEVELOPMENT_TOOLS, DevelopmentBridge, development_prompt
+        bridge_type = DevelopmentBridge
+        context_prompt, context_tools = development_prompt(job), DEVELOPMENT_TOOLS[job["role"]]
+    else:
+        context_prompt, context_tools = prompt(job, world), tools_for(stage)
+    write_json(worker / "repo/PROMPT.txt", {"prompt": context_prompt})
     before = source_hashes(worker)
     write_json(run / "context-manifest.json", before)
     name = "continuum-" + study.name + "-" + job["id"]
@@ -65,7 +84,7 @@ def execute(study, registration, job, world, provider):
     report = {"status": "failed", "exit_status": None, "job": job, "fixture": registration["fixture"]}
     with (run / "supervisor/session.jsonl").open("x", encoding="utf-8") as log, (run / "supervisor/session.stderr.txt").open("x", encoding="utf-8") as err:
         try:
-            bridge = InvestigatorBridge(run, stage, [], log, provider.model)
+            bridge = bridge_type(run, stage, [], log, provider.model)
             bridge.configure(job)
             bridge.emit({"event": "command_execution", "command": argv, "at": time.time()})
             process = subprocess.Popen(argv, cwd=PROJECT, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
@@ -92,7 +111,7 @@ def execute(study, registration, job, world, provider):
                     if requests > limits["responses_per_context"]:
                         raise ValueError("registered response ceiling")
                     try:
-                        response = provider.respond(job["id"], event["history"], tools_for(stage),
+                        response = provider.respond(job["id"], event["history"], context_tools,
                             timeout=min(remaining, limits["request_seconds"]), max_output_tokens=limits["output_tokens"])
                     except Exception:
                         report["failure_origin"] = "provider"

@@ -90,6 +90,44 @@ def network_chain(run, result, events, network, model, tools, limits):
     return receipts
 
 
+def verify_container(study, job, events, registration, *, execution_study=None):
+    commands = [e["command"] for e in events if e.get("event") == "command_execution"]
+    if len(commands) != 1:
+        raise ValueError("missing unique container execution")
+    argv = commands[0]
+    for flag, value in (("--network", "none"), ("--cap-drop", "ALL"), ("--security-opt", "no-new-privileges"),
+                        ("--user", "65534:65534"), ("--pids-limit", "128"), ("--memory", "256m"), ("--cpus", "1"),
+                        ("--pull", "never"), ("--entrypoint", "python")):
+        if argv.count(flag) != 1 or argv[argv.index(flag) + 1] != value:
+            raise ValueError("container isolation flags differ")
+    if "--read-only" not in argv or argv[-2:] != [registration["image"], "/runtime/e002_worker.py"] or argv.count("--mount") != 6:
+        raise ValueError("container image/mount count/runtime differs")
+    executed_study = execution_study if execution_study is not None else study
+    executed_worker = (executed_study / "units" / job["id"] / "workers" / job["stage"]).resolve()
+    expected = ["docker", "run", "--rm", "--pull", "never", "-i", "--name",
+                "continuum-" + executed_study.name + "-" + job["id"],
+                "--network", "none", "--read-only", "--cap-drop", "ALL",
+                "--security-opt", "no-new-privileges", "--user", "65534:65534",
+                "--pids-limit", "128", "--memory", "256m", "--cpus", "1",
+                "--tmpfs", "/tmp:rw,nosuid,size=128m", "--tmpfs", "/home/research:rw,nosuid,size=64m",
+                "--workdir", "/workspace", "--env", "HOME=/home/research", "--env", "CODEX_HOME=/codex-home",
+                "--env", "PYTHONDONTWRITEBYTECODE=1", "--env", "PYTHONUNBUFFERED=1",
+                "--env", "PYTHONNOUSERSITE=1", "--env", "OLLAMA_HOST=127.0.0.1:11434",
+                "--env", "OLLAMA_MODELS=/models", "--entrypoint", "python"]
+    for source, target, readonly in (
+        (executed_worker / "repo", "/workspace", False),
+        (executed_worker / "codex-home", "/codex-home", False),
+        (executed_worker / "codex-home/config.toml", "/codex-home/config.toml", True),
+        (executed_worker / "repo/AGENTS.md", "/workspace/AGENTS.md", True),
+        (executed_worker / "skills", "/workspace/.agents/skills", True),
+        (PROJECT / "research/worker_runtime", "/runtime", True),
+    ):
+        expected += ["--mount", f"type=bind,src={source.resolve()},dst={target}" + (",readonly" if readonly else "")]
+    expected += [registration["image"], "/runtime/e002_worker.py"]
+    if argv != expected:
+        raise ValueError("container mounts/environment/arguments differ from isolated execution contract")
+
+
 def audit(study, job, world, model, network=None, *, execution_study=None):
     run = study / "units" / job["id"]
     result = json.loads((run / "result.json").read_text())
@@ -119,41 +157,7 @@ def audit(study, job, world, model, network=None, *, execution_study=None):
             raise ValueError("successor question leakage")
         events = rows(run / "supervisor/session.jsonl")
         registration = json.loads((study / "registration.json").read_text())
-        commands = [e["command"] for e in events if e.get("event") == "command_execution"]
-        if len(commands) != 1:
-            raise ValueError("missing unique container execution")
-        argv = commands[0]
-        for flag, value in (("--network", "none"), ("--cap-drop", "ALL"), ("--security-opt", "no-new-privileges"),
-                            ("--user", "65534:65534"), ("--pids-limit", "128"), ("--memory", "256m"), ("--cpus", "1"),
-                            ("--pull", "never"), ("--entrypoint", "python")):
-            if argv.count(flag) != 1 or argv[argv.index(flag) + 1] != value:
-                raise ValueError("container isolation flags differ")
-        if "--read-only" not in argv or argv[-2:] != [registration["image"], "/runtime/e002_worker.py"] or argv.count("--mount") != 6:
-            raise ValueError("container image/mount count/runtime differs")
-        executed_study = execution_study if execution_study is not None else study
-        executed_worker = (executed_study / "units" / job["id"] / "workers" / job["stage"]).resolve()
-        expected = ["docker", "run", "--rm", "--pull", "never", "-i", "--name",
-                    "continuum-" + executed_study.name + "-" + job["id"],
-                    "--network", "none", "--read-only", "--cap-drop", "ALL",
-                    "--security-opt", "no-new-privileges", "--user", "65534:65534",
-                    "--pids-limit", "128", "--memory", "256m", "--cpus", "1",
-                    "--tmpfs", "/tmp:rw,nosuid,size=128m", "--tmpfs", "/home/research:rw,nosuid,size=64m",
-                    "--workdir", "/workspace", "--env", "HOME=/home/research", "--env", "CODEX_HOME=/codex-home",
-                    "--env", "PYTHONDONTWRITEBYTECODE=1", "--env", "PYTHONUNBUFFERED=1",
-                    "--env", "PYTHONNOUSERSITE=1", "--env", "OLLAMA_HOST=127.0.0.1:11434",
-                    "--env", "OLLAMA_MODELS=/models", "--entrypoint", "python"]
-        for source, target, readonly in (
-            (executed_worker / "repo", "/workspace", False),
-            (executed_worker / "codex-home", "/codex-home", False),
-            (executed_worker / "codex-home/config.toml", "/codex-home/config.toml", True),
-            (executed_worker / "repo/AGENTS.md", "/workspace/AGENTS.md", True),
-            (executed_worker / "skills", "/workspace/.agents/skills", True),
-            (PROJECT / "research/worker_runtime", "/runtime", True),
-        ):
-            expected += ["--mount", f"type=bind,src={source.resolve()},dst={target}" + (",readonly" if readonly else "")]
-        expected += [registration["image"], "/runtime/e002_worker.py"]
-        if argv != expected:
-            raise ValueError("container mounts/environment/arguments differ from isolated execution contract")
+        verify_container(study, job, events, registration, execution_study=execution_study)
         receipts = network_chain(run, result, events, network if network is not None else rows(study / "provider.jsonl"),
                                  model, tools_for(job["stage"]), registration["limits"])
         calls = pairs(events)
