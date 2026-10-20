@@ -90,7 +90,8 @@ def protocol_in_archive(run):
     return json.loads(objects[index["protocol"]]["content"]) if "protocol" in index else None
 
 
-def run_next(study, registration, store, gold, provider, *, guard, authorize_api=False, evidence=None):
+def run_next(study, registration, store, gold, provider, *, guard, authorize_api=False, evidence=None,
+             amendment=None):
     """Dispatch only the first pending assignment, or return None if terminal.
 
     A controller error becomes a retained terminal failure and stops the caller.
@@ -101,7 +102,14 @@ def run_next(study, registration, store, gold, provider, *, guard, authorize_api
     if store.study != study or read(study / "registration.json") != registration:
         raise PermissionError("wrong registered study binding")
     store._check_binding()
-    if registration["implementation_hashes"] != implementation_hashes():
+    amended_admission = None
+    if amendment:
+        from .e008_amendment import validate_scope
+        from .e008_transition import require_prepared, verify_source_scope
+        validate_scope(registration, amendment)
+        amended_admission = require_prepared(study, amendment)
+        verify_source_scope(registration, amendment, implementation_hashes())
+    elif registration["implementation_hashes"] != implementation_hashes():
         raise PermissionError("frozen implementation changed")
     if not isinstance(guard, SeriesLedger) or guard.study != study.resolve():
         raise PermissionError("study-wide durable resource guard required")
@@ -143,13 +151,22 @@ def run_next(study, registration, store, gold, provider, *, guard, authorize_api
     run = unit_path(study, job["id"])
     if run.exists():
         raise SeriesStopped("pending context already materialized; inspect orphan, never relaunch")
-    if provider is not None and provider.model != registration["models"][job["model_role"]]:
+    from .e008_amendment import model_for
+    expected_model = model_for(registration, job, amendment)
+    if amendment and job["id"] in amendment["preserved_outcome_hashes"]:
+        raise PermissionError("amendment cannot replay a preserved context")
+    if provider is not None and provider.model != expected_model:
         raise PermissionError("provider model differs from assigned role")
     ledger.claim(ledger_key(job))
     if evidence is not None:
         evidence.active = job["id"]
     make_unit(run)
     try:
+        if amended_admission:
+            write_once(run / "execution-binding.json", {
+                "job": job["id"], "model": expected_model,
+                "commit": amended_admission["commit"],
+                "amendment_sha256": amended_admission["amendment_sha256"]})
         reason = None
         if provider is None:
             if job.get("control") != "cross_model":
@@ -190,6 +207,7 @@ def run_next(study, registration, store, gold, provider, *, guard, authorize_api
             raise PermissionError("archive protocol differs from the selected immutable publication")
         # The remaining series deadline also bounds an idle/blocked worker.
         execution_registration = copy.deepcopy(registration)
+        execution_registration["models"][job["model_role"]] = expected_model
         execution_registration["limits"]["investigator_seconds"] = min(
             registration["limits"]["investigator_seconds"], guard.remaining())
         provider_log = study / "provider.jsonl"

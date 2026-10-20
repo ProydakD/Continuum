@@ -95,10 +95,11 @@ def verified_gold(cache, corpus, hashes):
     return manifest, gold
 
 
-def verify_inputs(reg, corpus_path, gold_cache, gate_path):
+def verify_inputs(reg, corpus_path, gold_cache, gate_path, *, amendment=None):
     current = implementation_hashes()
+    expected = amendment["implementation_hashes"] if amendment else reg["implementation_hashes"]
     if (reg.get("experiment") != "E-008" or reg.get("fixture") is not False
-            or reg.get("preregistered") is not True or reg["implementation_hashes"] != current
+            or reg.get("preregistered") is not True or expected != current
             or reg["runtime"] != runtime_identity()):
         raise PermissionError("frozen live preregistration and unchanged implementation/runtime required")
     corpus = read(corpus_path)
@@ -127,7 +128,7 @@ def verify_inputs(reg, corpus_path, gold_cache, gate_path):
         raise PermissionError("gold cache belongs to another corpus")
     gate = read(gate_path)
     if (reg["offline_gate_sha256"] != digest(gate_path) or gate.get("pass") is not True
-            or gate["implementation_hashes"] != current or set(gate["checks"]) != GATE_CHECKS):
+            or gate["implementation_hashes"] != reg["implementation_hashes"] or set(gate["checks"]) != GATE_CHECKS):
         raise PermissionError("complete independently reviewed offline gate required")
     for check in gate["checks"].values():
         if check.get("pass") is not True or not check.get("evidence"):
@@ -173,7 +174,7 @@ def prepare(identity, corpus_path, gold_cache, gate_path):
             "worlds": len(corpus["worlds"]), "positions": len(reg["schedule"]), **committed}
 
 
-def load(study):
+def load(study, *, amendment_path=None):
     study = Path(study).resolve(strict=True)
     if study.parent != (ROOT / "runs").resolve() or not study.name.startswith("e008-series-"):
         raise PermissionError("study outside registered research directory")
@@ -184,9 +185,15 @@ def load(study):
             or gate["registration_sha256"] != manifest["registration_sha256"]
             or gate["commit"] != manifest["prepared_source_commit"]):
         raise PermissionError("prepared admission record changed")
-    commit_binding(PROJECT, study / "registration.json", reg["implementation_hashes"])
+    amendment = None
+    if amendment_path is None:
+        commit_binding(PROJECT, study / "registration.json", reg["implementation_hashes"])
+    else:
+        from .e008_transition import load_amendment
+        amendment = load_amendment(study, amendment_path)
     git_bytes(PROJECT, "merge-base", "--is-ancestor", gate["commit"], "HEAD")
-    corpus, gold = verify_inputs(reg, study / "oracle.json", study / "gold", study / "offline-gate.json")
+    corpus, gold = verify_inputs(reg, study / "oracle.json", study / "gold", study / "offline-gate.json",
+                                amendment=amendment)
     if (study / "network-start.json").exists():
         started = read(study / "network-start.json")
         if started["gate_sha256"] != digest(study / "live-gate.json") or started["at"] < gate["prepared_at"]:
@@ -359,7 +366,7 @@ def resume_failure(study, job, result, provider):
     recover(study, job["id"], provider)
 
 
-def run(study, *, authorize_api=False, max_positions=None):
+def run(study, *, authorize_api=False, max_positions=None, amendment_path=None):
     """Resume only pending positions; invocation batching never changes the plan."""
     if not authorize_api:
         raise PermissionError("explicit API authorization required")
@@ -369,7 +376,8 @@ def run(study, *, authorize_api=False, max_positions=None):
     if study.parent != (ROOT / "runs").resolve() or not study.name.startswith("e008-series-"):
         raise PermissionError("study outside registered research directory")
     with controller_lock(study):
-        reg, corpus, gold = load(study)
+        reg, corpus, gold = load(study, amendment_path=amendment_path)
+        amendment = read(amendment_path) if amendment_path else None
         jobs = reg["schedule"]
         evidence = EvidenceSnapshot(study, jobs)
         # A terminal invocation is a verification, not a new smoke or API request.
@@ -387,20 +395,33 @@ def run(study, *, authorize_api=False, max_positions=None):
                             "SELECT COUNT(*) FROM metadata_attempts").fetchone()[0]:
                         raise SeriesStopped("network attempts exist without their admission record")
                 write_once(study / "network-start.json", {"at": time.time(), "gate_sha256": digest(study / "live-gate.json")})
+            models = amendment["proposed_models"] if amendment else reg["models"]
             providers = {role: BoundedProvider(reg["provider"], model, guard, study / "provider.jsonl", authorize=True)
-                         for role, model in reg["models"].items()}
-            for role in ("primary", "secondary"):
-                checked = compatibility(study, role, providers[role])
-                if not checked["pass"]:
-                    if role == "primary" or checked["action"] != "unavailable":
-                        raise SeriesStopped("compatibility gate failed; no repeat")
-                    providers[role] = None
+                         for role, model in models.items()}
+            if amendment:
+                from .e008_transition import check_gate, reconciles
+                checked = check_gate(study, reg, amendment, guard)
+                if checked["action"] == "unavailable":
+                    providers["secondary"] = None
+            else:
+                for role in ("primary", "secondary"):
+                    checked = compatibility(study, role, providers[role])
+                    if not checked["pass"]:
+                        if role == "primary" or checked["action"] != "unavailable":
+                            raise SeriesStopped("compatibility gate failed; no repeat")
+                        providers[role] = None
             store = SnapshotDecisions(study, corpus["worlds"], jobs, evidence)
             # Recovery survives process death; a previous fatal error cannot
             # disappear just because its completed row is now in the snapshot.
             for finished in jobs[:len(evidence.outcomes)]:
-                resume_failure(study, finished, evidence.get(finished)["result"],
-                               providers[finished["model_role"]])
+                result = evidence.get(finished)["result"]
+                if amendment and reconciles(study, finished, result, amendment):
+                    continue
+                provider = providers[finished["model_role"]]
+                if amendment and finished["id"] in amendment["preserved_outcome_hashes"]:
+                    provider = BoundedProvider(reg["provider"], reg["models"][finished["model_role"]],
+                                               guard, study / "provider.jsonl", authorize=True)
+                resume_failure(study, finished, result, provider)
             count = 0
             while max_positions is None or count < max_positions:
                 job = evidence.next_job()
@@ -408,7 +429,7 @@ def run(study, *, authorize_api=False, max_positions=None):
                     break
                 provider = providers[job["model_role"]]
                 result = run_next(study, reg, store, gold, provider, guard=guard,
-                                  authorize_api=True, evidence=evidence)
+                                  authorize_api=True, evidence=evidence, amendment=amendment)
                 count += 1
                 print(json.dumps({"event": "position_terminal", "job": job["id"], "status": result["status"]}), flush=True)
                 resume_failure(study, job, result, provider)
@@ -417,6 +438,9 @@ def run(study, *, authorize_api=False, max_positions=None):
                     "next": "independent raw audit/REF/full report" if terminal else "resume first pending position"}
         finally:
             evidence.verify_all()
+            if amendment:
+                from .e008_amendment import verify_preserved_prefix
+                verify_preserved_prefix(study, reg, amendment)
 
 
 def main():
@@ -431,9 +455,11 @@ def main():
     launch.add_argument("study", type=Path)
     launch.add_argument("--authorize-api", action="store_true")
     launch.add_argument("--max-positions", type=int)
+    launch.add_argument("--amendment", type=Path)
     args = parser.parse_args()
     result = (prepare(args.identity, args.corpus, args.gold_cache, args.offline_gate) if args.command == "prepare"
-              else run(args.study, authorize_api=args.authorize_api, max_positions=args.max_positions))
+              else run(args.study, authorize_api=args.authorize_api, max_positions=args.max_positions,
+                       amendment_path=args.amendment))
     print(json.dumps(result))
 
 

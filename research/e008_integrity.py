@@ -131,11 +131,11 @@ def network_ledger(study, registration, network, *, job_times=None):
             "ledger_sha256": digest(study / "provider-ledger.sqlite3")}
 
 
-def admission(study, registration, network, timeline):
+def admission(study, registration, network, timeline, *, amendment_path=None):
     """Actual Git blob binding plus observed local admission order, not attestation."""
     if registration["fixture"]:
         return {"pass": False, "not_applicable": "scripted fixture is not a preregistered model study"}
-    loaded, _, _ = load(study)
+    loaded, _, _ = load(study, amendment_path=amendment_path)
     if loaded != registration:
         raise PermissionError("live registration changed")
     gate = read(study / "live-gate.json")
@@ -149,7 +149,12 @@ def admission(study, registration, network, timeline):
             or not gate["prepared_at"] <= started <= proof["first_reservation"]
             or any(r["started"] < started for r in timeline.values())):
         raise PermissionError("network/context preceded committed admission")
-    return {"pass": True, **proof, "prepared_commit": gate["commit"], "prepared_at": gate["prepared_at"],
+    transition = None
+    if amendment_path:
+        from .e008_transition import audit_transition
+        transition = audit_transition(study, registration, read(amendment_path), timeline)
+    return {"pass": True, **proof, "model_transition": transition,
+            "prepared_commit": gate["commit"], "prepared_at": gate["prepared_at"],
             "network_started": started, "limitation": "Local ledger chronology, not trusted timestamp or provider attestation."}
 
 

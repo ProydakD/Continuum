@@ -108,10 +108,15 @@ def control_report(records, worlds, *, draws=10000):
     return result
 
 
-def evaluate(study, gold, *, bootstrap_samples=10000, reference=None):
+def evaluate(study, gold, *, bootstrap_samples=10000, reference=None, amendment_path=None):
     """Caller binds gold to the independent, hash-checked complete cache."""
     study = Path(study).resolve(strict=True)
     registration, corpus = read(study / "registration.json"), read(study / "oracle.json")
+    amendment = None
+    if amendment_path:
+        from .e008_transition import load_amendment
+        amendment = load_amendment(study, amendment_path)
+    amendment_sha = digest(amendment_path) if amendment_path else None
     jobs, worlds = registration["schedule"], corpus["worlds"]
     world_index = {w["id"]: w for w in worlds}
     if set(gold) != set(world_index) or len(world_index) != len(worlds):
@@ -144,7 +149,8 @@ def evaluate(study, gold, *, bootstrap_samples=10000, reference=None):
         resolved, _ = resolve_job(store, job)
         if resolved != row["job"]:
             raise PermissionError("resolved assignment differs from frozen choices")
-        model = registration["models"][job["model_role"]]
+        from .e008_amendment import model_for
+        model = model_for(registration, job, amendment)
         events = list(network.worker(identity))
         if job["role"] in ("designer", "critic"):
             # A controller may fail before making any development input.
@@ -181,7 +187,10 @@ def evaluate(study, gold, *, bootstrap_samples=10000, reference=None):
                             bootstrap_samples=bootstrap_samples)
     resources = resource_report(study, registration, verified, network.all())
     timeline = job_timeline(study, jobs)
-    admitted = admission(study, registration, network, timeline)
+    admitted = admission(study, registration, network, timeline, amendment_path=amendment_path)
+    if amendment:
+        from .e008_transition import charge_overhead
+        charge_overhead(resources, admitted["model_transition"])
     if not registration["fixture"] and (reference is None or not reference.get("pass")
                                          or reference.get("worlds") != len(worlds)):
         raise PermissionError("full independent cold REF binding required for scientific analysis")
@@ -208,12 +217,15 @@ def evaluate(study, gold, *, bootstrap_samples=10000, reference=None):
         "primary_analysis_available": not registration["fixture"],
         "binding": binding, "provider_sha256": network.sha256,
         "execution_implementation_hashes": registration["implementation_hashes"],
+        "prospective_execution_implementation_hashes": amendment["implementation_hashes"] if amendment else None,
+        "amendment_sha256": amendment_sha,
         "evaluator_implementation_hashes": evaluation_source,
         "evaluated_positions": len(verified), "statuses": dict(Counter(r["status"] for r in verified.values())),
         "primary": primary,
         "revision_and_uncertainty": aggregate_revision(list(verified.values()), worlds, draws=bootstrap_samples),
         "robustness": control_report(list(verified.values()), worlds, draws=bootstrap_samples),
         "resources": resources,
+        "model_transition": admitted.get("model_transition"),
         "efficiency": efficiency, "hypotheses": hypotheses, "admission": admitted, "reference": reference,
         "timeline": {"serial_positions": len(timeline), "selection_locked_before_test": True},
         "remaining_final_gate": (["scientific preregistration and full model series",
@@ -237,7 +249,8 @@ def evaluate(study, gold, *, bootstrap_samples=10000, reference=None):
                                  ("manifest.json", "live-gate.json", "network-start.json")
                                  if (study / name).exists()},
              "locks": {p.name: digest(p) for p in (study / "locks").glob("*.json")}}
-    if after != binding or evaluation_source != implementation_hashes():
+    if (after != binding or evaluation_source != implementation_hashes()
+            or (amendment_path and digest(amendment_path) != amendment_sha)):
         raise PermissionError("study changed during evaluation")
     return report
 
@@ -249,6 +262,7 @@ def main():
     parser.add_argument("--corpus", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--reference-study", type=Path)
+    parser.add_argument("--amendment", type=Path)
     args = parser.parse_args()
     corpus = read(args.corpus)
     _, gold = verified_gold(args.gold_cache, corpus, implementation_hashes())
@@ -261,7 +275,8 @@ def main():
         raise ValueError("fresh report outside immutable study required")
     reference = (reference_binding(args.reference_study, args.corpus, args.gold_cache / "manifest.json",
                                    corpus["worlds"], gold) if args.reference_study else None)
-    report = evaluate(args.study, {w["id"]: gold[w["id"]] for w in actual}, reference=reference)
+    report = evaluate(args.study, {w["id"]: gold[w["id"]] for w in actual}, reference=reference,
+                      amendment_path=args.amendment)
     write_once(output, report)
     if read(output) != report:
         raise OSError("report reopen differs")
