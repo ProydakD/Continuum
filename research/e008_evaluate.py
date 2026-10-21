@@ -108,14 +108,18 @@ def control_report(records, worlds, *, draws=10000):
     return result
 
 
-def evaluate(study, gold, *, bootstrap_samples=10000, reference=None, amendment_path=None):
+def evaluate(study, gold, *, bootstrap_samples=10000, reference=None, amendment_path=None, resumption_path=None):
     """Caller binds gold to the independent, hash-checked complete cache."""
     study = Path(study).resolve(strict=True)
     registration, corpus = read(study / "registration.json"), read(study / "oracle.json")
     amendment = None
     if amendment_path:
         from .e008_transition import load_amendment
-        amendment = load_amendment(study, amendment_path)
+        amendment = load_amendment(study, amendment_path, resumption_path=resumption_path)
+    elif resumption_path:
+        raise PermissionError("operational resumption requires the original model amendment")
+    resumption_sha = digest(resumption_path) if resumption_path else None
+    resumption = read(resumption_path) if resumption_path else None
     amendment_sha = digest(amendment_path) if amendment_path else None
     jobs, worlds = registration["schedule"], corpus["worlds"]
     world_index = {w["id"]: w for w in worlds}
@@ -187,7 +191,8 @@ def evaluate(study, gold, *, bootstrap_samples=10000, reference=None, amendment_
                             bootstrap_samples=bootstrap_samples)
     resources = resource_report(study, registration, verified, network.all())
     timeline = job_timeline(study, jobs)
-    admitted = admission(study, registration, network, timeline, amendment_path=amendment_path)
+    admitted = admission(study, registration, network, timeline, amendment_path=amendment_path,
+                         resumption_path=resumption_path)
     if amendment:
         from .e008_transition import charge_overhead
         charge_overhead(resources, admitted["model_transition"])
@@ -218,6 +223,9 @@ def evaluate(study, gold, *, bootstrap_samples=10000, reference=None, amendment_
         "binding": binding, "provider_sha256": network.sha256,
         "execution_implementation_hashes": registration["implementation_hashes"],
         "prospective_execution_implementation_hashes": amendment["implementation_hashes"] if amendment else None,
+          "resumed_execution_implementation_hashes": resumption["implementation_hashes"] if resumption else None,
+          "resumption_sha256": resumption_sha,
+          "operational_resumption": admitted.get("operational_resumption"),
         "amendment_sha256": amendment_sha,
         "evaluator_implementation_hashes": evaluation_source,
         "evaluated_positions": len(verified), "statuses": dict(Counter(r["status"] for r in verified.values())),
@@ -250,7 +258,8 @@ def evaluate(study, gold, *, bootstrap_samples=10000, reference=None, amendment_
                                  if (study / name).exists()},
              "locks": {p.name: digest(p) for p in (study / "locks").glob("*.json")}}
     if (after != binding or evaluation_source != implementation_hashes()
-            or (amendment_path and digest(amendment_path) != amendment_sha)):
+            or (amendment_path and digest(amendment_path) != amendment_sha)
+            or (resumption_path and digest(resumption_path) != resumption_sha)):
         raise PermissionError("study changed during evaluation")
     return report
 
@@ -263,6 +272,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--reference-study", type=Path)
     parser.add_argument("--amendment", type=Path)
+    parser.add_argument("--resumption", type=Path)
     args = parser.parse_args()
     corpus = read(args.corpus)
     _, gold = verified_gold(args.gold_cache, corpus, implementation_hashes())
@@ -276,7 +286,7 @@ def main():
     reference = (reference_binding(args.reference_study, args.corpus, args.gold_cache / "manifest.json",
                                    corpus["worlds"], gold) if args.reference_study else None)
     report = evaluate(args.study, {w["id"]: gold[w["id"]] for w in actual}, reference=reference,
-                      amendment_path=args.amendment)
+                      amendment_path=args.amendment, resumption_path=args.resumption)
     write_once(output, report)
     if read(output) != report:
         raise OSError("report reopen differs")

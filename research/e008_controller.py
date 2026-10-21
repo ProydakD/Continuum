@@ -91,7 +91,7 @@ def protocol_in_archive(run):
 
 
 def run_next(study, registration, store, gold, provider, *, guard, authorize_api=False, evidence=None,
-             amendment=None):
+             amendment=None, resumption=None):
     """Dispatch only the first pending assignment, or return None if terminal.
 
     A controller error becomes a retained terminal failure and stops the caller.
@@ -103,12 +103,19 @@ def run_next(study, registration, store, gold, provider, *, guard, authorize_api
         raise PermissionError("wrong registered study binding")
     store._check_binding()
     amended_admission = None
+    if resumption and not amendment:
+        raise PermissionError("operational resumption requires the original model amendment")
     if amendment:
         from .e008_amendment import validate_scope
         from .e008_transition import require_prepared, verify_source_scope
         validate_scope(registration, amendment)
         amended_admission = require_prepared(study, amendment)
-        verify_source_scope(registration, amendment, implementation_hashes())
+        current = implementation_hashes()
+        if resumption:
+            from .e008_resumption import verify_scope, require_recovered
+            verify_scope(registration, amendment, resumption, current)
+            require_recovered(study, resumption)
+        verify_source_scope(registration, amendment, amendment["implementation_hashes"] if resumption else current)
     elif registration["implementation_hashes"] != implementation_hashes():
         raise PermissionError("frozen implementation changed")
     if not isinstance(guard, SeriesLedger) or guard.study != study.resolve():
@@ -155,6 +162,8 @@ def run_next(study, registration, store, gold, provider, *, guard, authorize_api
     expected_model = model_for(registration, job, amendment)
     if amendment and job["id"] in amendment["preserved_outcome_hashes"]:
         raise PermissionError("amendment cannot replay a preserved context")
+    if resumption and int(job["id"][1:]) <= resumption["cutover_after_ordinal"]:
+        raise PermissionError("operational resumption cannot replay a preserved context")
     if provider is not None and provider.model != expected_model:
         raise PermissionError("provider model differs from assigned role")
     ledger.claim(ledger_key(job))
@@ -163,10 +172,14 @@ def run_next(study, registration, store, gold, provider, *, guard, authorize_api
     make_unit(run)
     try:
         if amended_admission:
-            write_once(run / "execution-binding.json", {
+            binding = {
                 "job": job["id"], "model": expected_model,
                 "commit": amended_admission["commit"],
-                "amendment_sha256": amended_admission["amendment_sha256"]})
+                "amendment_sha256": amended_admission["amendment_sha256"]}
+            if resumption:
+                from .e008_resumption import execution_binding
+                binding = execution_binding(study, job, amendment, resumption)
+            write_once(run / "execution-binding.json", binding)
         reason = None
         if provider is None:
             if job.get("control") != "cross_model":

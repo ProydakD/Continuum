@@ -131,11 +131,11 @@ def network_ledger(study, registration, network, *, job_times=None):
             "ledger_sha256": digest(study / "provider-ledger.sqlite3")}
 
 
-def admission(study, registration, network, timeline, *, amendment_path=None):
+def admission(study, registration, network, timeline, *, amendment_path=None, resumption_path=None):
     """Actual Git blob binding plus observed local admission order, not attestation."""
     if registration["fixture"]:
         return {"pass": False, "not_applicable": "scripted fixture is not a preregistered model study"}
-    loaded, _, _ = load(study, amendment_path=amendment_path)
+    loaded, _, _ = load(study, amendment_path=amendment_path, resumption_path=resumption_path)
     if loaded != registration:
         raise PermissionError("live registration changed")
     gate = read(study / "live-gate.json")
@@ -152,8 +152,13 @@ def admission(study, registration, network, timeline, *, amendment_path=None):
     transition = None
     if amendment_path:
         from .e008_transition import audit_transition
-        transition = audit_transition(study, registration, read(amendment_path), timeline)
-    return {"pass": True, **proof, "model_transition": transition,
+        transition = audit_transition(study, registration, read(amendment_path), timeline,
+                                      resumption=read(resumption_path) if resumption_path else None)
+    operational = None
+    if resumption_path:
+        from .e008_resumption import audit_resumption
+        operational = audit_resumption(study, read(resumption_path), timeline)
+    return {"pass": True, **proof, "model_transition": transition, "operational_resumption": operational,
             "prepared_commit": gate["commit"], "prepared_at": gate["prepared_at"],
             "network_started": started, "limitation": "Local ledger chronology, not trusted timestamp or provider attestation."}
 

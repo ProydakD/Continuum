@@ -95,9 +95,11 @@ def verified_gold(cache, corpus, hashes):
     return manifest, gold
 
 
-def verify_inputs(reg, corpus_path, gold_cache, gate_path, *, amendment=None):
+def verify_inputs(reg, corpus_path, gold_cache, gate_path, *, amendment=None, resumption=None):
     current = implementation_hashes()
     expected = amendment["implementation_hashes"] if amendment else reg["implementation_hashes"]
+    if resumption:
+        expected = resumption["implementation_hashes"]
     if (reg.get("experiment") != "E-008" or reg.get("fixture") is not False
             or reg.get("preregistered") is not True or expected != current
             or reg["runtime"] != runtime_identity()):
@@ -174,7 +176,7 @@ def prepare(identity, corpus_path, gold_cache, gate_path):
             "worlds": len(corpus["worlds"]), "positions": len(reg["schedule"]), **committed}
 
 
-def load(study, *, amendment_path=None):
+def load(study, *, amendment_path=None, resumption_path=None):
     study = Path(study).resolve(strict=True)
     if study.parent != (ROOT / "runs").resolve() or not study.name.startswith("e008-series-"):
         raise PermissionError("study outside registered research directory")
@@ -185,15 +187,18 @@ def load(study, *, amendment_path=None):
             or gate["registration_sha256"] != manifest["registration_sha256"]
             or gate["commit"] != manifest["prepared_source_commit"]):
         raise PermissionError("prepared admission record changed")
-    amendment = None
+    amendment = resumption = None
+    if resumption_path and not amendment_path:
+        raise PermissionError("operational resumption requires explicit immutable model amendment")
     if amendment_path is None:
         commit_binding(PROJECT, study / "registration.json", reg["implementation_hashes"])
     else:
         from .e008_transition import load_amendment
-        amendment = load_amendment(study, amendment_path)
+        amendment = load_amendment(study, amendment_path, resumption_path=resumption_path)
+        resumption = read(resumption_path) if resumption_path else None
     git_bytes(PROJECT, "merge-base", "--is-ancestor", gate["commit"], "HEAD")
     corpus, gold = verify_inputs(reg, study / "oracle.json", study / "gold", study / "offline-gate.json",
-                                amendment=amendment)
+                                amendment=amendment, resumption=resumption)
     if (study / "network-start.json").exists():
         started = read(study / "network-start.json")
         if started["gate_sha256"] != digest(study / "live-gate.json") or started["at"] < gate["prepared_at"]:
@@ -366,7 +371,7 @@ def resume_failure(study, job, result, provider):
     recover(study, job["id"], provider)
 
 
-def run(study, *, authorize_api=False, max_positions=None, amendment_path=None):
+def run(study, *, authorize_api=False, max_positions=None, amendment_path=None, resumption_path=None):
     """Resume only pending positions; invocation batching never changes the plan."""
     if not authorize_api:
         raise PermissionError("explicit API authorization required")
@@ -376,8 +381,9 @@ def run(study, *, authorize_api=False, max_positions=None, amendment_path=None):
     if study.parent != (ROOT / "runs").resolve() or not study.name.startswith("e008-series-"):
         raise PermissionError("study outside registered research directory")
     with controller_lock(study):
-        reg, corpus, gold = load(study, amendment_path=amendment_path)
+        reg, corpus, gold = load(study, amendment_path=amendment_path, resumption_path=resumption_path)
         amendment = read(amendment_path) if amendment_path else None
+        resumption = read(resumption_path) if resumption_path else None
         jobs = reg["schedule"]
         evidence = EvidenceSnapshot(study, jobs)
         # A terminal invocation is a verification, not a new smoke or API request.
@@ -410,11 +416,19 @@ def run(study, *, authorize_api=False, max_positions=None, amendment_path=None):
                         if role == "primary" or checked["action"] != "unavailable":
                             raise SeriesStopped("compatibility gate failed; no repeat")
                         providers[role] = None
+            if resumption:
+                from .e008_resumption import prepare_admission, recovery_gate
+                prepare_admission(study, resumption)
+                recovery_gate(study, resumption, providers["primary"])
             store = SnapshotDecisions(study, corpus["worlds"], jobs, evidence)
             # Recovery survives process death; a previous fatal error cannot
             # disappear just because its completed row is now in the snapshot.
             for finished in jobs[:len(evidence.outcomes)]:
                 result = evidence.get(finished)["result"]
+                if resumption:
+                    from .e008_resumption import reconciles as operational_reconciles
+                    if operational_reconciles(study, finished, result, resumption):
+                        continue
                 if amendment and reconciles(study, finished, result, amendment):
                     continue
                 provider = providers[finished["model_role"]]
@@ -429,7 +443,7 @@ def run(study, *, authorize_api=False, max_positions=None, amendment_path=None):
                     break
                 provider = providers[job["model_role"]]
                 result = run_next(study, reg, store, gold, provider, guard=guard,
-                                  authorize_api=True, evidence=evidence, amendment=amendment)
+                                  authorize_api=True, evidence=evidence, amendment=amendment, resumption=resumption)
                 count += 1
                 print(json.dumps({"event": "position_terminal", "job": job["id"], "status": result["status"]}), flush=True)
                 resume_failure(study, job, result, provider)
@@ -441,6 +455,9 @@ def run(study, *, authorize_api=False, max_positions=None, amendment_path=None):
             if amendment:
                 from .e008_amendment import verify_preserved_prefix
                 verify_preserved_prefix(study, reg, amendment)
+            if resumption:
+                from .e008_resumption import verify_preserved
+                verify_preserved(study, resumption)
 
 
 def main():
@@ -456,10 +473,11 @@ def main():
     launch.add_argument("--authorize-api", action="store_true")
     launch.add_argument("--max-positions", type=int)
     launch.add_argument("--amendment", type=Path)
+    launch.add_argument("--resumption", type=Path)
     args = parser.parse_args()
     result = (prepare(args.identity, args.corpus, args.gold_cache, args.offline_gate) if args.command == "prepare"
               else run(args.study, authorize_api=args.authorize_api, max_positions=args.max_positions,
-                       amendment_path=args.amendment))
+                       amendment_path=args.amendment, resumption_path=args.resumption))
     print(json.dumps(result))
 
 

@@ -87,7 +87,7 @@ def verify_git_files(commit, hashes, *, working=False):
             raise PermissionError("amendment source/record is not committed: " + name)
 
 
-def load_amendment(study, path):
+def load_amendment(study, path, *, resumption_path=None):
     """Read-only verification of both original and prospective source admissions."""
     from .e008_live import REGISTRATION, git_bytes
     study, path = Path(study).resolve(strict=True), Path(path).resolve(strict=True)
@@ -98,7 +98,11 @@ def load_amendment(study, path):
     if amendment["amendment_id"] != "E008-A001" or Path(amendment["study"]).resolve() != study:
         raise PermissionError("amendment belongs to another study")
     verify_preserved_prefix(study, registration, amendment)
-    verify_source_scope(registration, amendment, implementation_hashes())
+    if resumption_path:
+        from .e008_resumption import load_resumption
+        load_resumption(study, resumption_path, amendment)
+    verify_source_scope(registration, amendment,
+                        amendment["implementation_hashes"] if resumption_path else implementation_hashes())
     verify_clock(study, registration, amendment)
     verify_plan(registration, amendment)
     verify_original_controls(study, amendment)
@@ -109,7 +113,9 @@ def load_amendment(study, path):
                                     REGISTRATION: amendment["base_registration_sha256"]})
     commit = git_bytes(PROJECT, "rev-parse", "HEAD").decode().strip()
     git_bytes(PROJECT, "merge-base", "--is-ancestor", old["commit"], commit)
-    verify_git_files(commit, {**amendment["implementation_hashes"], AMENDMENT: digest(path)}, working=True)
+    source_commit = read(root(study) / "admission.json")["commit"] if resumption_path else commit
+    verify_git_files(source_commit, {**amendment["implementation_hashes"], AMENDMENT: digest(path)},
+                     working=not resumption_path)
     gate_path = Path(amendment["offline_gate_path"])
     gate = read(gate_path)
     if (digest(gate_path) != amendment["offline_gate_sha256"] or gate.get("pass") is not True
@@ -266,7 +272,7 @@ def check_gate(study, registration, amendment, original_guard):
     return value
 
 
-def audit_transition(study, registration, amendment, timeline):
+def audit_transition(study, registration, amendment, timeline, *, resumption=None):
     """Read-only final chronology, overhead and per-position revision attribution."""
     from .e008_integrity import network_ledger
     from .e008_live import load_network_result
@@ -288,6 +294,9 @@ def audit_transition(study, registration, amendment, timeline):
         binding = read(Path(study) / "units" / job["id"] / "execution-binding.json")
         expected = {"job": job["id"], "model": amendment["proposed_models"][job["model_role"]],
                     "commit": admitted["commit"], "amendment_sha256": admitted["amendment_sha256"]}
+        if resumption:
+            from .e008_resumption import execution_binding
+            expected = execution_binding(study, job, amendment, resumption)
         if binding != expected:
             raise PermissionError("prospective position lacks its exact model/source admission binding")
     trace.verify()
