@@ -16,7 +16,9 @@ from .e003 import implementation_hashes
 from .e008_locks import read, write_once
 from .e008_resources import SeriesStopped, provider_failure_action
 
-RESUMPTION = "docs/research/E008-OPERATIONAL-RESUMPTION.json"
+BASE_RESUMPTION = "docs/research/E008-OPERATIONAL-RESUMPTION.json"
+RESUMPTION = "docs/research/E008-OPERATIONAL-RESUMPTION-R1.json"
+BASE_RESUMPTION_SHA = "d942d5377b09554b73c104326a11aa9f072dcf5a5687a1f5f5cd531cdb80124f"
 CUTOVER = 1281
 FAILURE = "j01281"
 NEXT = "j01282"
@@ -65,6 +67,31 @@ def ledger_rows(study):
     with closing(sqlite3.connect((Path(study) / "jobs.sqlite3").as_uri() + "?mode=ro", uri=True)) as db:
         db.row_factory = sqlite3.Row
         return [dict(row) for row in db.execute("SELECT * FROM jobs ORDER BY ordinal")]
+
+
+def verify_revision(prior, value, current):
+    """R1 fixes the path type before any new context; the admitted GET is reused."""
+    unchanged = {"amendment_id", "study", "human_authorization", "cutover_after_ordinal", "first_pending_id",
+                 "models", "invariants", "recovery_plan", "model_amendment_sha256", "stop_path", "stop_sha256",
+                 "provider_prefix", "preserved_ledger_path", "preserved_ledger_sha256", "base_execution_commit"}
+    changed = {name for name in set(prior["implementation_hashes"]) | set(current)
+               if prior["implementation_hashes"].get(name) != current.get(name)}
+    if (value.get("revision") != 1 or value.get("prior_revision_sha256") != BASE_RESUMPTION_SHA
+            or any(value.get(name) != prior.get(name) for name in unchanged)
+            or value.get("prior_implementation_hashes") != prior["implementation_hashes"]
+            or not set(prior["implementation_hashes"]) <= set(current)
+            or not changed <= {"research/e008_resumption.py", "tests/test_e008_resumption.py"}):
+        raise PermissionError("R1 cannot change the admitted recovery or unrelated source")
+
+
+def verify_operational_prefix(study, value):
+    expected = {"admission.json", "recovery/2-started.json", "recovery/2-sending.json",
+                "recovery/2-result.json", "recovery/2-result.evidence.json", "recovery/complete.json"}
+    if set(value["preserved_operational_hashes"]) != expected:
+        raise PermissionError("R1 must retain the exact admitted slot-two catalogue result")
+    for name, sha in value["preserved_operational_hashes"].items():
+        if digest(root(study) / name) != sha:
+            raise PermissionError("original A002 admission or successful GET changed")
 
 
 def verify_preserved(study, resumption):
@@ -116,6 +143,12 @@ def load_resumption(study, path, amendment):
     if path != (PROJECT / RESUMPTION).resolve(strict=True):
         raise PermissionError("explicit committed operational resumption required")
     value = read(path)
+    prior_path = PROJECT / BASE_RESUMPTION
+    if digest(prior_path) != BASE_RESUMPTION_SHA:
+        raise PermissionError("original A002 revision changed")
+    prior = read(prior_path)
+    verify_revision(prior, value, implementation_hashes())
+    verify_operational_prefix(study, value)
     if Path(value["study"]).resolve() != study or digest(PROJECT / AMENDMENT) != MODEL_AMENDMENT_SHA:
         raise PermissionError("resumption study or immutable A001 changed")
     registration = read(study / "registration.json")
@@ -123,6 +156,12 @@ def load_resumption(study, path, amendment):
     verify_clock(study, registration, amendment)
     verify_preserved(study, value)
     head = git_bytes(PROJECT, "rev-parse", "HEAD").decode().strip()
+    original_operational = read(root(study) / "admission.json")
+    if original_operational["resumption_sha256"] != BASE_RESUMPTION_SHA:
+        raise PermissionError("original operational admission changed")
+    verify_git_files(original_operational["commit"], {**prior["implementation_hashes"],
+                                                     BASE_RESUMPTION: BASE_RESUMPTION_SHA})
+    git_bytes(PROJECT, "merge-base", "--is-ancestor", original_operational["commit"], head)
     old = read(study / "amendments/E008-A001/admission.json")
     if old["commit"] != value["base_execution_commit"]:
         raise PermissionError("A001 execution revision changed")
@@ -140,7 +179,7 @@ def load_resumption(study, path, amendment):
         for entry in check["evidence"]:
             if digest(entry["path"]) != entry["sha256"]:
                 raise PermissionError("operational offline evidence changed")
-    if (root(study) / "admission.json").exists():
+    if (root(study) / "admission-r1.json").exists():
         admitted = require_prepared(study, value)
         verify_git_files(admitted["commit"], {**value["implementation_hashes"], RESUMPTION: digest(path)})
         git_bytes(PROJECT, "merge-base", "--is-ancestor", admitted["commit"], head)
@@ -149,7 +188,7 @@ def load_resumption(study, path, amendment):
 
 def require_prepared(study, value):
     path = PROJECT / RESUMPTION
-    admitted = read(root(study) / "admission.json")
+    admitted = read(root(study) / "admission-r1.json")
     if (read(path) != value or admitted["resumption_sha256"] != digest(path)
             or admitted["model_amendment_sha256"] != MODEL_AMENDMENT_SHA
             or admitted["new_network_requests_before_gate"] != 0):
@@ -159,16 +198,15 @@ def require_prepared(study, value):
 
 def prepare_admission(study, value):
     from .e008_live import git_bytes
-    if (root(study) / "admission.json").exists():
+    if (root(study) / "admission-r1.json").exists():
         return require_prepared(study, value)
-    if root(study).exists():
-        raise SeriesStopped("orphan operational admission; do not recreate")
+    verify_operational_prefix(study, value)
     rows = ledger_rows(study)
     if (len(rows) != 3426 or any(row["status"] != "pending" or row["started"] is not None
                                 for row in rows[CUTOVER:])
             or any((Path(study) / "units" / f"j{n:05d}").exists() for n in range(CUTOVER + 1, 3427))):
         raise SeriesStopped("prospective context exists before operational admission")
-    return write_once(root(study) / "admission.json", {
+    return write_once(root(study) / "admission-r1.json", {
         "commit": git_bytes(PROJECT, "rev-parse", "HEAD").decode().strip(),
         "resumption_sha256": digest(PROJECT / RESUMPTION), "model_amendment_sha256": MODEL_AMENDMENT_SHA,
         "prepared_at": time.time(), "new_network_requests_before_gate": 0})
@@ -236,7 +274,7 @@ def reconciles(study, job, result, value):
     if job["id"] != FAILURE:
         return False
     require_recovered(study, value)
-    stop = read(value["stop_path"])
+    stop = read(Path(value["stop_path"]))
     path = Path(study) / "units" / FAILURE / "outcome.json"
     if digest(path) != stop["failed_outcome_sha256"] or read(path)["result"] != result:
         raise PermissionError("operational exception cannot change the retained timeout")
@@ -260,7 +298,10 @@ def audit_resumption(study, value, timeline):
     admitted = require_prepared(study, value)
     complete = require_recovered(study, value)
     events = []
-    previous = admitted["prepared_at"]
+    original_admission = read(root(study) / "admission.json")
+    previous = original_admission["prepared_at"]
+    if not previous <= admitted["prepared_at"] <= timeline[NEXT]["started"]:
+        raise PermissionError("corrective revision was not admitted before its first context")
     if timeline[FAILURE]["finished"] > previous:
         raise PermissionError("operational admission preceded stopped outcome")
     for number in range(2, complete["slot"] + 1):
@@ -280,8 +321,11 @@ def audit_resumption(study, value, timeline):
         events.extend(batch)
         previous = sending["at"]
     verify_preserved(study, value)
+    verify_operational_prefix(study, value)
     return {"pass": True, "cutover_after_ordinal": CUTOVER, "first_pending_id": NEXT,
             "prepared_commit": admitted["commit"], "resumption_sha256": admitted["resumption_sha256"],
+            "catalogue_execution_commit": original_admission["commit"],
+            "original_operational_sha256": original_admission["resumption_sha256"],
             "remaining_slot_used": complete["slot"], "same_models": value["models"],
             "overhead_already_in_main_ledger": api_measurements(events),
             "interpretation": "Authorized operational protocol deviation after heldout observations; no scientific retuning."}

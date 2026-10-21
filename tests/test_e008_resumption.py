@@ -10,7 +10,9 @@ from research.e008_locks import read, write_once
 from research.e008_live import recover, save_network_result
 from research.e008_resources import SeriesLedger, SeriesStopped, resource_policy
 from research.e008_resumption import (CUTOVER, FAILURE, NEXT, MODEL_AMENDMENT_SHA, PLAN, STOP_SHA,
-    audit_resumption, execution_binding, recovery_gate, require_recovered, root, verify_scope)
+    BASE_RESUMPTION_SHA, audit_resumption, execution_binding, recovery_gate, reconciles,
+    require_recovered, root, verify_revision, verify_scope)
+from research.common import digest
 
 
 class ResumptionTests(unittest.TestCase):
@@ -167,15 +169,44 @@ class ResumptionTests(unittest.TestCase):
              patch.object(self.guard, "check_context", return_value=100):
             self.gate()
         timeline = {FAILURE: {"finished": 1}, NEXT: {"started": 150}}
-        admission = {"prepared_at": 5, "commit": "new", "resumption_sha256": "sha"}
+        admission = {"prepared_at": 140, "commit": "new", "resumption_sha256": "sha"}
+        write_once(root(self.study) / "admission.json",
+                   {"prepared_at": 5, "commit": "old-catalogue", "resumption_sha256": "old-sha"})
         with patch("research.e008_resumption.require_prepared", return_value=admission), \
-             patch("research.e008_resumption.verify_preserved"):
+             patch("research.e008_resumption.verify_preserved"), \
+             patch("research.e008_resumption.verify_operational_prefix"):
             report = audit_resumption(self.study, self.value, timeline)
             self.assertTrue(report["pass"])
             self.assertEqual(report["overhead_already_in_main_ledger"]["metadata_requests"], 1)
             timeline[NEXT]["started"] = 100
-            with self.assertRaisesRegex(PermissionError, "chronology"):
+            with self.assertRaises(PermissionError):
                 audit_resumption(self.study, self.value, timeline)
+
+    def test_reconcile_reads_json_string_path_and_preserves_exact_failure(self):
+        result = {"failure_origin": "provider", "failure_type": "TimeoutError"}
+        outcome = self.study / "units" / FAILURE / "outcome.json"
+        write_once(outcome, {"result": result})
+        stop = self.study / "stop.json"
+        write_once(stop, {"failed_outcome_sha256": digest(outcome)})
+        value = {**self.value, "stop_path": str(stop)}
+        with patch("research.e008_resumption.require_recovered"):
+            self.assertTrue(reconciles(self.study, {"id": FAILURE}, result, value))
+            self.assertFalse(reconciles(self.study, {"id": NEXT}, result, value))
+            with self.assertRaises(PermissionError):
+                reconciles(self.study, {"id": FAILURE}, {"failure_type": "other"}, value)
+
+    def test_corrective_revision_is_narrow_and_retains_prior_record(self):
+        prior = {"implementation_hashes": {"research/e008_resumption.py": "old", "scientific.py": "fixed"},
+                 "recovery_plan": PLAN, "models": self.value["models"]}
+        current = {**prior["implementation_hashes"], "research/e008_resumption.py": "new"}
+        value = {**prior, "revision": 1, "prior_revision_sha256": BASE_RESUMPTION_SHA,
+                 "prior_implementation_hashes": prior["implementation_hashes"]}
+        verify_revision(prior, value, current)
+        for changed in ({**current, "scientific.py": "changed"}, {"research/e008_resumption.py": "new"}):
+            with self.assertRaises(PermissionError):
+                verify_revision(prior, value, changed)
+        with self.assertRaises(PermissionError):
+            verify_revision(prior, {**value, "models": {"primary": "other"}}, current)
 
 
 class ScopeTests(unittest.TestCase):
