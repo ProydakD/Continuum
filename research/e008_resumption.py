@@ -41,6 +41,9 @@ def root(study):
 
 
 def verify_scope(registration, amendment, resumption, current):
+    if resumption and resumption.get("amendment_id") == "E008-A003":
+        from . import e008_http408
+        return e008_http408.verify_scope(registration, amendment, resumption, current)
     if (resumption.get("amendment_id") != "E008-A002"
             or resumption.get("status") != "approved_for_execution"
             or resumption.get("preregistered") is not True
@@ -95,6 +98,9 @@ def verify_operational_prefix(study, value):
 
 
 def verify_preserved(study, resumption):
+    if resumption and resumption.get("amendment_id") == "E008-A003":
+        from . import e008_http408
+        return e008_http408.verify_preserved(study, resumption)
     from .e008_live import load_network_result, network_bytes
     study = Path(study)
     stop_path = Path(resumption["stop_path"])
@@ -136,9 +142,14 @@ def verify_preserved(study, resumption):
     return stop
 
 
-def load_resumption(study, path, amendment):
+def load_resumption(study, path, amendment, *, _historical=False):
     from .e008_live import git_bytes
     from .e008_transition import AMENDMENT, verify_clock, verify_git_files
+    from . import e008_http408
+    if Path(path).resolve() == (PROJECT / e008_http408.RESUMPTION).resolve():
+        if _historical:
+            raise PermissionError("A003 is not a historical parent")
+        return e008_http408.load_resumption(study, path, amendment)
     study, path = Path(study).resolve(strict=True), Path(path).resolve(strict=True)
     if path != (PROJECT / RESUMPTION).resolve(strict=True):
         raise PermissionError("explicit committed operational resumption required")
@@ -147,12 +158,13 @@ def load_resumption(study, path, amendment):
     if digest(prior_path) != BASE_RESUMPTION_SHA:
         raise PermissionError("original A002 revision changed")
     prior = read(prior_path)
-    verify_revision(prior, value, implementation_hashes())
+    current = value["implementation_hashes"] if _historical else implementation_hashes()
+    verify_revision(prior, value, current)
     verify_operational_prefix(study, value)
     if Path(value["study"]).resolve() != study or digest(PROJECT / AMENDMENT) != MODEL_AMENDMENT_SHA:
         raise PermissionError("resumption study or immutable A001 changed")
     registration = read(study / "registration.json")
-    verify_scope(registration, amendment, value, implementation_hashes())
+    verify_scope(registration, amendment, value, current)
     verify_clock(study, registration, amendment)
     verify_preserved(study, value)
     head = git_bytes(PROJECT, "rev-parse", "HEAD").decode().strip()
@@ -166,7 +178,8 @@ def load_resumption(study, path, amendment):
     if old["commit"] != value["base_execution_commit"]:
         raise PermissionError("A001 execution revision changed")
     git_bytes(PROJECT, "merge-base", "--is-ancestor", old["commit"], head)
-    verify_git_files(head, {**value["implementation_hashes"], RESUMPTION: digest(path)}, working=True)
+    source_commit = require_prepared(study, value)["commit"] if _historical else head
+    verify_git_files(source_commit, {**value["implementation_hashes"], RESUMPTION: digest(path)}, working=not _historical)
     gate_path = Path(value["offline_gate_path"])
     gate = read(gate_path)
     if (digest(gate_path) != value["offline_gate_sha256"] or gate.get("pass") is not True
@@ -187,6 +200,9 @@ def load_resumption(study, path, amendment):
 
 
 def require_prepared(study, value):
+    if value and value.get("amendment_id") == "E008-A003":
+        from . import e008_http408
+        return e008_http408.require_prepared(study, value)
     path = PROJECT / RESUMPTION
     admitted = read(root(study) / "admission-r1.json")
     if (read(path) != value or admitted["resumption_sha256"] != digest(path)
@@ -197,6 +213,9 @@ def require_prepared(study, value):
 
 
 def prepare_admission(study, value):
+    if value and value.get("amendment_id") == "E008-A003":
+        from . import e008_http408
+        return e008_http408.prepare_admission(study, value)
     from .e008_live import git_bytes
     if (root(study) / "admission-r1.json").exists():
         return require_prepared(study, value)
@@ -214,6 +233,9 @@ def prepare_admission(study, value):
 
 def recovery_gate(study, value, provider):
     """Use only unused slots 2/3, with the original guard and journal; never POST."""
+    if value and value.get("amendment_id") == "E008-A003":
+        from . import e008_http408
+        return e008_http408.recovery_gate(study, value, provider)
     from .e008_live import event_offset, last_http_status, load_network_result, save_network_result, wait_until
     if provider.model != value["models"]["primary"] or value["recovery_plan"] != PLAN:
         raise PermissionError("operational model or recovery plan changed")
@@ -254,6 +276,9 @@ def recovery_gate(study, value, provider):
 
 def require_recovered(study, value):
     """Offline re-read, not an attestation based on complete.json alone."""
+    if value and value.get("amendment_id") == "E008-A003":
+        from . import e008_http408
+        return e008_http408.require_recovered(study, value)
     from .e008_live import load_network_result
     require_prepared(study, value)
     provider = SimpleNamespace(log=Path(study) / "provider.jsonl")
@@ -271,6 +296,9 @@ def require_recovered(study, value):
 
 
 def reconciles(study, job, result, value):
+    if value and value.get("amendment_id") == "E008-A003":
+        from . import e008_http408
+        return e008_http408.reconciles(study, job, result, value)
     if job["id"] != FAILURE:
         return False
     require_recovered(study, value)
@@ -282,6 +310,9 @@ def reconciles(study, job, result, value):
 
 
 def execution_binding(study, job, amendment, value):
+    if value and value.get("amendment_id") == "E008-A003":
+        from . import e008_http408
+        return e008_http408.execution_binding(study, job, amendment, value)
     from .e008_transition import require_prepared as original_admission
     original = original_admission(study, amendment)
     binding = {"job": job["id"], "model": amendment["proposed_models"][job["model_role"]],
@@ -293,6 +324,9 @@ def execution_binding(study, job, amendment, value):
 
 
 def audit_resumption(study, value, timeline):
+    if value and value.get("amendment_id") == "E008-A003":
+        from . import e008_http408
+        return e008_http408.audit_resumption(study, value, timeline)
     from .e008_live import load_network_result, network_bytes
     from .e008_measurements import api_measurements
     admitted = require_prepared(study, value)
