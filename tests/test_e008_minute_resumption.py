@@ -305,8 +305,9 @@ class HistoricalA003Tests(unittest.TestCase):
         with patch.object(prior, "load_resumption", return_value="historical") as load:
             self.assertEqual(dispatch.load_resumption("study", prior.PROJECT / prior.RESUMPTION, {}, _historical=True), "historical")
             load.assert_called_once_with("study", prior.PROJECT / prior.RESUMPTION, {}, _historical=True)
+        from research import e008_direct_resumption
         with self.assertRaises(PermissionError):
-            dispatch.load_resumption("study", h.PROJECT / h.RESUMPTION, {}, _historical=True)
+            dispatch.load_resumption("study", h.PROJECT / e008_direct_resumption.RESUMPTION, {}, _historical=True)
 
     def test_historical_load_checks_admitted_git_not_current_source(self):
         with tempfile.TemporaryDirectory() as folder:

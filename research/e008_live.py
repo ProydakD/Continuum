@@ -368,6 +368,10 @@ def resume_failure(study, job, result, provider, *, resumption=None):
     status = last_http_status(provider, 0, job["id"])
     if provider_failure_action(result.get("failure_type"), status) != "recover_next_position":
         raise SeriesStopped("non-transient provider failure; no new model context")
+    if resumption and resumption.get("amendment_id") == "E008-A005" and status == 502:
+        from . import e008_direct_resumption
+        if int(job["id"][1:]) > e008_direct_resumption.CUTOVER:
+            return e008_direct_resumption.recover_failure(study, job, result, provider, resumption)
     if resumption and resumption.get("amendment_id") == "E008-A004" and status == 502:
         from . import e008_minute_resumption
         if int(job["id"][1:]) > e008_minute_resumption.CUTOVER:

@@ -41,6 +41,9 @@ def root(study):
 
 
 def verify_scope(registration, amendment, resumption, current):
+    if resumption and resumption.get("amendment_id") == "E008-A005":
+        from . import e008_direct_resumption
+        return e008_direct_resumption.verify_scope(registration, amendment, resumption, current)
     if resumption and resumption.get("amendment_id") == "E008-A004":
         from . import e008_minute_resumption
         return e008_minute_resumption.verify_scope(registration, amendment, resumption, current)
@@ -101,6 +104,9 @@ def verify_operational_prefix(study, value):
 
 
 def verify_preserved(study, resumption):
+    if resumption and resumption.get("amendment_id") == "E008-A005":
+        from . import e008_direct_resumption
+        return e008_direct_resumption.verify_preserved(study, resumption)
     if resumption and resumption.get("amendment_id") == "E008-A004":
         from . import e008_minute_resumption
         return e008_minute_resumption.verify_preserved(study, resumption)
@@ -152,11 +158,13 @@ def load_resumption(study, path, amendment, *, _historical=False):
     from .e008_live import git_bytes
     from .e008_transition import AMENDMENT, verify_clock, verify_git_files
     from . import e008_http408
-    from . import e008_minute_resumption
-    if Path(path).resolve() == (PROJECT / e008_minute_resumption.RESUMPTION).resolve():
+    from . import e008_minute_resumption, e008_direct_resumption
+    if Path(path).resolve() == (PROJECT / e008_direct_resumption.RESUMPTION).resolve():
         if _historical:
-            raise PermissionError("A004 has no historical child admission")
-        return e008_minute_resumption.load_resumption(study, path, amendment)
+            raise PermissionError("A005 has no historical child admission")
+        return e008_direct_resumption.load_resumption(study, path, amendment)
+    if Path(path).resolve() == (PROJECT / e008_minute_resumption.RESUMPTION).resolve():
+        return e008_minute_resumption.load_resumption(study, path, amendment, _historical=_historical)
     if Path(path).resolve() == (PROJECT / e008_http408.RESUMPTION).resolve():
         return e008_http408.load_resumption(study, path, amendment, _historical=_historical)
     study, path = Path(study).resolve(strict=True), Path(path).resolve(strict=True)
@@ -209,6 +217,9 @@ def load_resumption(study, path, amendment, *, _historical=False):
 
 
 def require_prepared(study, value):
+    if value and value.get("amendment_id") == "E008-A005":
+        from . import e008_direct_resumption
+        return e008_direct_resumption.require_prepared(study, value)
     if value and value.get("amendment_id") == "E008-A004":
         from . import e008_minute_resumption
         return e008_minute_resumption.require_prepared(study, value)
@@ -225,6 +236,9 @@ def require_prepared(study, value):
 
 
 def prepare_admission(study, value):
+    if value and value.get("amendment_id") == "E008-A005":
+        from . import e008_direct_resumption
+        return e008_direct_resumption.prepare_admission(study, value)
     if value and value.get("amendment_id") == "E008-A004":
         from . import e008_minute_resumption
         return e008_minute_resumption.prepare_admission(study, value)
@@ -248,6 +262,9 @@ def prepare_admission(study, value):
 
 def recovery_gate(study, value, provider):
     """Use only unused slots 2/3, with the original guard and journal; never POST."""
+    if value and value.get("amendment_id") == "E008-A005":
+        from . import e008_direct_resumption
+        return e008_direct_resumption.recovery_gate(study, value, provider)
     if value and value.get("amendment_id") == "E008-A004":
         from . import e008_minute_resumption
         return e008_minute_resumption.recovery_gate(study, value, provider)
@@ -294,6 +311,9 @@ def recovery_gate(study, value, provider):
 
 def require_recovered(study, value):
     """Offline re-read, not an attestation based on complete.json alone."""
+    if value and value.get("amendment_id") == "E008-A005":
+        from . import e008_direct_resumption
+        return e008_direct_resumption.require_recovered(study, value)
     if value and value.get("amendment_id") == "E008-A004":
         from . import e008_minute_resumption
         return e008_minute_resumption.require_recovered(study, value)
@@ -317,6 +337,9 @@ def require_recovered(study, value):
 
 
 def reconciles(study, job, result, value):
+    if value and value.get("amendment_id") == "E008-A005":
+        from . import e008_direct_resumption
+        return e008_direct_resumption.reconciles(study, job, result, value)
     if value and value.get("amendment_id") == "E008-A004":
         from . import e008_minute_resumption
         return e008_minute_resumption.reconciles(study, job, result, value)
@@ -334,6 +357,9 @@ def reconciles(study, job, result, value):
 
 
 def execution_binding(study, job, amendment, value):
+    if value and value.get("amendment_id") == "E008-A005":
+        from . import e008_direct_resumption
+        return e008_direct_resumption.execution_binding(study, job, amendment, value)
     if value and value.get("amendment_id") == "E008-A004":
         from . import e008_minute_resumption
         return e008_minute_resumption.execution_binding(study, job, amendment, value)
@@ -351,6 +377,9 @@ def execution_binding(study, job, amendment, value):
 
 
 def audit_resumption(study, value, timeline):
+    if value and value.get("amendment_id") == "E008-A005":
+        from . import e008_direct_resumption
+        return e008_direct_resumption.audit_resumption(study, value, timeline)
     if value and value.get("amendment_id") == "E008-A004":
         from . import e008_minute_resumption
         return e008_minute_resumption.audit_resumption(study, value, timeline)
