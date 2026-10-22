@@ -359,7 +359,7 @@ def recover(study, identity, provider):
     raise SeriesStopped("registered recovery exhausted; no extra probes")
 
 
-def resume_failure(study, job, result, provider):
+def resume_failure(study, job, result, provider, *, resumption=None):
     """A recorded failure stays a failure even if the provider recovers."""
     if result.get("failure_origin") != "provider":
         if result.get("failure_origin") in ("controller", "safeguard"):
@@ -368,6 +368,10 @@ def resume_failure(study, job, result, provider):
     status = last_http_status(provider, 0, job["id"])
     if provider_failure_action(result.get("failure_type"), status) != "recover_next_position":
         raise SeriesStopped("non-transient provider failure; no new model context")
+    if resumption and resumption.get("amendment_id") == "E008-A004" and status == 502:
+        from . import e008_minute_resumption
+        if int(job["id"][1:]) > e008_minute_resumption.CUTOVER:
+            return e008_minute_resumption.recover_failure(study, job, result, provider, resumption)
     recover(study, job["id"], provider)
 
 
@@ -435,7 +439,7 @@ def run(study, *, authorize_api=False, max_positions=None, amendment_path=None, 
                 if amendment and finished["id"] in amendment["preserved_outcome_hashes"]:
                     provider = BoundedProvider(reg["provider"], reg["models"][finished["model_role"]],
                                                guard, study / "provider.jsonl", authorize=True)
-                resume_failure(study, finished, result, provider)
+                resume_failure(study, finished, result, provider, resumption=resumption)
             count = 0
             while max_positions is None or count < max_positions:
                 job = evidence.next_job()
@@ -446,7 +450,7 @@ def run(study, *, authorize_api=False, max_positions=None, amendment_path=None, 
                                   authorize_api=True, evidence=evidence, amendment=amendment, resumption=resumption)
                 count += 1
                 print(json.dumps({"event": "position_terminal", "job": job["id"], "status": result["status"]}), flush=True)
-                resume_failure(study, job, result, provider)
+                resume_failure(study, job, result, provider, resumption=resumption)
             terminal = evidence.next_job() is None
             return {"terminal": terminal, "new_positions": count, "research_complete": False,
                     "next": "independent raw audit/REF/full report" if terminal else "resume first pending position"}
