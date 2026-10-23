@@ -107,14 +107,14 @@ def verify_preserved(study, value):
     return stop
 
 
-def load_resumption(study, path, amendment):
+def load_resumption(study, path, amendment, *, _historical=False):
     from .e008_live import git_bytes
     from .e008_transition import verify_git_files, verify_clock
     study, path = Path(study).resolve(strict=True), Path(path).resolve(strict=True)
     if path != (PROJECT / RESUMPTION).resolve(strict=True):
         raise PermissionError("explicit committed A005 required")
     value = read(path)
-    current = implementation_hashes()
+    current = value["implementation_hashes"] if _historical else implementation_hashes()
     verify_scope(read(study / "registration.json"), amendment, value, current)
     if Path(value["study"]).resolve() != study:
         raise PermissionError("A005 study changed")
@@ -123,7 +123,8 @@ def load_resumption(study, path, amendment):
     verify_clock(study, read(study / "registration.json"), amendment)
     verify_preserved(study, value)
     head = git_bytes(PROJECT, "rev-parse", "HEAD").decode().strip()
-    verify_git_files(head, {**value["implementation_hashes"], RESUMPTION: digest(path)}, working=True)
+    source_commit = require_prepared(study, value)["commit"] if _historical else head
+    verify_git_files(source_commit, {**value["implementation_hashes"], RESUMPTION: digest(path)}, working=not _historical)
     gate_path = Path(value["offline_gate_path"])
     gate = read(gate_path)
     if (digest(gate_path) != value["offline_gate_sha256"] or gate.get("pass") is not True
