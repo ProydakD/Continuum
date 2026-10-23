@@ -287,6 +287,72 @@ class Http408FollowupScopeTests(unittest.TestCase):
                 h.verify_scope(self.registration, {}, self.value, {**self.current, "research/e008_http408_followup.py": "unfrozen"})
 
 
+class RepairScopeTests(unittest.TestCase):
+    def test_revision_only_allows_implementation_and_gate_rebinding(self):
+        original = {"models": {"primary": "p"}, "recovery_plan": h.PLAN, "created_at": 1,
+                    "implementation_hashes": {"research/e008_http408_followup.py": "old", "science.py": "fixed"},
+                    "offline_gate_path": "old", "offline_gate_sha256": "old"}
+        current = {**original["implementation_hashes"], "research/e008_http408_followup.py": "new"}
+        value = {**original, "created_at": 2, "implementation_hashes": current,
+                 "offline_gate_path": "new", "offline_gate_sha256": "new", "revision": 1,
+                 "prior_revision_sha256": h.BASE_RESUMPTION_SHA,
+                 "prior_implementation_hashes": original["implementation_hashes"]}
+        h.verify_revision(original, value, current)
+        for key, bad in (("models", {}), ("recovery_plan", {}), ("prior_revision_sha256", "bad"), ("revision", 2)):
+            with self.subTest(field=key), self.assertRaises(PermissionError):
+                h.verify_revision(original, {**value, key: bad}, current)
+        changed = {**current, "science.py": "different"}
+        with self.assertRaises(PermissionError):
+            h.verify_revision(original, {**value, "implementation_hashes": changed}, changed)
+
+    def test_operational_prefix_reopens_exact_original_gate_and_network(self):
+        with tempfile.TemporaryDirectory() as folder:
+            study = Path(folder)
+            names = ["amendments/E008-A006/admission.json"] + ["recovery/E008-A006/" + name for name in
+                     ("1-started.json", "1-sending.json", "1-result.json", "1-result.evidence.json", "complete.json")]
+            for name in names:
+                write_once(study / name, {"original": name})
+            (study / "provider.jsonl").write_bytes(b"original-get\n")
+            value = {"preserved_operational_hashes": {name: digest(study / name) for name in names},
+                     "operational_provider_prefix": {"bytes": 13, "sha256": digest(study / "provider.jsonl")}}
+            h.verify_operational_prefix(study, value)
+            (study / "provider.jsonl").write_bytes(b"changed--get\n")
+            with self.assertRaises(PermissionError):
+                h.verify_operational_prefix(study, value)
+
+    def test_repair_admission_does_not_replace_original(self):
+        with tempfile.TemporaryDirectory() as folder:
+            study = Path(folder)
+            original = {"prepared_at": 1, "commit": "a006"}
+            write_once(h.root(study) / "admission.json", original)
+            rows = [{"status": "completed", "started": 1}] * h.CUTOVER + [
+                {"status": "pending", "started": None}] * (3426 - h.CUTOVER)
+            with patch.object(dispatch, "ledger_rows", return_value=rows), patch.object(h, "verify_operational_prefix") as check, \
+                 patch("research.e008_live.git_bytes", return_value=b"a006-r1"), patch.object(h, "digest", return_value="new-sha"):
+                value = {"revision": 1}
+                admitted = h.prepare_admission(study, value)
+                check.assert_called_once_with(study, value)
+                self.assertEqual(read(h.root(study) / "admission.json"), original)
+                self.assertEqual(read(h.root(study) / "admission-r1.json"), admitted)
+                self.assertEqual(admitted["commit"], "a006-r1")
+
+
+class HistoricalFailureDispatchTests(unittest.TestCase):
+    def test_pre_a005_http502_uses_original_cached_recovery(self):
+        value = {"amendment_id": h.IDENTITY}
+        job = {"id": "j00020", "model_role": "primary"}
+        result = {"failure_origin": "provider", "failure_type": "RuntimeError",
+                  "failure": "provider HTTP status 502; no retry or redirect"}
+        provider = Mock()
+        with patch.object(h, "require_recovered"), patch.object(prior, "require_recovered"), patch.object(h, "parent", return_value={}), \
+             patch("research.e008_live.last_http_status", return_value=502), \
+             patch("research.e008_live.recover", return_value="original-cached") as cached:
+            self.assertEqual(resume_failure("study", job, result, provider, resumption=value), "original-cached")
+            cached.assert_called_once_with("study", "j00020", provider)
+            provider.models.assert_not_called()
+            provider.respond.assert_not_called()
+
+
 class AdmissionTests(unittest.TestCase):
     def test_admission_uses_original_ledger_and_is_written_once(self):
         with tempfile.TemporaryDirectory() as folder:

@@ -17,7 +17,9 @@ from . import e008_direct_resumption as prior
 from . import e008_resumption as base
 from . import e008_minute_resumption as minute
 
-RESUMPTION = "docs/research/E008-HTTP408-FOLLOWUP.json"
+BASE_RESUMPTION = "docs/research/E008-HTTP408-FOLLOWUP.json"
+BASE_RESUMPTION_SHA = "155ec1f4aed7c2e012deec0bddf480f58228a01e420c817698a958c8fcfadb5b"
+RESUMPTION = "docs/research/E008-HTTP408-FOLLOWUP-R1.json"
 PRIOR_SHA = "f626fb0038c93033bc9586e944d41cf32f214cee384b80b9c6a3f89c61d03bf4"
 STOP_SHA = "5b9b428a75e123f0b933dc901c4b632ba14a82fe7121e438dd10ad6868a41859"
 CUTOVER, FAILURE, NEXT = 2697, "j02697", "j02698"
@@ -87,6 +89,34 @@ def verify_failed_transport(study):
         raise PermissionError("A006 requires the exact sent and complete HTTP408 transport")
 
 
+def verify_revision(original, value, current):
+    mutable = {"created_at", "implementation_hashes", "offline_gate_path", "offline_gate_sha256"}
+    changed = {name for name in set(original["implementation_hashes"]) | set(current)
+               if original["implementation_hashes"].get(name) != current.get(name)}
+    if (value.get("revision") != 1 or value.get("prior_revision_sha256") != BASE_RESUMPTION_SHA
+            or any(value.get(name) != content for name, content in original.items() if name not in mutable)
+            or value.get("implementation_hashes") != current
+            or value.get("prior_implementation_hashes") != original["implementation_hashes"]
+            or set(current) != set(original["implementation_hashes"])
+            or not changed <= {"research/e008_http408_followup.py", "tests/test_e008_http408_followup.py"}):
+        raise PermissionError("A006 R1 may only repair historical dispatch, not change execution conditions")
+
+
+def verify_operational_prefix(study, value):
+    from .e008_live import network_bytes
+    expected = {"amendments/E008-A006/admission.json"} | {
+        "recovery/E008-A006/" + name for name in
+        ("1-started.json", "1-sending.json", "1-result.json", "1-result.evidence.json", "complete.json")}
+    if set(value["preserved_operational_hashes"]) != expected:
+        raise PermissionError("A006 R1 must retain the original admission and successful GET")
+    if any(digest(Path(study) / name) != sha for name, sha in value["preserved_operational_hashes"].items()):
+        raise PermissionError("A006 original admission or catalogue proof changed")
+    prefix = value["operational_provider_prefix"]
+    raw = network_bytes(SimpleNamespace(log=Path(study) / "provider.jsonl"), 0, prefix["bytes"])
+    if hashlib.sha256(raw).hexdigest() != prefix["sha256"]:
+        raise PermissionError("A006 original operational journal changed")
+
+
 def verify_preserved(study, value):
     from .e008_live import network_bytes
     study = Path(study)
@@ -122,6 +152,8 @@ def verify_preserved(study, value):
     old_recovery = study / "recovery" / FAILURE
     if old_recovery.exists() and any(old_recovery.iterdir()):
         raise PermissionError("original stopped recovery was extended")
+    if value.get("revision") == 1:
+        verify_operational_prefix(study, value)
     return stop
 
 
@@ -133,6 +165,11 @@ def load_resumption(study, path, amendment):
         raise PermissionError("explicit committed A006 required")
     value = read(path)
     current = implementation_hashes()
+    original_path = PROJECT / BASE_RESUMPTION
+    if digest(original_path) != BASE_RESUMPTION_SHA:
+        raise PermissionError("original A006 manifest changed")
+    original = read(original_path)
+    verify_revision(original, value, current)
     verify_scope(read(study / "registration.json"), amendment, value, current)
     if Path(value["study"]).resolve() != study:
         raise PermissionError("A006 study changed")
@@ -141,6 +178,11 @@ def load_resumption(study, path, amendment):
     verify_clock(study, read(study / "registration.json"), amendment)
     verify_preserved(study, value)
     head = git_bytes(PROJECT, "rev-parse", "HEAD").decode().strip()
+    original_admission = read(root(study) / "admission.json")
+    if original_admission["resumption_sha256"] != BASE_RESUMPTION_SHA:
+        raise PermissionError("original A006 admission changed")
+    verify_git_files(original_admission["commit"], {**original["implementation_hashes"], BASE_RESUMPTION: BASE_RESUMPTION_SHA})
+    git_bytes(PROJECT, "merge-base", "--is-ancestor", original_admission["commit"], head)
     verify_git_files(head, {**value["implementation_hashes"], RESUMPTION: digest(path)}, working=True)
     gate_path = Path(value["offline_gate_path"])
     gate = read(gate_path)
@@ -154,16 +196,21 @@ def load_resumption(study, path, amendment):
         for entry in check["evidence"]:
             if digest(entry["path"]) != entry["sha256"]:
                 raise PermissionError("A006 offline evidence changed")
-    if (root(study) / "admission.json").exists():
+    if admission_path(study, value).exists():
         admitted = require_prepared(study, value)
         verify_git_files(admitted["commit"], {**value["implementation_hashes"], RESUMPTION: digest(path)})
         git_bytes(PROJECT, "merge-base", "--is-ancestor", admitted["commit"], head)
     return value
 
 
+def admission_path(study, value):
+    return root(study) / ("admission-r1.json" if value.get("revision") == 1 else "admission.json")
+
+
 def require_prepared(study, value):
-    admitted = read(root(study) / "admission.json")
-    if (read(PROJECT / RESUMPTION) != value or admitted["resumption_sha256"] != digest(PROJECT / RESUMPTION)
+    admitted = read(admission_path(study, value))
+    manifest = PROJECT / (RESUMPTION if value.get("revision") == 1 else BASE_RESUMPTION)
+    if (read(manifest) != value or admitted["resumption_sha256"] != digest(manifest)
             or admitted["prior_resumption_sha256"] != PRIOR_SHA or admitted["new_network_requests_before_gate"] != 0):
         raise PermissionError("A006 admission binding changed")
     return admitted
@@ -171,15 +218,18 @@ def require_prepared(study, value):
 
 def prepare_admission(study, value):
     from .e008_live import git_bytes
-    if (root(study) / "admission.json").exists():
+    if admission_path(study, value).exists():
         return require_prepared(study, value)
+    if value.get("revision") == 1:
+        verify_operational_prefix(study, value)
     rows = base.ledger_rows(study)
     if (len(rows) != 3426 or any(r["status"] != "pending" or r["started"] is not None for r in rows[CUTOVER:])
             or any((Path(study) / "units" / f"j{n:05d}").exists() for n in range(CUTOVER + 1, 3427))):
         raise SeriesStopped("prospective context exists before A006 admission")
-    return write_once(root(study) / "admission.json", {
+    manifest = PROJECT / (RESUMPTION if value.get("revision") == 1 else BASE_RESUMPTION)
+    return write_once(admission_path(study, value), {
         "commit": git_bytes(PROJECT, "rev-parse", "HEAD").decode().strip(),
-        "resumption_sha256": digest(PROJECT / RESUMPTION), "prior_resumption_sha256": PRIOR_SHA,
+        "resumption_sha256": digest(manifest), "prior_resumption_sha256": PRIOR_SHA,
         "prepared_at": time.time(), "new_network_requests_before_gate": 0})
 
 
@@ -211,6 +261,9 @@ def require_recovered(study, value):
 
 def recover_failure(study, job, result, provider, value):
     require_recovered(study, value)
+    if int(job["id"][1:]) <= prior.CUTOVER:
+        from .e008_live import recover
+        return recover(study, job["id"], provider)
     if int(job["id"][1:]) <= CUTOVER:
         return prior.recover_failure(study, job, result, provider, parent())
     minute.verify_future_failure(study, job, result, value)
@@ -245,9 +298,12 @@ def audit_resumption(study, value, timeline):
     historical = {key: timing for key, timing in timeline.items() if int(key[1:]) <= CUTOVER}
     previous = prior.audit_resumption(study, parent(), historical)
     admitted, complete = require_prepared(study, value), require_recovered(study, value)
-    at = admitted["prepared_at"]
+    original_admission = read(root(study) / "admission.json") if value.get("revision") == 1 else admitted
+    at = original_admission["prepared_at"]
     if not timeline[FAILURE]["finished"] <= at <= timeline[NEXT]["started"]:
         raise PermissionError("A006 admission chronology changed")
+    if not at <= admitted["prepared_at"] <= timeline[NEXT]["started"]:
+        raise PermissionError("A006 repair admission chronology changed")
     events = []
     provider = SimpleNamespace(log=Path(study) / "provider.jsonl")
     for number in range(1, complete["attempts"] + 1):
@@ -283,6 +339,7 @@ def audit_resumption(study, value, timeline):
     verify_preserved(study, value)
     return {"pass": True, "cutover_after_ordinal": CUTOVER, "first_pending_id": NEXT,
             "prepared_commit": admitted["commit"], "resumption_sha256": admitted["resumption_sha256"],
+            "catalogue_execution_commit": original_admission["commit"], "revision": value.get("revision", 0),
             "prior_operational_resumption": previous, "same_models": value["models"],
             "catalogue_slot_used": complete["attempts"], "future_http502_recoveries": future,
             "overhead_already_in_main_ledger": api_measurements(events),
