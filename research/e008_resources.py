@@ -69,7 +69,7 @@ class SeriesLedger(SpendLedger):
     retained if a gate closes. A pending request blocks all further network use.
     """
 
-    def __init__(self, study, policy):
+    def __init__(self, study, policy, *, deadline_extension=None):
         self.study = Path(study).resolve(strict=True)
         self.evidence = None
         if (not isinstance(policy.get("workers"), dict) or not policy["workers"]
@@ -93,6 +93,10 @@ class SeriesLedger(SpendLedger):
             db.commit()
         self.monotonic_anchor = time.monotonic()
         self.wall_anchor = time.time()
+        self.deadline_extension_seconds = 0
+        if deadline_extension is not None:
+            from .e008_deadline_resumption import deadline_allowance
+            self.deadline_extension_seconds = deadline_allowance(self.study, self.limits, deadline_extension)
 
     def start(self):
         with closing(sqlite3.connect(self.path)) as db:
@@ -120,7 +124,7 @@ class SeriesLedger(SpendLedger):
             db.commit()
         if (self.study / "STOP").exists():
             raise SeriesStopped("operator STOP")
-        remaining = self.limits["series_seconds"] - elapsed
+        remaining = self.limits["series_seconds"] + self.deadline_extension_seconds - elapsed
         if remaining <= 0:
             raise SeriesStopped("registered series deadline")
         return remaining

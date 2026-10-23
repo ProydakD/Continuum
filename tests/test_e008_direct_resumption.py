@@ -275,6 +275,9 @@ class DirectScopeTests(unittest.TestCase):
         with patch.object(h, "load_resumption", return_value="historical-a005") as load:
             self.assertEqual(dispatch.load_resumption("study", h.PROJECT / h.RESUMPTION, {}, _historical=True), "historical-a005")
             load.assert_called_once_with("study", h.PROJECT / h.RESUMPTION, {}, _historical=True)
-        from research import e008_http408_followup
+        from research import e008_http408_followup, e008_deadline_resumption
+        with patch.object(e008_http408_followup, "load_resumption", return_value="historical-a006") as load:
+            self.assertEqual(dispatch.load_resumption("study", h.PROJECT / e008_http408_followup.RESUMPTION, {}, _historical=True), "historical-a006")
+            load.assert_called_once_with("study", h.PROJECT / e008_http408_followup.RESUMPTION, {}, _historical=True)
         with self.assertRaises(PermissionError):
-            dispatch.load_resumption("study", h.PROJECT / e008_http408_followup.RESUMPTION, {}, _historical=True)
+            dispatch.load_resumption("study", h.PROJECT / e008_deadline_resumption.RESUMPTION, {}, _historical=True)

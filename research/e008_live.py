@@ -368,6 +368,9 @@ def resume_failure(study, job, result, provider, *, resumption=None):
     status = last_http_status(provider, 0, job["id"])
     if provider_failure_action(result.get("failure_type"), status) != "recover_next_position":
         raise SeriesStopped("non-transient provider failure; no new model context")
+    if resumption and resumption.get("amendment_id") == "E008-A007" and status == 502:
+        from . import e008_deadline_resumption
+        return e008_deadline_resumption.recover_failure(study, job, result, provider, resumption)
     if resumption and resumption.get("amendment_id") == "E008-A006" and status == 502:
         from . import e008_http408_followup
         return e008_http408_followup.recover_failure(study, job, result, provider, resumption)
@@ -401,7 +404,12 @@ def run(study, *, authorize_api=False, max_positions=None, amendment_path=None, 
         if evidence.next_job() is None:
             return {"terminal": True, "new_positions": 0, "new_network_requests": 0,
                     "research_complete": False}
-        guard = SeriesLedger(study, reg["resources"])
+        extension = None
+        if resumption and resumption.get("amendment_id") == "E008-A007":
+            from .e008_deadline_resumption import prepare_admission
+            prepare_admission(study, resumption)
+            extension = resumption
+        guard = SeriesLedger(study, reg["resources"], deadline_extension=extension)
         guard.use_evidence(evidence)
         try:
             guard.start()

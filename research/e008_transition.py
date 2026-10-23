@@ -263,7 +263,11 @@ def compatibility(study, amendment, provider, original_log):
 def check_gate(study, registration, amendment, original_guard):
     prepare_admission(study, amendment)
     guard = TransitionLedger(study, registration, original_guard)
-    guard.start()
+    if original_guard.deadline_extension_seconds:
+        # A007 reuses the sealed A001 gate; its expired overhead clock is not reset.
+        original_guard.check_context()
+    else:
+        guard.start()
     provider = BoundedProvider(registration["provider"], amendment["proposed_models"]["secondary"],
                                guard, root(study) / "provider.jsonl", authorize=True)
     value = compatibility(study, amendment, provider, Path(study) / "provider.jsonl")
@@ -300,9 +304,13 @@ def audit_transition(study, registration, amendment, timeline, *, resumption=Non
         if binding != expected:
             raise PermissionError("prospective position lacks its exact model/source admission binding")
     trace.verify()
-    for row in timeline.values():
-        if row["finished"] > amendment["invariants"]["original_deadline"]:
-            raise PermissionError("context exceeded original series deadline")
+    if resumption and resumption.get("amendment_id") == "E008-A007":
+        from .e008_deadline_resumption import audit_clock
+        audit_clock(study, resumption, timeline)
+    else:
+        for row in timeline.values():
+            if row["finished"] > amendment["invariants"]["original_deadline"]:
+                raise PermissionError("context exceeded original series deadline")
     return {"pass": True, **proof, "prepared_commit": admitted["commit"],
             "cutover_after_ordinal": after, "first_pending_id": amendment["first_pending_id"],
             "models_before": registration["models"], "models_after": amendment["proposed_models"],
