@@ -1,4 +1,5 @@
 """E009-only authorized HTTPS transport, bounded retries and durable attempt accounting."""
+import asyncio
 from contextlib import closing
 from email.utils import parsedate_to_datetime
 import hashlib
@@ -9,12 +10,12 @@ import os
 from pathlib import Path
 import random
 import re
-import socket
 import sqlite3
 import ssl
-import threading
 import time
 from urllib.parse import urlsplit
+
+import httpx2 as httpx
 
 from .e009_broker import frame
 from .e009_protocol import output_items
@@ -165,7 +166,8 @@ class HTTPSProvider:
     def accounting(self, context):
         rows = self.ledger.records(context)
         return {"fixture": self.fixture, "transport_attempts": len(rows),
-                "submitted_or_uncertain": sum(r.get("request_may_have_been_sent", False) for r in rows),
+                "submitted_or_uncertain": sum(r["status"] == "pending" or r.get("request_may_have_been_sent", False)
+                                             for r in rows),
                 "unknown_usage_attempts": sum(r.get("usage_state") == "unknown" for r in rows),
                 "reported_input_tokens": sum((r.get("usage") or {}).get("input_tokens", 0) for r in rows),
                 "reported_output_tokens": sum((r.get("usage") or {}).get("output_tokens", 0) for r in rows),
@@ -181,52 +183,61 @@ class HTTPSProvider:
             time.sleep(min(0.1, end - time.monotonic()))
 
     def _attempt(self, body, timeout, observation):
-        conn = http.client.HTTPSConnection(self.host, self.port, timeout=timeout,
-                                           context=ssl.create_default_context())
-        finished = threading.Event()
-        deadline = time.monotonic() + timeout
+        async def exchange():
+            transport = httpx.AsyncHTTPTransport(verify=ssl.create_default_context(),
+                                                trust_env=False, retries=0)
+            try:
+                async with httpx.AsyncClient(transport=transport, trust_env=False,
+                                             follow_redirects=False, timeout=timeout) as client:
+                    # Conservative until a connect-only failure proves no request was sent.
+                    observation["request_may_have_been_sent"] = True
+                    async with client.stream("POST", self.policy["endpoint"], content=body,
+                            headers={"Authorization": "Bearer " + self._key,
+                                     "Content-Type": "application/json", "Accept-Encoding": "identity"}) as response:
+                        observation["http_status"] = response.status_code
+                        chunks, total = [], 0
+                        async for chunk in response.aiter_raw():
+                            total += len(chunk)
+                            observation["response_body_bytes_observed"] = total
+                            if total > self.policy["response_bytes"]:
+                                raise ProviderFailure("response_byte_limit")
+                            chunks.append(chunk)
+                        observation["response_complete"] = True
+                        return response.status_code, response.headers.get("Retry-After"), b"".join(chunks)
+            except (httpx.ConnectError, httpx.ConnectTimeout) as error:
+                observation["request_may_have_been_sent"] = False
+                pending, seen = [error], set()
+                while pending:
+                    cause = pending.pop()
+                    if cause is None or id(cause) in seen:
+                        continue
+                    seen.add(id(cause))
+                    if isinstance(cause, ssl.SSLError):
+                        raise ProviderFailure("tls_failure") from None
+                    pending.extend((cause.__cause__, cause.__context__))
+                raise ProviderFailure("network_failure") from None
+            except httpx.TransportError:
+                raise ProviderFailure("network_failure") from None
 
-        def interrupt():
-            while not finished.wait(0.05):
-                if self.stopped() or time.monotonic() >= deadline:
-                    if conn.sock is not None:
-                        try:
-                            conn.sock.shutdown(socket.SHUT_RDWR)
-                        except OSError:
-                            pass
-                    conn.close()
-                    return
+        async def interruptible():
+            deadline = time.monotonic() + timeout
+            task = asyncio.create_task(exchange())
+            try:
+                while True:
+                    await asyncio.wait({task}, timeout=0.05)
+                    if self.stopped():
+                        raise ProviderFailure("operator_stop")
+                    if time.monotonic() >= deadline:
+                        raise ProviderFailure("attempt_deadline")
+                    if task.done():
+                        return await task
+            finally:
+                if not task.done():
+                    task.cancel()
+                    # Join cancellation/connection cleanup before any retry can start.
+                    await asyncio.gather(task, return_exceptions=True)
 
-        watcher = threading.Thread(target=interrupt, daemon=True)
-        watcher.start()
-        try:
-            conn.connect()
-            if self.stopped() or time.monotonic() >= deadline:
-                raise ProviderFailure("operator_stop" if self.stopped() else "attempt_deadline")
-            # A partial send cannot be assumed free merely because request() raised.
-            observation["request_may_have_been_sent"] = True
-            conn.request("POST", "/v1/responses", body=body,
-                         headers={"Authorization": "Bearer " + self._key, "Content-Type": "application/json"})
-            response = conn.getresponse()
-            observation["http_status"] = response.status
-            chunks, total = [], 0
-            while True:
-                chunk = response.read(min(65536, self.policy["response_bytes"] + 1 - total))
-                if not chunk:
-                    break
-                chunks.append(chunk)
-                total += len(chunk)
-                observation["response_body_bytes_observed"] = total
-                if total > self.policy["response_bytes"]:
-                    raise ProviderFailure("response_byte_limit")
-            if self.stopped() or time.monotonic() >= deadline:
-                raise ProviderFailure("operator_stop" if self.stopped() else "attempt_deadline")
-            observation["response_complete"] = True
-            return response.status, response.getheader("Retry-After"), b"".join(chunks)
-        finally:
-            finished.set()
-            conn.close()
-            watcher.join(timeout=1)
+        return asyncio.run(interruptible())
 
     def respond(self, context_id, request, *, timeout=180):
         if not isinstance(context_id, str) or not context_id or len(context_id) > 256 or self._key in context_id:
@@ -300,7 +311,7 @@ class HTTPSProvider:
                     observation["reason"] = "tls_failure"
                 except ProviderFailure as error:
                     observation["reason"] = error.reason
-                    retryable = error.reason == "attempt_deadline"
+                    retryable = error.reason in {"attempt_deadline", "network_failure"}
                 except (OSError, http.client.HTTPException):
                     observation["reason"] = "network_failure"
                     retryable = True

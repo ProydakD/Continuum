@@ -50,6 +50,60 @@ def object_packet(obj, expected):
     return parse_frame(raw)
 
 
+def audit_transport(directory, terminal, binding):
+    """Recompute resource totals and bind each response to durable transport evidence."""
+    path = directory / "provider-attempts.json"
+    if not path.exists():
+        if not binding["fixture"] and terminal.get("responses"):
+            raise ValueError("live stage lacks durable transport evidence")
+        return None
+    attempts = json.loads(path.read_text(encoding="utf-8"))
+    if len({a["id"] for a in attempts}) != len(attempts):
+        raise ValueError("duplicate attempt identity")
+    if any(a["status"] not in {"pending", "terminal"} for a in attempts):
+        raise ValueError("unknown attempt state")
+    if terminal["status"] == "completed" and any(a["status"] == "pending" for a in attempts):
+        raise ValueError("completed stage has pending transport")
+    for attempt in attempts:
+        usage = attempt.get("usage")
+        if usage is not None and (not isinstance(usage, dict) or not all(
+                type(usage.get(k)) is int and usage[k] >= 0 for k in ("input_tokens", "output_tokens"))):
+            raise ValueError("invalid reported usage")
+    expected = {"fixture": binding["fixture"], "transport_attempts": len(attempts),
+                "submitted_or_uncertain": sum(a["status"] == "pending" or a.get("request_may_have_been_sent", False)
+                                             for a in attempts),
+                "unknown_usage_attempts": sum(a.get("usage_state") == "unknown" for a in attempts),
+                "reported_input_tokens": sum((a.get("usage") or {}).get("input_tokens", 0) for a in attempts),
+                "reported_output_tokens": sum((a.get("usage") or {}).get("output_tokens", 0) for a in attempts),
+                "cost_usd": None}
+    if frame(terminal["provider_accounting"]) != frame(expected):
+        raise ValueError("provider accounting not equal to recorded attempts")
+    request_hashes = set()
+    for request_path in sorted((directory / "provider").glob("*-request.json")):
+        request_sha = hashlib.sha256(frame(json.loads(request_path.read_text(encoding="utf-8")))).hexdigest()
+        if request_sha in request_hashes:
+            raise ValueError("duplicate provider request")
+        request_hashes.add(request_sha)
+        matching = [a for a in attempts if a.get("request_sha256") == request_sha]
+        if not matching:
+            raise ValueError("provider request lacks durable attempt")
+        if (len({a["request_id"] for a in matching}) != 1
+                or [a["ordinal"] for a in matching] != list(range(1, len(matching) + 1))):
+            raise ValueError("retry identities/order differ")
+        response_path = request_path.with_name(request_path.name.replace("-request", "-response"))
+        if response_path.exists():
+            response = json.loads(response_path.read_text(encoding="utf-8"))
+            response_sha = hashlib.sha256(frame(response)).hexdigest()
+            if response.get("model") != binding["provider_model"]:
+                raise ValueError("response model differs from assigned model")
+            if sum(a.get("reason") == "completed" and a.get("response_json_sha256") == response_sha
+                   and a.get("reported_model") == binding["provider_model"] for a in matching) != 1:
+                raise ValueError("provider response lacks exactly one completed attempt")
+    if {a.get("request_sha256") for a in attempts} != request_hashes:
+        raise ValueError("unregistered transport request")
+    return expected
+
+
 def replay(directory, expected_manifest, oracle):
     run = Path(directory).resolve(strict=True)
     if digest(run / "MANIFEST.json") != expected_manifest:
@@ -76,25 +130,7 @@ def replay(directory, expected_manifest, oracle):
         terminal = read(f"{stage}/terminal.json")
         record = {"stage": stage, "instance_id": terminal["instance_id"], "terminal_status": terminal["status"]}
         calls, mcp_bytes = mcp_calls(directory)
-        attempts_path = directory / "provider-attempts.json"
-        if attempts_path.exists():
-            attempts = read(f"{stage}/provider-attempts.json")
-            accounting = terminal["provider_accounting"]
-            if accounting["transport_attempts"] != len(attempts) or accounting["fixture"] != binding["fixture"]:
-                raise ValueError("provider attempt accounting differs")
-            for request_path in sorted((directory / "provider").glob("*-request.json")):
-                request_sha = hashlib.sha256(frame(json.loads(request_path.read_text(encoding="utf-8")))).hexdigest()
-                matching = [a for a in attempts if a.get("request_sha256") == request_sha]
-                if not matching:
-                    raise ValueError("provider request lacks durable attempt")
-                response_path = request_path.with_name(request_path.name.replace("-request", "-response"))
-                if response_path.exists():
-                    response_sha = hashlib.sha256(frame(json.loads(response_path.read_text(encoding="utf-8")))).hexdigest()
-                    if sum(a.get("reason") == "completed" and a.get("response_json_sha256") == response_sha
-                           for a in matching) != 1:
-                        raise ValueError("provider response lacks exactly one completed attempt")
-        elif not binding["fixture"] and terminal.get("responses"):
-            raise ValueError("live stage lacks durable transport evidence")
+        provider_accounting = audit_transport(directory, terminal, binding)
         commits = [(a, v) for n, a, v in calls if n == "continuum_checkpoint_task"]
         if len(commits) > 1:
             raise ValueError("multiple stage commits")
@@ -244,7 +280,8 @@ def replay(directory, expected_manifest, oracle):
             prior_index = index
         trace.append(record)
         resources.append({"stage": stage, "mcp_bytes": mcp_bytes, "read_envelope_bytes": read_bytes,
-                          "provider_request_bytes": request_bytes, "response_calls": response_number})
+                          "provider_request_bytes": request_bytes, "response_calls": response_number,
+                          "provider_accounting": provider_accounting})
     if len(set(container_ids)) != len(container_ids):
         raise ValueError("container reused between stages")
     if frame(read("terminal.json")) != frame([read(f"{s}/terminal.json") for s in "ABCDE"]):

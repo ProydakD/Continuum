@@ -15,6 +15,7 @@ from unittest.mock import patch
 
 from research.e009_broker import frame
 from research.e009_provider import HTTPSProvider, ProviderFailure, retry_delay
+from research.e009_replay import audit_transport
 
 SYNTHETIC_KEY = "SYNTHETIC-provider-key-not-a-real-credential"
 
@@ -240,6 +241,8 @@ class ProviderTests(unittest.TestCase):
         with self.assertRaises(KeyboardInterrupt):
             provider.respond("context", request())
         self.assertEqual(provider.ledger.records()[0]["status"], "pending")
+        self.assertEqual(provider.accounting("context")["submitted_or_uncertain"], 1)
+        self.assertEqual(provider.accounting("context")["unknown_usage_attempts"], 1)
         reopened = self.provider([{}])
         with self.assertRaisesRegex(ProviderFailure, "pending_or_orphan_request"):
             reopened.respond("new", request())
@@ -250,6 +253,62 @@ class ProviderTests(unittest.TestCase):
         record = provider.ledger.records()[0]
         with self.assertRaisesRegex(ProviderFailure, "attempt_already_terminal"):
             provider.ledger.finish_attempt(record["id"], {"reason": "changed"})
+
+    def transport_artifact(self):
+        provider = self.provider([{}])
+        response = provider.respond("context", request())
+        directory = self.root / "raw"
+        (directory / "provider").mkdir(parents=True)
+        (directory / "provider/001-request.json").write_bytes(frame(request()))
+        (directory / "provider/001-response.json").write_bytes(frame(response))
+        (directory / "provider-attempts.json").write_bytes(frame(provider.ledger.records("context")))
+        terminal = {"status": "completed", "responses": 1, "provider_accounting": provider.accounting("context")}
+        binding = {"fixture": True, "provider_model": provider.model}
+        return directory, terminal, binding
+
+    def test_transport_replay_recomputes_usage(self):
+        directory, terminal, binding = self.transport_artifact()
+        result = audit_transport(directory, terminal, binding)
+        self.assertEqual(result["reported_input_tokens"], 11)
+        self.assertEqual(result["transport_attempts"], 1)
+
+    def test_transport_replay_rejects_forged_usage_total(self):
+        directory, terminal, binding = self.transport_artifact()
+        terminal["provider_accounting"]["reported_input_tokens"] = 123456
+        with self.assertRaisesRegex(ValueError, "accounting not equal"):
+            audit_transport(directory, terminal, binding)
+
+    def test_transport_replay_rejects_changed_model_with_rehashed_response(self):
+        directory, terminal, binding = self.transport_artifact()
+        response = success(model="different-model")
+        (directory / "provider/001-response.json").write_bytes(frame(response))
+        attempts = json.loads((directory / "provider-attempts.json").read_text())
+        attempts[0]["response_json_sha256"] = hashlib.sha256(frame(response)).hexdigest()
+        attempts[0]["reported_model"] = "different-model"
+        (directory / "provider-attempts.json").write_bytes(frame(attempts))
+        with self.assertRaisesRegex(ValueError, "response model differs"):
+            audit_transport(directory, terminal, binding)
+
+    def test_transport_replay_rejects_duplicate_attempt_identity(self):
+        directory, terminal, binding = self.transport_artifact()
+        attempts = json.loads((directory / "provider-attempts.json").read_text())
+        (directory / "provider-attempts.json").write_bytes(frame(attempts + attempts))
+        with self.assertRaisesRegex(ValueError, "duplicate attempt"):
+            audit_transport(directory, terminal, binding)
+
+    def test_transport_replay_rejects_boolean_usage(self):
+        directory, terminal, binding = self.transport_artifact()
+        attempts = json.loads((directory / "provider-attempts.json").read_text())
+        attempts[0]["usage"]["input_tokens"] = True
+        (directory / "provider-attempts.json").write_bytes(frame(attempts))
+        with self.assertRaisesRegex(ValueError, "invalid reported usage"):
+            audit_transport(directory, terminal, binding)
+
+    def test_quota_type_without_code_not_retried(self):
+        provider = self.provider([{"status": 429, "response": {"error": {"type": "insufficient_quota"}}}])
+        with self.assertRaisesRegex(ProviderFailure, "quota_action_required"):
+            provider.respond("context", request())
+        self.assertEqual(len(provider.calls), 1)
 
     def test_four_attempts_not_unbounded(self):
         provider = self.provider([{"status": 503, "response": {}}] * 4)
@@ -266,54 +325,79 @@ class ProviderTests(unittest.TestCase):
             self.assertEqual(provider.ledger.records(), [])
 
     def test_real_transport_uses_verified_tls_fixed_post_and_no_redirect_logic(self):
-        class Response:
-            status = 200
-            def __init__(self):
-                self.remaining = frame(success())
-            def read(self, _):
-                value, self.remaining = self.remaining, b""
-                return value
-            def getheader(self, _):
-                return None
-        class Connection:
-            sock = None
-            def connect(self): pass
-            def request(self, method, path, body, headers):
-                self.arguments = method, path, body, headers
-            def getresponse(self): return Response()
-            def close(self): pass
-        connection = Connection()
+        import httpx2 as httpx
+        received = []
+        async def handle(req):
+            received.append(req)
+            return httpx.Response(200, stream=httpx.ByteStream(frame(success())))
         provider = HTTPSProvider("https://fixture.invalid/v1", "fixture-model", self.root / "real-method", authorize=True)
-        with patch("research.e009_provider.http.client.HTTPSConnection", return_value=connection) as factory:
+        with patch("research.e009_provider.httpx.AsyncHTTPTransport",
+                   return_value=httpx.MockTransport(handle)) as factory:
             provider.respond("context", request())
-        context = factory.call_args.kwargs["context"]
+        context = factory.call_args.kwargs["verify"]
         self.assertEqual(context.verify_mode, ssl.CERT_REQUIRED)
         self.assertTrue(context.check_hostname)
-        self.assertEqual(connection.arguments[:2], ("POST", "/v1/responses"))
+        self.assertIs(factory.call_args.kwargs["trust_env"], False)
+        self.assertEqual(factory.call_args.kwargs["retries"], 0)
+        self.assertEqual((received[0].method, str(received[0].url)),
+                         ("POST", "https://fixture.invalid/v1/responses"))
 
     def test_stop_interrupts_blocking_transport(self):
-        class Connection:
-            sock = None
-            def __init__(self): self.closed = threading.Event()
-            def connect(self): pass
-            def request(self, *args, **kwargs): pass
-            def getresponse(self):
-                self.closed.wait(3)
-                raise OSError("synthetic disconnect")
-            def close(self): self.closed.set()
+        import asyncio
+        import httpx2 as httpx
+        cancelled = threading.Event()
+        async def handle(_):
+            try:
+                await asyncio.sleep(10)
+            finally:
+                cancelled.set()
         provider = HTTPSProvider("https://fixture.invalid/v1", "fixture-model", self.root / "blocking", authorize=True)
-        connection = Connection()
         timer = threading.Timer(0.1, lambda: provider.stop_path.write_text("stop"))
         timer.start()
         started = time.monotonic()
         try:
-            with patch("research.e009_provider.http.client.HTTPSConnection", return_value=connection):
+            with patch("research.e009_provider.httpx.AsyncHTTPTransport",
+                       return_value=httpx.MockTransport(handle)):
                 with self.assertRaisesRegex(ProviderFailure, "operator_stop"):
                     provider.respond("context", request(), timeout=3)
         finally:
             timer.cancel()
-        self.assertLess(time.monotonic() - started, 2)
+        self.assertLess(time.monotonic() - started, 1)
+        self.assertTrue(cancelled.is_set())
         self.assertEqual(provider.ledger.records()[0]["usage_state"], "unknown")
+
+    def test_attempt_deadline_cancels_and_joins_blocked_transport(self):
+        import asyncio
+        import httpx2 as httpx
+        cancelled = threading.Event()
+        async def handle(_):
+            try:
+                await asyncio.sleep(10)
+            finally:
+                cancelled.set()
+        provider = HTTPSProvider("https://fixture.invalid/v1", "fixture-model", self.root / "deadline", authorize=True)
+        with patch("research.e009_provider.httpx.AsyncHTTPTransport",
+                   return_value=httpx.MockTransport(handle)):
+            with self.assertRaisesRegex(ProviderFailure, "retry_wait_exceeds_deadline"):
+                provider.respond("context", request(), timeout=0.15)
+        self.assertTrue(cancelled.is_set())
+        self.assertEqual(len(provider.ledger.records()), 1)
+        self.assertEqual(provider.ledger.records()[0]["reason"], "attempt_deadline")
+
+    def test_nested_tls_context_is_not_retried_as_network_failure(self):
+        import httpx2 as httpx
+        async def handle(_):
+            try:
+                raise ssl.SSLCertVerificationError("synthetic untrusted certificate")
+            except ssl.SSLError:
+                raise httpx.ConnectError("synthetic wrapper") from None
+        provider = HTTPSProvider("https://fixture.invalid/v1", "fixture-model", self.root / "tls-context", authorize=True)
+        with patch("research.e009_provider.httpx.AsyncHTTPTransport",
+                   return_value=httpx.MockTransport(handle)):
+            with self.assertRaisesRegex(ProviderFailure, "tls_failure"):
+                provider.respond("context", request())
+        self.assertEqual(len(provider.ledger.records()), 1)
+        self.assertIs(provider.ledger.records()[0]["request_may_have_been_sent"], False)
 
 
 if __name__ == "__main__":

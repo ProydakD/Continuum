@@ -1,0 +1,2 @@
+# Direct E009 transport dependency, already installed via the isolated MCP runtime.
+httpx2==2.14.0

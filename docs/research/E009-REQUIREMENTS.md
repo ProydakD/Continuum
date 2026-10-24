@@ -13,11 +13,11 @@
 | 11. Статистика | draft + прежняя planning simulation | 27000 симуляций сохранены; перерасчёт для полного endpoint/guardrail и final N впереди |
 | 12. Calibration | не запускалась | primary-кандидат gpt-6.1-sol, доступность не проверена |
 | 13. Robustness | частично | реальный Docker kill C после durable commit, recovery D; не полная robustness серия |
-| 14. Ресурсы | частично | binary MCP и worker replies, serialized provider request bytes; HTTP/API usage/cost впереди |
-| 15. Архитектура/безопасность | частично | Docker, private measurement, Responses history lock и независимый raw replay; HTTPS provider впереди |
+| 14. Ресурсы | частично | binary MCP, request/response body bytes, durable per-attempt ledger и независимый пересчёт usage; реальные usage/cost впереди |
+| 15. Архитектура/безопасность | частично | HTTPS retries/STOP/TLS проверены на localhost; реальный gateway и модель не проверены |
 | 16. Phase 0 | выполнено | review + независимо проверенный сертификат |
 | 16. Phase 1 | draft подготовлен | runbook, hypotheses, prereg draft; это не final freeze |
-| 16. Phase 2 | частично | 96 тестов; прежние gates сохранены; Responses matrix 12 cases/52 контейнера/1249 raw files, failures/STOP/crash |
+| 16. Phase 2 | частично | 130 тестов; прежние gates сохранены; provider controller 2 cases/171 raw files; локальный TLS 6 cases, включая STOP/deadline |
 | 16. Phase 3–7 | не запускались | pilot/calibration/freeze/test/analysis/report требуют предыдущих gates |
 | 17. Полномочия | соблюдены в выполненной области | отдельная ветка, локальные коммиты, no push/API/secrets, E003–E008 неизменны |
 | 18. Полное завершение | НЕТ | модельная серия и научный отчёт отсутствуют |
@@ -25,6 +25,7 @@
 
 Подробные фактические наблюдения, отрицательный результат regression probe,
 ресурсные допущения и ограничения: E009-OFFLINE-FOUNDATION.md,
-E009-DEPENDENCY-REPAIR.md, E009-SANDBOX-HANDOFF.md и E009-RESPONSES-CONTROLLER.md.
+E009-DEPENDENCY-REPAIR.md, E009-SANDBOX-HANDOFF.md, E009-RESPONSES-CONTROLLER.md
+и E009-HTTPS-PROVIDER.md.
 Отчёт не приписывает LLM успехи scripted reference и не заменяет полный
 исследовательский результат архитектурным описанием.
