@@ -92,6 +92,22 @@ class ProviderTests(unittest.TestCase):
         self.assertEqual(retry_delay("7", 2, 0), 7)
         self.assertEqual(retry_delay("1", 2, 0), 2)
 
+    def test_configured_attempt_deadline_bound_to_ledger_and_total_timeout(self):
+        provider = self.provider([{}, {}], attempt_seconds=240)
+        provider.respond("long", request(), timeout=1000)
+        provider.respond("remaining", request(), timeout=20)
+        self.assertEqual(provider.calls[0]["timeout"], 240)
+        self.assertLessEqual(provider.calls[1]["timeout"], 20)
+        self.assertEqual(provider.policy["attempt_seconds"], 240)
+        with self.assertRaisesRegex(ProviderFailure, "ledger_policy_mismatch"):
+            self.provider([], attempt_seconds=40)
+
+    def test_invalid_attempt_deadline_rejected_before_ledger(self):
+        for value in (True, False, 0, -1, float("nan"), float("inf"), "240", None):
+            with self.subTest(value=value), self.assertRaisesRegex(ProviderFailure, "invalid_attempt_deadline"):
+                self.provider([], attempt_seconds=value)
+        self.assertFalse((self.root / "ledger").exists())
+
     def test_retry_after_date_invalid_and_nonfinite(self):
         date = format_datetime(datetime.fromtimestamp(1020, timezone.utc), usegmt=True)
         self.assertEqual(retry_delay(date, 2, 1000), 20)

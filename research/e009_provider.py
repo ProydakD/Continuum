@@ -137,9 +137,11 @@ class HTTPSProvider:
     fixture = False
 
     def __init__(self, base_url, model, directory, *, authorize=False, stop_path=None,
-                 protocol_version=PROTOCOL_VERSION):
+                 protocol_version=PROTOCOL_VERSION, attempt_seconds=40):
         if not authorize:
             raise ProviderFailure("authorization_required")
+        if type(attempt_seconds) not in (int, float) or not math.isfinite(attempt_seconds) or attempt_seconds <= 0:
+            raise ProviderFailure("invalid_attempt_deadline")
         if not isinstance(base_url, str) or any(c.isspace() or ord(c) < 32 for c in base_url):
             raise ProviderFailure("invalid_fixed_endpoint_or_model")
         url = urlsplit(base_url)
@@ -158,7 +160,7 @@ class HTTPSProvider:
         self.stop_path = Path(stop_path) if stop_path is not None else self.directory / "STOP"
         self.policy = {"endpoint": base_url.rstrip("/") + "/responses", "model": model,
                        "attempts": 4, "backoff_seconds": [2, 4, 8], "jitter_seconds": 0.25,
-                       "attempt_seconds": 40, "request_bytes": 262144, "response_bytes": 4194304,
+                       "attempt_seconds": attempt_seconds, "request_bytes": 262144, "response_bytes": 4194304,
                        "fixture": self.fixture, "cost_usd": None, "concurrency": 1,
                        "protocol_version": protocol_version}
         self.ledger = AttemptLedger(self.directory / "attempts.sqlite3", self.policy)
