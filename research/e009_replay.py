@@ -180,7 +180,7 @@ def replay(directory, expected_manifest, oracle):
         if (directory / "worker/repo/PROMPT.txt").exists():
             if frame(read(f"{stage}/worker/repo/PROMPT.txt")) != frame({"history": history}):
                 raise ValueError("fresh prompt contains additional history")
-        seed = assigned_seed(episode, condition, track, stage)
+        seed = assigned_seed(episode, condition, track, stage, protocol_version)
         if condition == "FULL-JOURNAL":
             journal = ([read_envelope(seed, None, None, {"actor": "registered-input-history"})] if seed else [])
             expected_read = {"memory": None, "journal": journal + deepcopy(publications),

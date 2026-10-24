@@ -105,7 +105,9 @@ def read_locked_plan(directory):
                               "transport_directory", "transport_not_before"}
                 or execution["image"] != plan["image"]
                 or execution["limits"] != expected_limits
-                or execution["protocol_version"] != 2
+                or type(execution["protocol_version"]) is not int
+                or execution["protocol_version"] not in {2, 3}
+                or execution["protocol_version"] < plan.get("protocol_version", 1)
                 or execution["transport_directory"] != f"transport-amendment-{index:03}"
                 or type(amendment["start_assignment"]) is not int
                 or not 1 <= amendment["start_assignment"] <= len(plan["assignments"])):

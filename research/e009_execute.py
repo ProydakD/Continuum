@@ -68,7 +68,7 @@ def execute_stage(run, episode, registry: EvidenceRegistry, stage, condition, tr
         write_once(directory / "worker-manifest.json", initial)
         transport = BinaryMCP(run / "private/state.sqlite3", actor, run.name, directory / "mcp", provider.model)
         broker = MemoryBroker(transport, stage, condition, actor, registry, task_id=task_id,
-                              seed=assigned_seed(episode, condition, track, stage), assignment=assignment)
+                              seed=assigned_seed(episode, condition, track, stage, protocol_version), assignment=assignment)
         report["task_id"] = broker.task["id"]
         argv = worker_command(image, name, worker, "responses.py")
         write_once(directory / "command.json", {"command": argv, "cwd": str(PROJECT)})

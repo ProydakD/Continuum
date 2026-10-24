@@ -6,6 +6,7 @@ from unittest.mock import Mock, patch
 
 from research.e009_live import amendment_limits, amend_plan, create_plan, load_plan, next_assignment, pilot_next, verify_model
 from research.e009_provider import ProviderFailure
+from research.e009_protocol import PROTOCOL_VERSION
 from research.e009_raw import write_once
 from research.common import digest
 
@@ -106,7 +107,7 @@ class LiveTests(unittest.TestCase):
             directory.mkdir(parents=True)
             write_once(directory / "MANIFEST.json", {"fixture": True})
             self.assertEqual(limits, self.plan["limits"])
-            self.assertEqual(protocol_version, 2)
+            self.assertEqual(protocol_version, PROTOCOL_VERSION)
             return {"directory": str(directory), "manifest_sha256": digest(directory / "MANIFEST.json"),
                     "statuses": ["provider_failure"] + ["upstream_missing"] * 4, "fixture": True, "response_calls": 1}
         with patch("research.e009_live.HTTPSProvider", return_value=self.provider()), patch("research.e009_live.run_chain", side_effect=run) as runner:
@@ -187,6 +188,34 @@ class LiveTests(unittest.TestCase):
         for deadlines in variants:
             with self.subTest(deadlines=deadlines), self.assertRaises(ValueError):
                 amendment_limits(self.plan["limits"], deadlines)
+
+    def test_protocol_upgrade_preserves_legacy_amendment_and_limits(self):
+        legacy = self.directory.parent / "legacy"
+        with patch("research.e009_live.PROTOCOL_VERSION", 2):
+            create_plan(legacy, "sha256:pinned-test-fixture")
+            first = amend_plan(legacy, "legacy protocol", deadlines={
+                "attempt_seconds": 240, "request_seconds": 1000, "stage_seconds": 3600})
+        original = Path(first["path"]).read_bytes()
+        previous = load_plan(legacy)[1]
+        amend_plan(legacy, "explicit public measurement contract")
+        current = load_plan(legacy)[1]
+        self.assertEqual(current["protocol_version"], 3)
+        self.assertEqual(current["limits"], previous["limits"])
+        self.assertEqual(current["assignments"], previous["assignments"])
+        self.assertEqual(Path(first["path"]).read_bytes(), original)
+
+    def test_unknown_or_downgraded_protocol_rejected_even_with_rebound_hash(self):
+        from research.e009_revision import sha
+        result = amend_plan(self.directory, "current contract")
+        path = Path(result["path"])
+        original = json.loads(path.read_text())
+        for version in (2, 4, True):
+            record = json.loads(json.dumps(original))
+            record["amendment"]["execution"]["protocol_version"] = version
+            record["sha256"] = sha(record["amendment"])
+            path.write_text(json.dumps(record))
+            with self.assertRaisesRegex(ValueError, "unregistered pilot amendment"):
+                load_plan(self.directory)
 
 
 if __name__ == "__main__":
