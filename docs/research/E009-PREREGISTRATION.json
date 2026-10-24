@@ -1,23 +1,46 @@
 {
   "experiment": "E-009",
-  "revision": "draft-004",
+  "revision": "draft-005",
   "preregistered": false,
-  "status": "offline provider and natural provenance/selectivity guardrails verified; full-endpoint power, T2 protocol and pilot lock pending",
+  "status": "full-endpoint power completed with inadequate joint-decision power; pilot locked and preferred model availability observed; calibration started, final freeze pending",
   "parent_commit": "21513287458da664e2b84ff06f42c360b2d01501",
   "primary_model_candidate": "gpt-6.1-sol",
-  "primary_model_verified": false,
+  "primary_model_verified": true,
   "primary_contrast": "F1-F0",
-  "confirmatory_family": ["F1-F0", "S1-S0", "S1-F1"],
-  "conditions": ["F0", "F1", "S0", "S1", "C0", "FULL-JOURNAL", "T2-a", "T2-b", "REF"],
-  "tracks": ["natural", "controlled"],
+  "confirmatory_family": [
+    "F1-F0",
+    "S1-S0",
+    "S1-F1"
+  ],
+  "conditions": [
+    "F0",
+    "F1",
+    "S0",
+    "S1",
+    "C0",
+    "FULL-JOURNAL",
+    "T2-a",
+    "T2-b",
+    "REF"
+  ],
+  "tracks": [
+    "natural",
+    "controlled"
+  ],
   "unit": "causal_world",
   "metric": "BRI=T*R*D*A*N*P*Q",
   "controlled_metric_unit": "one full A-E episode; all four registered A-D checkpoints plus E novel answer must pass",
-  "controlled_evidence_sequence": ["A: EA", "B: add EB/EC", "C: revoke EB/EC", "D: add ED/EE", "E: final reader"],
-  "power_simulation_status": "draft-001 planning retained; recompute for full-episode endpoint and guardrail before final N",
+  "controlled_evidence_sequence": [
+    "A: EA",
+    "B: add EB/EC",
+    "C: revoke EB/EC",
+    "D: add ED/EE",
+    "E: final reader"
+  ],
+  "power_simulation_status": "power-001/full-001: 4000 experiments, 200 per N/scenario, 10000 paired-world bootstrap resamples, exact sign-flip; safe-strong at N480 joint decision 0.61 (MC95CI 0.541-0.675)",
   "failure_policy": "assigned controlled opportunity scores zero; C0 BRI not applicable; natural zero opportunities undefined",
   "multiplicity": "Holm FWER 0.05 across three confirmatory contrasts",
-  "minimum_important_effect": 0.10,
+  "minimum_important_effect": 0.1,
   "false_retraction_absolute_ceiling": 0.05,
   "false_retraction_difference_upper_95_ceiling": 0.02,
   "false_retraction_definition": "registered oracle-supported proposition not retained as supported with identical ID/proposition; includes downgrade, disappearance and redefinition, not only explicit refuted",
@@ -26,7 +49,11 @@
   "guardrail_world_aggregation": "pool losses and registered supported slots across assigned episodes/repeats within each world, then equally weight paired world rates",
   "natural_metrics": {
     "primary_bri": null,
-    "root_types": ["model", "edge", "path"],
+    "root_types": [
+      "model",
+      "edge",
+      "path"
+    ],
     "opportunity": "observed pre-update causal root with dependent claims whose oracle epistemic status changes under the assigned evidence update",
     "revision_credit": "correct current statuses, sound current bases, all inherited identities and exact version/hash/origin/reasons, successful adjacent publications and unbroken observed history",
     "zero_opportunities": "undefined, never successful repair",
@@ -35,7 +62,12 @@
     "C0": "no inherited revision or preservation denominator",
     "post_update_integrity": "descriptive only when an opportunity is observed; requires B-D evidence/history integrity, all technical stages and justified E answer; never controlled BRI"
   },
-  "candidate_world_counts": [60, 120, 240],
+  "candidate_world_counts": [
+    60,
+    120,
+    240,
+    480
+  ],
   "world_count_frozen": null,
   "planning_seed": 2026102409,
   "heldout_seed": null,
@@ -45,8 +77,25 @@
   "memory_envelope_bytes_candidate": 8192,
   "public_hash_utility": "hash_claims: identical in all conditions, supplied JSON only, no private state; account all calls",
   "pilot_context_ceiling_candidate": 600,
-  "pilot_locked": false,
-  "api_requests": 0,
-  "live_gates": ["offline completion", "pilot lock", "primary model verification", "pilot/calibration", "final preregistration and immutable execution binding"],
-  "scientific_completion": false
+  "pilot_locked": true,
+  "live_gates": [
+    "offline completion",
+    "pilot lock",
+    "primary model verification",
+    "pilot/calibration",
+    "final preregistration and immutable execution binding"
+  ],
+  "scientific_completion": false,
+  "primary_model_verification_scope": "Gateway-reported gpt-6.1-sol on direct HTTPS Responses request, not independent weight identity",
+  "pilot_plan_sha256": "0ec03cff30061b12179239b2ac95fb19a614254ed3481e1c15f5ecfe7f4a81c8",
+  "pilot_repeats": 1,
+  "main_controlled_repeats_candidate": 2,
+  "statistical_test": "Exact two-sided paired sign-flip on two-repeat world success-count differences in {-2,-1,0,1,2}, Holm across three contrasts",
+  "bri_ci": "10000 paired whole-world percentile bootstrap draws, linear quantile interpolation",
+  "guardrail_inference": "Finite-sample Bernoulli-KL envelope for independent bounded world loss rates: absolute upper95 <=0.05; difference upper via U(D+,alpha/2)-L(D-,alpha/2) <=0.02. Descriptive percentile bootstrap is not the safety gate.",
+  "guardrail_change_reason": "All-zero bootstrap is degenerate; retained zero-event audit before model outcomes. No loss of data or threshold relaxation.",
+  "non_test_reserved_worlds": 96,
+  "main_N_decision": "not frozen; largest feasible candidate480 still underpowered in full-decision simulation; reassess operational assumptions on pilot without using hidden outcomes",
+  "api_requests_at_availability_check": 1,
+  "api_accounting_source": "pilot-001/availability plus pilot-001/transport attempt ledgers; query for current counts"
 }
