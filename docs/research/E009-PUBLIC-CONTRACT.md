@@ -59,8 +59,8 @@ amendment003 SHA256:
 Новый ledger отделён от старого. Прежние deadlines240/1000/3600s, модель,
 24Responses/24tool calls на стадию,16000 output tokens и память8192байта сохранены.
 
-Запущен ограниченный последовательный batch007–010: F0 natural, FULL-JOURNAL
-natural, FULL-JOURNAL controlled, S1 controlled; world321. Проверяется, остаются ли
+Первоначальный ограниченный batch007–010: F0 natural, FULL-JOURNAL natural,
+FULL-JOURNAL controlled, S1 controlled; world321. Проверяется, остаются ли
 ошибки происхождения и оснований после явного общего контракта. Успех не
 предполагается; все исходы сохраняются. Один мир и разные версии не дают оценки
 эффекта представления. После raw replay продолжается полный pilot/calibration.
@@ -70,5 +70,42 @@ BASELINE.json, unit-001-command.json, amendment-unit-command.json,
 legacy-replay-diagnostic.json, LEGACY-REPLAY.json, gate-001/SUMMARY.json,
 AMENDMENT.json и live-batch-003 содержат проверяемые доказательства.
 
+## Наблюдённый отказ и восстановление анализа, amendment004
+
+007 F0/natural завершил A–E: все четыре snapshot прошли evidence/provenance,
+новый ответ с основанием верен, потерь поддержанных утверждений0/6. Однако
+корней с потомками снова0, поэтому revision rate=null, а не успешный repair.
+18 transport attempts,58723 reported input и8711 output tokens, unknown usage0;
+140 raw files независимо воспроизведены.
+
+008 FULL-JOURNAL/natural в A дважды отправил format=FULL-JOURNAL вместо
+указанного в инструкции F. Эти две попытки израсходовали фиксированный лимит
+публикаций; третья с format=F была отклонена по лимиту. Модель завершила работу
+JSON-сообщением об ошибке без публикации. A failed, B–E upstream_missing;
+receipt,45 raw files и расходы сохранены. Это не доказательство эпистемической
+неспособности и не основание незаметно увеличить лимит.
+
+Контроллер правильно отклонил final без публикации, но replay ошибочно требовал
+у такого failed terminal поле принятого final. Batch завершился exit1. Исправлен
+только read-only reconcile_final: аутентичный отклонённый final фиксируется как
+rejected_final, не как успех. Отсутствующий принятый final или подменённое
+значение по-прежнему отвергаются; основание отказа проверяется независимо по
+фактам read/publication/shape, а не только по status=failed.
+
+61 затронутый тест повторно прошёл после исправления (78 различных целевых тестов
+за этап). Восемь назначений,664 raw files переоценены; первые семь replay
+неизменны, восьмой отрицательный исход восстановлен без модельных запросов.
+Четыре прежних fixture replay совпали; три новые подмены final на копиях
+реальных журналов отклонены даже после пересчёта manifest. Сырые оригиналы не
+изменялись. Доказательства: BATCH-EXECUTION-ERROR.json, RECOVERY-008.json,
+REPAIRED-REPLAY.json, REPAIR-NEGATIVE-GATE.json и repair-*-command.json.
+
+amendment004 SHA256:
+`96c3b0290ee89ca15022c18d5fda5298cff27d5ce1b397d88f807270022597cf`.
+Он связывает исправленный replay, замораживает все восемь receipts и сохраняет
+protocol3 prompt, evaluator, worker, модель, память и budgets. Новый batch004
+продолжает только009–010;008 не перезапускается. Его живое состояние и результаты
+находятся в live-batch-004, отдельно от сохранённого failed batch003.
+
 Обе T2-линии, финальная предрегистрация/N, heldout, robustness и полный научный
-отчёт остаются незавершёнными; draft-008 не является окончательной регистрацией.
+отчёт остаются незавершёнными; draft-009 не является окончательной регистрацией.
