@@ -1,8 +1,8 @@
 {
   "experiment": "E-009",
-  "revision": "draft-005",
+  "revision": "draft-006",
   "preregistered": false,
-  "status": "full-endpoint power completed with inadequate joint-decision power; pilot locked and preferred model availability observed; calibration started, final freeze pending",
+  "status": "pilot protocol amendment001 frozen; ordered batches and explicit schemas verified; live calibration resumed from first unfinished assignment; no final freeze",
   "parent_commit": "21513287458da664e2b84ff06f42c360b2d01501",
   "primary_model_candidate": "gpt-6.1-sol",
   "primary_model_verified": true,
@@ -97,5 +97,11 @@
   "non_test_reserved_worlds": 96,
   "main_N_decision": "not frozen; largest feasible candidate480 still underpowered in full-decision simulation; reassess operational assumptions on pilot without using hidden outcomes",
   "api_requests_at_availability_check": 1,
-  "api_accounting_source": "pilot-001/availability plus pilot-001/transport attempt ledgers; query for current counts"
+  "api_accounting_source": "pilot-001/availability plus pilot-001/transport attempt ledgers; query for current counts",
+  "pilot_protocol_version": 2,
+  "pilot_amendment_sha256": "56507e32ea405796d7a33e4618276cf5eb7735d84f5049604e1b2eb03f4efc41",
+  "pilot_amendment_scope": "preserve original plan/first failed outcome; exact JSON query fields, sequential <=16 tool calls/batch and <=24/stage, credential-safe parsed response retention; no model/world/order changes",
+  "pilot_completed_assignments_before_amendment": 1,
+  "pilot_resume_assignment": "pilot-002",
+  "calibration_version_policy": "report protocol versions separately, retain failures; do not infer old outcome success after implementation repair"
 }
