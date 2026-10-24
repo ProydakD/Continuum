@@ -12,6 +12,7 @@ import uuid
 from .common import PROJECT, command, digest, runtime_identity, source_hashes
 from .e009_broker import BinaryMCP, MemoryBroker, frame, parse_frame
 from .e009_protocol import assigned_seed, final_text, fresh_history, output_items, public_input, request_body
+from .e009_provider import ProviderFailure
 from .e009_raw import write_once
 from .e009_revision import sha
 from .e009_sources import EvidenceRegistry, evidence_catalog
@@ -186,6 +187,10 @@ def execute_stage(run, episode, registry: EvidenceRegistry, stage, condition, tr
     except Exception as error:
         # No exception text: provider errors may contain request credentials.
         report["failure_type"] = type(error).__name__
+        if isinstance(error, ProviderFailure):
+            report["failure_reason"] = error.reason
+            if error.reason == "operator_stop":
+                report["status"] = "stopped"
     finally:
         if process is not None:
             if process.poll() is None:
@@ -210,6 +215,9 @@ def execute_stage(run, episode, registry: EvidenceRegistry, stage, condition, tr
         if initial is not None and source_hashes(worker) != initial:
             report["status"] = "failed"
             report["failure_type"] = "WorkerInputChanged"
+        if hasattr(provider, "accounting"):
+            report["provider_accounting"] = provider.accounting(actor)
+            write_once(directory / "provider-attempts.json", provider.ledger.records(actor))
         report["seconds"] = time.monotonic() - started
         (directory / "worker-input.bin").write_bytes(b"".join(child_stdin))
         (directory / "worker-output.bin").write_bytes(b"".join(child_stdout))

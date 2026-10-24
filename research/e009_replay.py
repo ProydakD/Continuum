@@ -76,6 +76,25 @@ def replay(directory, expected_manifest, oracle):
         terminal = read(f"{stage}/terminal.json")
         record = {"stage": stage, "instance_id": terminal["instance_id"], "terminal_status": terminal["status"]}
         calls, mcp_bytes = mcp_calls(directory)
+        attempts_path = directory / "provider-attempts.json"
+        if attempts_path.exists():
+            attempts = read(f"{stage}/provider-attempts.json")
+            accounting = terminal["provider_accounting"]
+            if accounting["transport_attempts"] != len(attempts) or accounting["fixture"] != binding["fixture"]:
+                raise ValueError("provider attempt accounting differs")
+            for request_path in sorted((directory / "provider").glob("*-request.json")):
+                request_sha = hashlib.sha256(frame(json.loads(request_path.read_text(encoding="utf-8")))).hexdigest()
+                matching = [a for a in attempts if a.get("request_sha256") == request_sha]
+                if not matching:
+                    raise ValueError("provider request lacks durable attempt")
+                response_path = request_path.with_name(request_path.name.replace("-request", "-response"))
+                if response_path.exists():
+                    response_sha = hashlib.sha256(frame(json.loads(response_path.read_text(encoding="utf-8")))).hexdigest()
+                    if sum(a.get("reason") == "completed" and a.get("response_json_sha256") == response_sha
+                           for a in matching) != 1:
+                        raise ValueError("provider response lacks exactly one completed attempt")
+        elif not binding["fixture"] and terminal.get("responses"):
+            raise ValueError("live stage lacks durable transport evidence")
         commits = [(a, v) for n, a, v in calls if n == "continuum_checkpoint_task"]
         if len(commits) > 1:
             raise ValueError("multiple stage commits")
