@@ -10,6 +10,7 @@ from research.e009_episode_eval import assess_snapshot, reference_chain
 from research.e009_oracle import Oracle
 from research.e009_protocol import assigned_seed, instructions_for, output_items, public_input, tools_for
 from research.e009_revision import sha
+from research.e009_replay import reconcile_final
 from research.e009_scm import models
 from research.e009_sources import EvidenceRegistry, evidence_catalog
 
@@ -112,6 +113,27 @@ class ContractTests(unittest.TestCase):
                 output_items({"status": "completed", "output": output}, 3)
         second = {**call, "call_id": "two"}
         self.assertEqual(output_items({"status": "completed", "output": [call, second]}, 3), [call, second])
+
+    def test_authentic_rejected_final_is_not_success_or_missing_evidence(self):
+        terminal = {"status": "failed", "failure_type": "ValueError"}
+        error = {"status": "error", "reason": "Publication failed"}
+        self.assertFalse(reconcile_final(terminal, error, "A", 1, False))
+        self.assertFalse(reconcile_final(terminal, {"status": "published"}, "A", 1, False))
+        self.assertFalse(reconcile_final(terminal, error, "E", 1, False))
+        self.assertFalse(reconcile_final(terminal, {"answer": 1, "basis": []}, "E", 0, False))
+
+    def test_missing_accepted_final_or_forged_terminal_still_rejected(self):
+        final = {"status": "published"}
+        terminal = {"status": "failed", "failure_type": "ValueError"}
+        for record, observed, stage, published in [
+                (terminal, final, "A", True),
+                (terminal, {"answer": 1, "basis": []}, "E", False),
+                ({"status": "completed"}, final, "A", False),
+                ({**terminal, "failure_type": "TimeoutError"}, final, "A", False),
+                ({**terminal, "final": final}, {"status": "error"}, "A", False)]:
+            with self.assertRaisesRegex(ValueError, "terminal answer differs"):
+                reconcile_final(record, observed, stage, 1, published)
+        self.assertTrue(reconcile_final({"status": "completed", "final": final}, final, "A", 1, True))
 
 
 if __name__ == "__main__":

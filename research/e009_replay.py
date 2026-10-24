@@ -112,6 +112,19 @@ def audit_transport(directory, terminal, binding):
     return expected
 
 
+def reconcile_final(terminal, observed, stage, reads, published):
+    """A rejected authentic final is failure evidence, never a successful answer."""
+    if "final" in terminal:
+        if frame(terminal["final"]) != frame(observed):
+            raise ValueError("terminal answer differs from actual provider")
+        return True
+    rejected = (not reads or stage != "E" and (not published or observed != {"status": "published"})
+                or stage == "E" and (not isinstance(observed, dict) or set(observed) != {"answer", "basis"}))
+    if terminal["status"] != "failed" or terminal.get("failure_type") != "ValueError" or not rejected:
+        raise ValueError("terminal answer differs from actual provider")
+    return False
+
+
 def replay(directory, expected_manifest, oracle):
     run = Path(directory).resolve(strict=True)
     if digest(run / "MANIFEST.json") != expected_manifest:
@@ -239,8 +252,8 @@ def replay(directory, expected_manifest, oracle):
                     if pending or msg["text"] != final_text(last_output):
                         raise ValueError("final not bound to provider output")
                     observed_final = parse_frame(msg["text"].encode() + b"\n")
-                    if frame(observed_final) != frame(terminal.get("final")):
-                        raise ValueError("terminal answer differs from actual provider")
+                    if not reconcile_final(terminal, observed_final, stage, reads, publication is not None):
+                        record["rejected_final"] = observed_final
                 else:
                     raise ValueError("unknown worker trace channel")
             elif event["kind"] == "response":
@@ -290,7 +303,7 @@ def replay(directory, expected_manifest, oracle):
             killed = read(f"{stage}/kill-command.json")
             if terminal["exit_status"] != 137 or killed["exit_status"] or publication is None:
                 raise ValueError("unproven committed crash")
-        if stage == "E" and observed_final is not None:
+        if stage == "E" and observed_final is not None and "rejected_final" not in record:
             record.update(observed_final)
         if publication is not None:
             publications.append(publication)
