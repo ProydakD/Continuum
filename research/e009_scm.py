@@ -67,6 +67,8 @@ def edges(index):
 
 def quantity(index, query):
     kind = query["kind"]
+    if kind == "census_match":
+        return int(distribution(index, tuple(map(tuple, query["do"]))) == tuple(query["counts"]))
     if kind == "model":
         return int(index == query["index"])
     if kind in ("edge", "path"):

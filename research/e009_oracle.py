@@ -73,6 +73,11 @@ class Oracle:
                          if all(solve(model, do) == counts for do, counts in validated))
 
     def quantity(self, index, query):
+        if query["kind"] == "census_match":
+            record = {"id": "predicate", "kind": "interventional" if query["do"] else "observational",
+                      "total": 8, "do": query["do"], "counts": query["counts"]}
+            do = validate_evidence(record)
+            return int(solve(self.models[index], do) == tuple(query["counts"]))
         if query["kind"] == "model":
             if type(query["index"]) is not int or not 0 <= query["index"] < len(self.models):
                 raise ValueError("invalid model ID")
