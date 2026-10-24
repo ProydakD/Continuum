@@ -1,0 +1,2 @@
+# Optional acceleration used by the bundled analysis runtime, not the isolated model worker.
+numpy==2.3.5
