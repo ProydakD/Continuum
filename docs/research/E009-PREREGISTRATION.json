@@ -1,8 +1,8 @@
 {
   "experiment": "E-009",
-  "revision": "draft-002",
+  "revision": "draft-003",
   "preregistered": false,
-  "status": "offline full-chain and Docker/MCP handoff gates; no model outcomes; model controller still pending",
+  "status": "mock Responses A-E controller and independent raw replay verified; live HTTPS provider and scientific gates pending",
   "parent_commit": "21513287458da664e2b84ff06f42c360b2d01501",
   "primary_model_candidate": "gpt-6.1-sol",
   "primary_model_verified": false,
@@ -28,6 +28,7 @@
   "corpus_hash": null,
   "implementation_hashes": null,
   "memory_envelope_bytes_candidate": 8192,
+  "public_hash_utility": "hash_claims: identical in all conditions, supplied JSON only, no private state; account all calls",
   "pilot_context_ceiling_candidate": 600,
   "pilot_locked": false,
   "api_requests": 0,

@@ -1,4 +1,4 @@
-# E009 — runbook (draft v2)
+# E009 — runbook (draft v3)
 
 Дата: 2026-10-24. Исследовательская копия:
 `C:\Users\User\Documents\ChatGPT\ContinuumResearch\project`.
@@ -138,5 +138,11 @@ TLS проверяется; редиректы с Authorization не выпол�
 gate из E009 checkpoint. Не перезапускать завершённые E008/model outcomes.
 
 Изолированный deterministic handoff, boundary controls и настоящий post-commit
-Docker kill проверены в E009-SANDBOX-HANDOFF.md. Следующий gate — model-capable
-controller/runtime и raw replay; это не разрешение пропустить остальные gates.
+Docker kill проверены в E009-SANDBOX-HANDOFF.md. Model-capable controller/runtime
+и raw replay проверены mock provider в E009-RESPONSES-CONTROLLER.md.
+Следующий gate — HTTPS provider/retries/STOP/usage; остальные научные gates сохраняются.
+
+Draft v3 добавляет одинаковый для всех условий чистый hash_claims utility:
+хэшируются только переданные JSON claims, без чтения private measurement.
+Участнику не требуется угадывать SHA256; вызовы, bytes и время учитываются.
+FULL-JOURNAL строится из явных public publications, не measurement snapshots.
