@@ -3,12 +3,14 @@ import argparse
 import json
 from pathlib import Path
 import random
+import sqlite3
 import time
 
 from .common import PROJECT, digest
 from .e009_episode import episode_corpus, make_episode
 from .e009_execute import run_chain
 from .e009_provider import HTTPSProvider, ProviderFailure
+from .e009_protocol import PROTOCOL_VERSION
 from .e009_raw import write_once
 from .e009_revision import sha
 
@@ -37,6 +39,7 @@ def create_plan(directory, image):
             assignments.append({"id": f"pilot-{len(assignments) + 1:03}", "world": world,
                                 "condition": condition, "track": track})
     plan = {"schema": "e009-pilot-lock-v1", "primary_model_candidate": "gpt-6.1-sol",
+            "protocol_version": PROTOCOL_VERSION,
             "base_url": "https://185.170.154.169/v1", "wire_api": "responses",
             "credential_environment_variable": "API_KEY", "source_hashes": execution_sources(), "image": image,
             "seed": 2026102411, "development_worlds": development, "pilot_worlds": pilot,
@@ -60,15 +63,84 @@ def create_plan(directory, image):
             "assigned_chains": len(assignments), "maximum_contexts": plan["maximum_contexts"], "model_calls": 0}
 
 
-def load_plan(directory):
+def read_locked_plan(directory):
     directory = Path(directory).resolve()
     expected = json.loads((directory / "PLAN-SHA256.json").read_text())["sha256"]
     if digest(directory / "PLAN.json") != expected:
         raise ValueError("pilot plan hash changed")
     plan = json.loads((directory / "PLAN.json").read_text(encoding="utf-8"))
+    binding = expected
+    plan["_assignment_bindings"] = {a["id"]: binding for a in plan["assignments"]}
+    amendments = sorted((directory / "amendments").glob("*.json"))
+    for index, path in enumerate(amendments, 1):
+        if path.name != f"amendment-{index:03}.json":
+            raise ValueError("amendment sequence changed")
+        record = json.loads(path.read_text())
+        amendment = record["amendment"]
+        if (sha(amendment) != record["sha256"] or amendment["parent_binding_sha256"] != binding
+                or amendment["parent_plan_sha256"] != expected):
+            raise ValueError("amendment hash chain changed")
+        execution = amendment["execution"]
+        if (set(execution) != {"source_hashes", "image", "protocol_version", "limits",
+                              "transport_directory", "transport_not_before"}
+                or execution["image"] != plan["image"]
+                or execution["limits"] != {**plan["limits"], "tool_calls": 24}
+                or execution["protocol_version"] != 2
+                or execution["transport_directory"] != f"transport-amendment-{index:03}"
+                or type(amendment["start_assignment"]) is not int
+                or not 1 <= amendment["start_assignment"] <= len(plan["assignments"])):
+            raise ValueError("unregistered pilot amendment fields")
+        for name, value in amendment["frozen_receipts"].items():
+            if Path(name).name != name or digest(directory / "receipts" / name) != value:
+                raise ValueError("pre-amendment outcome changed")
+        binding = digest(path)
+        for assigned in plan["assignments"][amendment["start_assignment"] - 1:]:
+            plan["_assignment_bindings"][assigned["id"]] = binding
+        plan.update(execution)
+    plan["_execution_binding_sha256"] = binding
+    return directory, plan, expected
+
+
+def load_plan(directory):
+    directory, plan, expected = read_locked_plan(directory)
     if execution_sources() != plan["source_hashes"]:
         raise ValueError("pilot execution source binding changed; do not silently refreeze")
     return directory, plan, expected
+
+
+def amend_plan(directory, reason):
+    """Explicit append-only execution amendment; assignments and prior outcomes never change."""
+    directory, plan, plan_hash = read_locked_plan(directory)
+    if not reason.strip():
+        raise ValueError("amendment reason required")
+    assigned = next_assignment(directory, plan)
+    if assigned is None:
+        raise ValueError("no unfinished pilot assignment")
+    start = plan["assignments"].index(assigned) + 1
+    receipts = {p.name: digest(p) for p in (directory / "receipts").glob("*.json")}
+    if set(receipts) != {a["id"] + ".json" for a in plan["assignments"][:start - 1]}:
+        raise ValueError("non-prefix outcomes cannot be amended")
+    not_before = plan.get("transport_not_before", 0)
+    ledger = directory / plan.get("transport_directory", "transport") / "attempts.sqlite3"
+    if ledger.exists():
+        with sqlite3.connect(ledger.as_uri() + "?mode=ro", uri=True) as db:
+            if db.execute("SELECT 1 FROM requests WHERE status='pending'").fetchone():
+                raise ValueError("pending transport prevents amendment")
+            not_before = max([not_before] + [json.loads(row[0]).get("retry_at", 0)
+                                           for row in db.execute("SELECT record FROM attempts")])
+    number = len(list((directory / "amendments").glob("*.json"))) + 1
+    execution = {"source_hashes": execution_sources(), "image": plan["image"],
+                 "protocol_version": PROTOCOL_VERSION, "limits": {**plan["limits"], "tool_calls": 24},
+                 "transport_directory": f"transport-amendment-{number:03}", "transport_not_before": not_before}
+    amendment = {"schema": "e009-pilot-amendment-v1", "parent_plan_sha256": plan_hash,
+                 "parent_binding_sha256": plan["_execution_binding_sha256"], "reason": reason,
+                 "start_assignment": start, "frozen_receipts": receipts, "execution": execution,
+                 "created": time.time(), "assigned_outcomes_replayed": False}
+    path = directory / "amendments" / f"amendment-{number:03}.json"
+    write_once(path, {"amendment": amendment, "sha256": sha(amendment)})
+    load_plan(directory)
+    return {"path": str(path), "sha256": digest(path), "next_assignment": assigned["id"],
+            "prior_outcomes_preserved": len(receipts), "model_calls": 0}
 
 
 def verify_model(directory, *, authorize=False, retry_failed=False):
@@ -129,7 +201,9 @@ def next_assignment(directory, plan):
             if (not target.exists() or digest(target / "MANIFEST.json") != record["manifest_sha256"]
                     or sha(record["assignment"]) != sha(assignment)
                     or Path(record["directory"]).resolve() != target.resolve()
-                    or record["plan_sha256"] != digest(directory / "PLAN.json")):
+                    or record["plan_sha256"] != digest(directory / "PLAN.json")
+                    or record.get("execution_binding_sha256", record["plan_sha256"]) !=
+                    plan["_assignment_bindings"][assignment["id"]]):
                 raise ValueError("assigned outcome binding broken")
             completed.append(record)
             continue
@@ -155,26 +229,36 @@ def pilot_next(directory, *, authorize=False):
     assignment = next_assignment(directory, plan)
     if assignment is None:
         return {"status": "pilot_assignments_complete", "research_complete": False}
-    provider = HTTPSProvider(plan["base_url"], plan["primary_model_candidate"], directory / "transport",
-                             authorize=authorize, stop_path=directory / "STOP")
+    if time.time() < plan.get("transport_not_before", 0):
+        raise ValueError("pre-amendment provider cooldown still active")
+    provider = HTTPSProvider(plan["base_url"], plan["primary_model_candidate"],
+                             directory / plan.get("transport_directory", "transport"),
+                             authorize=authorize, stop_path=directory / "STOP",
+                             protocol_version=plan.get("protocol_version", 1))
     episode = make_episode(assignment["world"], "e009-pilot-world-" + str(assignment["world"]))
     result = run_chain(directory / "runs" / assignment["id"], episode, assignment["condition"], assignment["track"],
-                       provider, plan["image"], limits=plan["limits"])
-    write_once(directory / "receipts" / (assignment["id"] + ".json"), {**result, "assignment": assignment, "plan_sha256": plan_hash})
+                       provider, plan["image"], limits=plan["limits"], protocol_version=plan.get("protocol_version", 1))
+    write_once(directory / "receipts" / (assignment["id"] + ".json"), {
+        **result, "assignment": assignment, "plan_sha256": plan_hash,
+        "execution_binding_sha256": plan["_execution_binding_sha256"]})
     return result
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=["plan", "verify-model", "pilot-next"])
+    parser.add_argument("mode", choices=["plan", "amend", "verify-model", "pilot-next"])
     parser.add_argument("--directory", required=True)
     parser.add_argument("--image")
+    parser.add_argument("--reason")
     parser.add_argument("--authorize", action="store_true")
     parser.add_argument("--retry-failed-availability", action="store_true")
     args = parser.parse_args()
     if args.mode == "plan":
         if not args.image: parser.error("--image required for plan")
         result = create_plan(args.directory, args.image)
+    elif args.mode == "amend":
+        if not args.reason: parser.error("--reason required for amendment")
+        result = amend_plan(args.directory, args.reason)
     elif args.mode == "verify-model": result = verify_model(args.directory, authorize=args.authorize,
                                                           retry_failed=args.retry_failed_availability)
     else: result = pilot_next(args.directory, authorize=args.authorize)

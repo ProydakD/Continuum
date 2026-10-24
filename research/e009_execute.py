@@ -1,6 +1,7 @@
 """Model-capable isolated E009 controller. Provider receives public request bodies only."""
 from copy import deepcopy
 import base64
+import hashlib
 import json
 from pathlib import Path
 import queue
@@ -11,7 +12,7 @@ import uuid
 
 from .common import PROJECT, command, digest, runtime_identity, source_hashes
 from .e009_broker import BinaryMCP, MemoryBroker, frame, parse_frame
-from .e009_protocol import assigned_seed, final_text, fresh_history, output_items, public_input, request_body
+from .e009_protocol import PROTOCOL_VERSION, assigned_seed, final_text, fresh_history, output_items, public_input, request_body
 from .e009_provider import ProviderFailure
 from .e009_raw import write_once
 from .e009_revision import sha
@@ -23,7 +24,7 @@ LIMITS = {"stage_seconds": 120, "responses": 24, "request_seconds": 45, "output_
 
 
 def execute_stage(run, episode, registry: EvidenceRegistry, stage, condition, track, provider, task_id,
-                  assignment, image, limits, *, crash_after_commit=False):
+                  assignment, image, limits, *, protocol_version=PROTOCOL_VERSION, crash_after_commit=False):
     directory = run / stage
     directory.mkdir()
     actor = run.name + ":" + stage + ":" + uuid.uuid4().hex
@@ -71,7 +72,9 @@ def execute_stage(run, episode, registry: EvidenceRegistry, stage, condition, tr
         report["task_id"] = broker.task["id"]
         argv = worker_command(image, name, worker, "responses.py")
         write_once(directory / "command.json", {"command": argv, "cwd": str(PROJECT)})
-        pending = None
+        pending = []
+        seen_call_ids = set()
+        report["tool_calls"] = 0
         last_output = None
         final = None
         with (directory / "stderr.bin").open("xb") as stderr:
@@ -116,29 +119,37 @@ def execute_stage(run, episode, registry: EvidenceRegistry, stage, condition, tr
                 if report["container_id"] is None:
                     raise PermissionError("no observed container boundary")
                 if channel == "responses":
-                    if pending is not None or final is not None or frame(message.get("history")) != frame(history):
+                    if pending or final is not None or frame(message.get("history")) != frame(history):
                         raise ValueError("history rewrite or unfinished function call")
                     report["responses"] += 1
                     if report["responses"] > limits["responses"]:
                         report["status"] = "response_limit"
                         break
-                    request = request_body(provider.model, history, stage, condition, limits["output_tokens"])
+                    request = request_body(provider.model, history, stage, condition, limits["output_tokens"], protocol_version)
                     number = report["responses"]
                     write_once(directory / f"provider/{number:03}-request.json", request)
                     response = provider.respond(actor, deepcopy(request), timeout=min(remaining, limits["request_seconds"]))
                     write_once(directory / f"provider/{number:03}-response.json", response)
-                    output = output_items(response)
+                    output = output_items(response, protocol_version)
                     report["provider_models"].append(response.get("model"))
                     last_output = output
                     history.extend(output)
                     calls = [item for item in output if item.get("type") == "function_call"]
-                    pending = calls[0] if calls else None
+                    ids = {call["call_id"] for call in calls}
+                    if ids & seen_call_ids:
+                        raise ValueError("repeated function call identity")
+                    seen_call_ids.update(ids)
+                    pending = calls
                     deliver({"result": response}, "response")
                 elif channel == "tool":
-                    if (pending is None or set(message) != {"channel", "name", "call_id", "arguments"}
-                            or message["name"] != pending["name"] or message["call_id"] != pending["call_id"]
-                            or frame(message["arguments"]) != frame(parse_frame(pending["arguments"].encode() + b"\n"))):
+                    if (not pending or set(message) != {"channel", "name", "call_id", "arguments"}
+                            or message["name"] != pending[0]["name"] or message["call_id"] != pending[0]["call_id"]
+                            or frame(message["arguments"]) != frame(parse_frame(pending[0]["arguments"].encode() + b"\n"))):
                         raise ValueError("worker tool call not issued by provider")
+                    report["tool_calls"] += 1
+                    if report["tool_calls"] > limits.get("tool_calls", 24):
+                        report["status"] = "tool_limit"
+                        break
                     try:
                         value = broker.call(message["name"], message["arguments"])
                         reply = {"result": value}
@@ -156,10 +167,9 @@ def execute_stage(run, episode, registry: EvidenceRegistry, stage, condition, tr
                         report["receipt_delivered"] = False
                         break
                     serialized = deliver(reply, "tool")
-                    history.append({"type": "function_call_output", "call_id": pending["call_id"], "output": serialized})
-                    pending = None
+                    history.append({"type": "function_call_output", "call_id": pending.pop(0)["call_id"], "output": serialized})
                 elif channel == "final":
-                    if pending is not None or final is not None or message.get("text") != final_text(last_output):
+                    if pending or final is not None or message.get("text") != final_text(last_output):
                         raise ValueError("final differs from provider output")
                     final = parse_frame(message["text"].encode() + b"\n")
                     if not broker.reads or stage != "E" and (not broker.committed or final != {"status": "published"}):
@@ -169,7 +179,7 @@ def execute_stage(run, episode, registry: EvidenceRegistry, stage, condition, tr
                     report["final"] = final
                 else:
                     raise PermissionError("unknown worker channel")
-            if report["status"] in {"stopped", "timeout", "response_limit"} and process.poll() is None:
+            if report["status"] in {"stopped", "timeout", "response_limit", "tool_limit"} and process.poll() is None:
                 write_once(directory / "stop-command.json", command(["docker", "kill", name], timeout=15))
             process.stdin.close()
             report["exit_status"] = process.wait(timeout=20)
@@ -217,7 +227,20 @@ def execute_stage(run, episode, registry: EvidenceRegistry, stage, condition, tr
             report["failure_type"] = "WorkerInputChanged"
         if hasattr(provider, "accounting"):
             report["provider_accounting"] = provider.accounting(actor)
-            write_once(directory / "provider-attempts.json", provider.ledger.records(actor))
+            attempts = provider.ledger.records(actor)
+            for attempt in attempts:
+                if attempt.get("response_body_file"):
+                    source = (provider.directory / attempt["response_body_file"]).resolve(strict=True)
+                    if not source.is_relative_to(provider.directory):
+                        raise ValueError("retained response escaped provider directory")
+                    body = source.read_bytes()
+                    if hashlib.sha256(body).hexdigest() != attempt["response_sha256"]:
+                        raise ValueError("retained response changed before stage sealing")
+                    target = directory / "provider-bodies" / Path(attempt["response_body_file"]).name
+                    target.parent.mkdir(exist_ok=True)
+                    with target.open("xb") as stream:
+                        stream.write(body)
+            write_once(directory / "provider-attempts.json", attempts)
         report["seconds"] = time.monotonic() - started
         (directory / "worker-input.bin").write_bytes(b"".join(child_stdin))
         (directory / "worker-output.bin").write_bytes(b"".join(child_stdout))
@@ -227,7 +250,7 @@ def execute_stage(run, episode, registry: EvidenceRegistry, stage, condition, tr
 
 
 def run_chain(directory, episode, condition, track, provider, image, *,
-              limits=None, crash_stage=None, stop_before=None):
+              limits=None, crash_stage=None, stop_before=None, protocol_version=PROTOCOL_VERSION):
     run = Path(directory).resolve()
     run.mkdir(parents=True, exist_ok=False)
     limits = dict(LIMITS if limits is None else limits)
@@ -236,6 +259,7 @@ def run_chain(directory, episode, condition, track, provider, image, *,
     assignment = {"episode": episode["id"], "track": track, "condition": condition,
                   "episode_sha256": sha(episode), "catalog_sha256": sha(catalog)}
     binding = {"schema": "e009-responses-run-v1", **assignment, "image": image, "limits": limits,
+               "protocol_version": protocol_version,
                "provider_model": provider.model, "fixture": provider.fixture,
                "crash_stage": crash_stage, "stop_before": stop_before}
     write_once(run / "private/episode.json", episode)
@@ -252,7 +276,8 @@ def run_chain(directory, episode, condition, track, provider, image, *,
             (run / "STOP").write_text("registered synthetic STOP test\n", encoding="utf-8")
         if recoverable or (run / "STOP").exists():
             record = execute_stage(run, episode, registry, stage, condition, track, provider, task_id,
-                                   assignment, image, limits, crash_after_commit=stage == crash_stage)
+                                   assignment, image, limits, protocol_version=protocol_version,
+                                   crash_after_commit=stage == crash_stage)
         else:
             (run / stage).mkdir()
             record = {"stage": stage, "instance_id": run.name + ":" + stage,

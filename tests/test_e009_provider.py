@@ -7,6 +7,7 @@ import hashlib
 import json
 from pathlib import Path
 import ssl
+import shutil
 import tempfile
 import threading
 import time
@@ -194,6 +195,24 @@ class ProviderTests(unittest.TestCase):
             with self.assertRaisesRegex(ProviderFailure, "credential_echo"):
                 provider.respond("context", request())
             self.assertNotIn(SYNTHETIC_KEY.encode(), provider.ledger.path.read_bytes())
+            self.assertFalse((provider.directory / "responses").exists())
+
+    def test_rejected_parsed_body_retained_exactly_with_fixed_reason(self):
+        raw = json.dumps(success(status="incomplete"), indent=2).encode()
+        provider = self.provider([{"raw": raw}])
+        with self.assertRaisesRegex(ProviderFailure, "invalid_response"):
+            provider.respond("context", request())
+        record = provider.ledger.records()[0]
+        self.assertEqual((provider.directory / record["response_body_file"]).read_bytes(), raw)
+        self.assertEqual(record["validation_error"], "incomplete or invalid provider response")
+        self.assertEqual(record["response_sha256"], hashlib.sha256(raw).hexdigest())
+
+    def test_retention_write_failure_never_resubmits(self):
+        provider = self.provider([{}, {}])
+        (provider.directory / "responses").write_text("not a directory")
+        with self.assertRaisesRegex(ProviderFailure, "response_retention_failed"):
+            provider.respond("context", request())
+        self.assertEqual(len(provider.calls), 1)
 
     def test_credential_in_context_not_written_to_ledger(self):
         provider = self.provider([{}])
@@ -262,6 +281,7 @@ class ProviderTests(unittest.TestCase):
         (directory / "provider/001-request.json").write_bytes(frame(request()))
         (directory / "provider/001-response.json").write_bytes(frame(response))
         (directory / "provider-attempts.json").write_bytes(frame(provider.ledger.records("context")))
+        shutil.copytree(provider.directory / "responses", directory / "provider-bodies")
         terminal = {"status": "completed", "responses": 1, "provider_accounting": provider.accounting("context")}
         binding = {"fixture": True, "provider_model": provider.model}
         return directory, terminal, binding
@@ -285,6 +305,9 @@ class ProviderTests(unittest.TestCase):
         attempts = json.loads((directory / "provider-attempts.json").read_text())
         attempts[0]["response_json_sha256"] = hashlib.sha256(frame(response)).hexdigest()
         attempts[0]["reported_model"] = "different-model"
+        body_path = directory / "provider-bodies" / Path(attempts[0]["response_body_file"]).name
+        body_path.write_bytes(frame(response))
+        attempts[0]["response_sha256"] = hashlib.sha256(frame(response)).hexdigest()
         (directory / "provider-attempts.json").write_bytes(frame(attempts))
         with self.assertRaisesRegex(ValueError, "response model differs"):
             audit_transport(directory, terminal, binding)

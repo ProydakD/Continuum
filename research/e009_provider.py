@@ -18,7 +18,7 @@ from urllib.parse import urlsplit
 import httpx2 as httpx
 
 from .e009_broker import frame
-from .e009_protocol import output_items
+from .e009_protocol import PROTOCOL_VERSION, output_items
 
 RETRYABLE = {408, 429, 500, 502, 503, 504}
 QUOTA_ERRORS = {"insufficient_quota", "billing_hard_limit_reached", "billing_not_active",
@@ -136,7 +136,8 @@ class AttemptLedger:
 class HTTPSProvider:
     fixture = False
 
-    def __init__(self, base_url, model, directory, *, authorize=False, stop_path=None):
+    def __init__(self, base_url, model, directory, *, authorize=False, stop_path=None,
+                 protocol_version=PROTOCOL_VERSION):
         if not authorize:
             raise ProviderFailure("authorization_required")
         if not isinstance(base_url, str) or any(c.isspace() or ord(c) < 32 for c in base_url):
@@ -152,12 +153,14 @@ class HTTPSProvider:
             raise ProviderFailure("unsafe_configuration")
         self._key = key
         self.host, self.port, self.model = url.hostname, url.port or 443, model
+        self.protocol_version = protocol_version
         self.directory = Path(directory).resolve()
         self.stop_path = Path(stop_path) if stop_path is not None else self.directory / "STOP"
         self.policy = {"endpoint": base_url.rstrip("/") + "/responses", "model": model,
                        "attempts": 4, "backoff_seconds": [2, 4, 8], "jitter_seconds": 0.25,
                        "attempt_seconds": 40, "request_bytes": 262144, "response_bytes": 4194304,
-                       "fixture": self.fixture, "cost_usd": None, "concurrency": 1}
+                       "fixture": self.fixture, "cost_usd": None, "concurrency": 1,
+                       "protocol_version": protocol_version}
         self.ledger = AttemptLedger(self.directory / "attempts.sqlite3", self.policy)
 
     def stopped(self):
@@ -279,16 +282,31 @@ class HTTPSProvider:
                     if self._key.encode() in raw:
                         raise ProviderFailure("credential_echo")
                     # Standard JSON decoder plus strict re-serialization rejects nonfinite values.
+                    parsed = True
                     try:
                         response = json.loads(raw)
                     except (ValueError, UnicodeDecodeError):
                         if status == 200:
                             raise
                         response = {}
+                        parsed = False
                     if self._key.encode() in frame(response):
                         raise ProviderFailure("credential_echo")
                     observation["response_sha256"] = hashlib.sha256(raw).hexdigest()
-                    observation["response_json_sha256"] = hashlib.sha256(frame(response)).hexdigest()
+                    if parsed or self.protocol_version == 1:
+                        observation["response_json_sha256"] = hashlib.sha256(frame(response)).hexdigest()
+                    # Retain complete, parsed, credential-free bodies BEFORE protocol rejection.
+                    # Never retry a submitted request merely because local evidence persistence failed.
+                    if parsed and self.protocol_version >= 2:
+                        relative = f"responses/{attempt:06}.json"
+                        target = self.directory / relative
+                        try:
+                            target.parent.mkdir(exist_ok=True)
+                            with target.open("xb") as stream:
+                                stream.write(raw)
+                        except OSError:
+                            raise ProviderFailure("response_retention_failed") from None
+                        observation["response_body_file"] = relative
                     usage = response.get("usage") if isinstance(response, dict) else None
                     if (isinstance(usage, dict) and all(type(usage.get(k)) is int and usage[k] >= 0
                                                      for k in ("input_tokens", "output_tokens"))):
@@ -305,7 +323,14 @@ class HTTPSProvider:
                             observation["reported_model"] = reported
                         if not isinstance(response, dict) or response.get("model") != self.model:
                             raise ProviderFailure("reported_model_mismatch")
-                        output_items(response)
+                        try:
+                            output_items(response, self.protocol_version)
+                        except ValueError as error:
+                            codes = {"incomplete or invalid provider response", "missing output items",
+                                     "unregistered output item type", "invalid function call batch",
+                                     "duplicate function call identity", "invalid function call arguments"}
+                            observation["validation_error"] = str(error) if str(error) in codes else "unknown_protocol_error"
+                            raise
                         observation["reason"] = "completed"
                 except ssl.SSLError:
                     observation["reason"] = "tls_failure"

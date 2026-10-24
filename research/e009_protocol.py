@@ -5,6 +5,8 @@ import json
 from .e009_sources import episode_input, seed_memory
 
 CONDITIONS = {"F0", "F1", "S0", "S1", "C0", "FULL-JOURNAL"}
+PROTOCOL_VERSION = 2
+MAX_BATCH_CALLS = 16
 
 INSTRUCTIONS = """You are a fresh investigator in a synthetic causal-knowledge study.
 Only this stage's public input and the read_memory tool supply prior information.
@@ -26,8 +28,14 @@ counts index is X*32+Y*16+Z*8+W*4+V*2+Q.
 Structural edges: Z->V,W->V,V->Q always; X->Y unless confounded;
 Y->Z for chain/confounded, X->Z for fork, no observed parent of Z for common-source.
 For probability queries return the integer numerator over denominator 8.
-Other query kinds: model(index) tests exact model identity; edge/path tests structural
-edge/reachability; census_match(do,counts) tests exact census equality.
+Exact query JSON shapes (literal field names, not aliases):
+{"kind":"model","index":<integer 0..575>} tests exact model identity.
+{"kind":"edge","source":<variable>,"target":<different variable>} tests a structural edge.
+{"kind":"path","source":<variable>,"target":<different variable>} tests reachability.
+{"kind":"probability","target":<variable>,"do":[[<variable>,<0 or 1>],...]} returns
+the integer numerator for P(target=1 | do) over denominator 8; [] means observational.
+{"kind":"census_match","do":[[<variable>,<0 or 1>],...],"counts":[<64 nonnegative integers>]} tests exact census equality.
+Variables are strings X,Y,Z,W,V,Q; do names cannot repeat. Use source/target, not from/to.
 A proposition is {query: <query object>, value: <integer>}.
 Relative to all models compatible with admissible evidence, status is supported
 if all satisfy it, refuted if none, undetermined if some; no compatible model -> conflicted.
@@ -56,6 +64,20 @@ At E do not publish; answer the new question as JSON {"answer":<integer or null>
 "basis":[<e:source or c:claim references>]}, using null if not identified.
 Available tools are the ONLY capabilities; no shell, files, web or arbitrary object hashes.
 """
+
+# The original pilot remains independently replayable with its exact prompt bytes.
+LEGACY_INSTRUCTIONS = INSTRUCTIONS.replace(
+    INSTRUCTIONS[INSTRUCTIONS.index("Exact query JSON shapes"):INSTRUCTIONS.index("A proposition is")],
+    "Other query kinds: model(index) tests exact model identity; edge/path tests structural\n"
+    "edge/reachability; census_match(do,counts) tests exact census equality.\n")
+
+
+def instructions_for(version):
+    if version == 1:
+        return LEGACY_INSTRUCTIONS
+    if version == 2:
+        return INSTRUCTIONS
+    raise ValueError("unknown protocol version")
 
 
 def public_input(episode, registry, stage, condition, track):
@@ -97,13 +119,14 @@ def tools_for(stage, condition):
     return tools
 
 
-def request_body(model, history, stage, condition, output_tokens):
-    return {"model": model, "input": deepcopy(history), "instructions": INSTRUCTIONS,
+def request_body(model, history, stage, condition, output_tokens, protocol_version=PROTOCOL_VERSION):
+    return {"model": model, "input": deepcopy(history), "instructions": instructions_for(protocol_version),
             "tools": tools_for(stage, condition), "store": False, "parallel_tool_calls": False,
             "include": ["reasoning.encrypted_content"], "max_output_tokens": output_tokens}
 
 
-def output_items(response):
+def output_items(response, protocol_version=PROTOCOL_VERSION):
+    instructions_for(protocol_version)
     if not isinstance(response, dict) or response.get("status") != "completed":
         raise ValueError("incomplete or invalid provider response")
     output = response.get("output")
@@ -112,9 +135,20 @@ def output_items(response):
     if any(i.get("type") not in {"reasoning", "function_call", "message"} for i in output):
         raise ValueError("unregistered output item type")
     calls = [i for i in output if i.get("type") == "function_call"]
-    if len(calls) > 1 or any(not all(isinstance(c.get(k), str) and c[k]
+    if len(calls) > (1 if protocol_version == 1 else MAX_BATCH_CALLS) or any(not all(isinstance(c.get(k), str) and c[k]
                                    for k in ("call_id", "name", "arguments")) for c in calls):
         raise ValueError("invalid function call batch")
+    if protocol_version == 2:
+        if len({c["call_id"] for c in calls}) != len(calls):
+            raise ValueError("duplicate function call identity")
+        for call in calls:
+            try:
+                arguments = json.loads(call["arguments"])
+                if not isinstance(arguments, dict):
+                    raise ValueError()
+                json.dumps(arguments, allow_nan=False)
+            except (ValueError, TypeError):
+                raise ValueError("invalid function call arguments") from None
     # Preserve ALL items, including encrypted reasoning and message phase, within this context.
     return deepcopy(output)
 

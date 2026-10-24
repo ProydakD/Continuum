@@ -65,6 +65,14 @@ def audit_transport(directory, terminal, binding):
     if terminal["status"] == "completed" and any(a["status"] == "pending" for a in attempts):
         raise ValueError("completed stage has pending transport")
     for attempt in attempts:
+        if attempt.get("response_body_file"):
+            body_path = directory / "provider-bodies" / Path(attempt["response_body_file"]).name
+            if digest(body_path) != attempt["response_sha256"]:
+                raise ValueError("retained response bytes differ from transport")
+            if hashlib.sha256(frame(json.loads(body_path.read_bytes()))).hexdigest() != attempt["response_json_sha256"]:
+                raise ValueError("retained response JSON differs from transport")
+        elif binding.get("protocol_version", 1) >= 2 and attempt.get("response_json_sha256"):
+            raise ValueError("parsed live response lacks retained body")
         usage = attempt.get("usage")
         if usage is not None and (not isinstance(usage, dict) or not all(
                 type(usage.get(k)) is int and usage[k] >= 0 for k in ("input_tokens", "output_tokens"))):
@@ -118,6 +126,7 @@ def replay(directory, expected_manifest, oracle):
             raise ValueError("raw file escaped or changed")
     read = lambda name: json.loads((run / name).read_text(encoding="utf-8"))
     binding, episode = read("binding.json"), read("private/episode.json")
+    protocol_version = binding.get("protocol_version", 1)
     if sha(episode) != binding["episode_sha256"]:
         raise ValueError("episode binding differs")
     registry = EvidenceRegistry(read("private/catalog.json"), binding["catalog_sha256"])
@@ -184,8 +193,9 @@ def replay(directory, expected_manifest, oracle):
             expected_read = read_envelope(seed, None, None, {"actor": "registered-input-history"} if seed else None)
         events = [json.loads(line) for line in (directory / "worker-wire.jsonl").read_bytes().splitlines()]
         input_raw, output_raw = [], []
-        pending, last, last_output = None, None, None
-        response_number = reads = matched_publications = 0
+        pending, last, last_output = [], None, None
+        seen_call_ids = set()
+        response_number = reads = matched_publications = observed_tool_calls = 0
         observed_final = None
         read_bytes = 0
         request_bytes = 0
@@ -208,24 +218,25 @@ def replay(directory, expected_manifest, oracle):
                         raise ValueError("container identity/boundary mismatch")
                     container_ids.append(info["Id"])
                 elif channel == "responses":
-                    if pending is not None or frame(msg["history"]) != frame(history):
+                    if pending or frame(msg["history"]) != frame(history):
                         raise ValueError("history not reconstructed from same-stage output")
                     response_number += 1
                     request = read(f"{stage}/provider/{response_number:03}-request.json")
-                    if frame(request) != frame(request_body(binding["provider_model"], history, stage, condition, binding["limits"]["output_tokens"])):
+                    if frame(request) != frame(request_body(binding["provider_model"], history, stage, condition, binding["limits"]["output_tokens"], protocol_version)):
                         raise ValueError("provider request contains hidden input or changed protocol")
                     request_bytes += len(frame(request))
                 elif channel == "tool":
-                    if (pending is None or msg["name"] != pending["name"] or msg["call_id"] != pending["call_id"]
-                            or frame(msg["arguments"]) != frame(parse_frame(pending["arguments"].encode() + b"\n"))):
+                    if (not pending or msg["name"] != pending[0]["name"] or msg["call_id"] != pending[0]["call_id"]
+                            or frame(msg["arguments"]) != frame(parse_frame(pending[0]["arguments"].encode() + b"\n"))):
                         raise ValueError("tool not bound to provider call")
                     last = msg
+                    observed_tool_calls += 1
                     if msg["name"] == "publish" and publication is not None:
                         args = msg["arguments"]
                         if frame(args) == frame({"published_memory": publication["memory"], "measurement": measurement}):
                             matched_publications += 1
                 elif channel == "final":
-                    if pending is not None or msg["text"] != final_text(last_output):
+                    if pending or msg["text"] != final_text(last_output):
                         raise ValueError("final not bound to provider output")
                     observed_final = parse_frame(msg["text"].encode() + b"\n")
                     if frame(observed_final) != frame(terminal.get("final")):
@@ -236,12 +247,16 @@ def replay(directory, expected_manifest, oracle):
                 response = read(f"{stage}/provider/{response_number:03}-response.json")
                 if frame(msg) != frame({"result": response}):
                     raise ValueError("response differs from recorded provider body")
-                last_output = output_items(response)
+                last_output = output_items(response, protocol_version)
                 history.extend(last_output)
                 output_calls = [item for item in last_output if item.get("type") == "function_call"]
-                pending = output_calls[0] if output_calls else None
+                ids = {call["call_id"] for call in output_calls}
+                if ids & seen_call_ids:
+                    raise ValueError("repeated provider call identity")
+                seen_call_ids.update(ids)
+                pending = output_calls
             elif event["kind"] == "tool":
-                if pending is None or last is None:
+                if not pending or last is None:
                     raise ValueError("unexpected function output")
                 if last["name"] == "read_memory" and last["arguments"] == {} and "result" in msg:
                     if frame(msg["result"]) != frame(expected_read):
@@ -253,9 +268,9 @@ def replay(directory, expected_manifest, oracle):
                 if last["name"] == "publish" and msg.get("result", {}).get("saved"):
                     if publication is None or msg["result"]["sha256"] != publication["sha256"]:
                         raise ValueError("publication receipt lacks durable proof")
-                history.append({"type": "function_call_output", "call_id": pending["call_id"],
+                history.append({"type": "function_call_output", "call_id": pending.pop(0)["call_id"],
                                 "output": raw.decode()})
-                pending = last = None
+                last = None
             else:
                 raise ValueError("unknown controller reply")
         if b"".join(input_raw) != (directory / "worker-input.bin").read_bytes():
@@ -265,6 +280,8 @@ def replay(directory, expected_manifest, oracle):
         if publication is not None and matched_publications != 1:
             raise ValueError("durable publication not equal to one provider-authored tool request")
         if terminal["status"] == "completed":
+            if protocol_version >= 2 and observed_tool_calls > binding["limits"].get("tool_calls", 24):
+                raise ValueError("completed stage exceeded tool call budget")
             if reads != 1 or observed_final is None or terminal["exit_status"] != 0:
                 raise ValueError("unproven technical completion")
             if stage != "E" and (publication is None or observed_final != {"status": "published"}):
@@ -279,8 +296,11 @@ def replay(directory, expected_manifest, oracle):
             publications.append(publication)
             prior_index = index
         trace.append(record)
+        if "tool_calls" in terminal and terminal["tool_calls"] != observed_tool_calls:
+            raise ValueError("tool call accounting differs from wire")
         resources.append({"stage": stage, "mcp_bytes": mcp_bytes, "read_envelope_bytes": read_bytes,
                           "provider_request_bytes": request_bytes, "response_calls": response_number,
+                          "tool_calls": observed_tool_calls,
                           "provider_accounting": provider_accounting})
     if len(set(container_ids)) != len(container_ids):
         raise ValueError("container reused between stages")

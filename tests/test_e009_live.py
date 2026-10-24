@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import Mock, patch
 
-from research.e009_live import create_plan, load_plan, next_assignment, pilot_next, verify_model
+from research.e009_live import amend_plan, create_plan, load_plan, next_assignment, pilot_next, verify_model
 from research.e009_provider import ProviderFailure
 from research.e009_raw import write_once
 from research.common import digest
@@ -102,10 +102,11 @@ class LiveTests(unittest.TestCase):
 
     def test_failed_assigned_outcomes_are_kept_and_three_failures_stop_new_work(self):
         self.confirm()
-        def run(directory, episode, condition, track, provider, image, *, limits):
+        def run(directory, episode, condition, track, provider, image, *, limits, protocol_version):
             directory.mkdir(parents=True)
             write_once(directory / "MANIFEST.json", {"fixture": True})
             self.assertEqual(limits, self.plan["limits"])
+            self.assertEqual(protocol_version, 2)
             return {"directory": str(directory), "manifest_sha256": digest(directory / "MANIFEST.json"),
                     "statuses": ["provider_failure"] + ["upstream_missing"] * 4, "fixture": True, "response_calls": 1}
         with patch("research.e009_live.HTTPSProvider", return_value=self.provider()), patch("research.e009_live.run_chain", side_effect=run) as runner:
@@ -125,6 +126,35 @@ class LiveTests(unittest.TestCase):
             "assignment": {**assignment, "world": -1}, "plan_sha256": digest(self.directory / "PLAN.json")})
         with self.assertRaisesRegex(ValueError, "outcome binding"):
             next_assignment(self.directory, self.plan)
+
+    def test_amendment_keeps_parent_plan_and_changes_only_unfinished_execution(self):
+        original = (self.directory / "PLAN.json").read_bytes()
+        with patch("research.e009_live.execution_sources", return_value={"source.py": "new-hash"}):
+            result = amend_plan(self.directory, "public schema and sequential batch correction")
+            self.assertEqual(result["next_assignment"], "pilot-001")
+            self.assertEqual((self.directory / "PLAN.json").read_bytes(), original)
+            _, amended, _ = load_plan(self.directory)
+            self.assertEqual(amended["assignments"], self.plan["assignments"])
+            self.assertEqual(amended["_execution_binding_sha256"], result["sha256"])
+            self.assertEqual(amended["source_hashes"], {"source.py": "new-hash"})
+        with self.assertRaisesRegex(ValueError, "source binding"):
+            load_plan(self.directory)
+
+    def test_amendment_freezes_prior_receipt_and_cannot_repeat_it(self):
+        assignment = self.plan["assignments"][0]
+        target = self.directory / "runs" / assignment["id"]
+        target.mkdir(parents=True)
+        write_once(target / "MANIFEST.json", {})
+        receipt = self.directory / "receipts" / (assignment["id"] + ".json")
+        write_once(receipt, {"directory": str(target), "manifest_sha256": digest(target / "MANIFEST.json"),
+            "assignment": assignment, "plan_sha256": digest(self.directory / "PLAN.json"), "statuses": ["failed"] * 5})
+        result = amend_plan(self.directory, "versioned correction after retained failure")
+        _, plan, _ = load_plan(self.directory)
+        self.assertEqual(result["next_assignment"], "pilot-002")
+        self.assertEqual(next_assignment(self.directory, plan)["id"], "pilot-002")
+        receipt.write_text("{}")
+        with self.assertRaisesRegex(ValueError, "pre-amendment outcome"):
+            load_plan(self.directory)
 
 
 if __name__ == "__main__":
