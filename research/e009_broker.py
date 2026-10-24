@@ -12,7 +12,7 @@ import threading
 import time
 
 from .common import PROJECT, server_env
-from .e009_revision import memory_envelope
+from .e009_revision import memory_envelope, sha
 from .e009_sources import verifier_notices
 
 MAX_FRAME = 262144
@@ -148,14 +148,17 @@ class BinaryMCP:
 class MemoryBroker:
     """One assigned stage, no arbitrary hashes, filesystem, shell or private score reads."""
     def __init__(self, transport, stage, condition, actor, registry, *,
-                 task_id=None, seed=None, budget=8192):
-        if stage not in tuple("ABCDE") or condition not in {"F0", "F1", "S0", "S1", "C0"}:
+                 task_id=None, seed=None, budget=8192, assignment=None):
+        if stage not in tuple("ABCDE") or condition not in {"F0", "F1", "S0", "S1", "C0", "FULL-JOURNAL"}:
             raise ValueError("unsupported broker assignment")
         if type(budget) is not int or not 1 <= budget <= 8192:
             raise ValueError("invalid read limit")
         self.transport, self.stage, self.condition = transport, stage, condition
         self.actor, self.registry, self.budget = actor, registry, budget
+        self.assignment = deepcopy(assignment)
+        self.read_limit = 131072 if condition == "FULL-JOURNAL" else budget
         self.reads = self.attempts = self.verifications = 0
+        self.hashings = 0
         self.committed = False
         if task_id is None:
             if stage != "A":
@@ -174,8 +177,23 @@ class MemoryBroker:
             raise ValueError("missing, repeated or out-of-order checkpoint")
         if index and index.get("condition") != condition:
             raise ValueError("condition differs from existing assignment")
+        if index and index.get("assignment") != self.assignment:
+            raise ValueError("episode/track/evidence binding differs from existing assignment")
         self.index = index
-        if condition == "C0":
+        if condition == "FULL-JOURNAL":
+            journal = []
+            if seed:
+                journal.append(read_envelope(seed, None, None, {"actor": "registered-input-history"}))
+            for digest in index.get("publication_history", []):
+                obj, packet = self.get(digest)
+                if packet["actor"] != obj["origin"]["actor"]:
+                    raise ValueError("journal author mismatch")
+                journal.append(read_envelope(packet["memory"], packet["stage"], digest, obj["origin"]))
+            expected = list("ABCD"[:ord(stage) - ord("A")])
+            if [item["stage"] for item in journal if item["stage"] is not None] != expected:
+                raise ValueError("incomplete publication journal")
+            self.previous = {"memory": None, "journal": journal, "trust": "unverified_author_assertions"}
+        elif condition == "C0":
             self.previous = read_envelope(None, None, None, None)
         elif previous:
             obj, packet = self.get(index["memory_sha256"])
@@ -184,7 +202,7 @@ class MemoryBroker:
             self.previous = read_envelope(packet["memory"], previous, index["memory_sha256"], obj["origin"])
         else:
             self.previous = read_envelope(seed, None, None, {"actor": "registered-input-history"} if seed else None)
-        if read_size(self.previous) > budget:
+        if read_size(self.previous) > self.read_limit:
             raise ValueError("assigned read envelope exceeds limit")
 
     def get(self, digest):
@@ -214,6 +232,14 @@ class MemoryBroker:
                 raise PermissionError("one memory read per context")
             self.reads += 1
             return deepcopy(self.previous)
+        if (name == "hash_claims" and set(arguments) == {"claims"}
+                and isinstance(arguments["claims"], list)
+                and len(arguments["claims"]) <= 128
+                and all(isinstance(c, dict) for c in arguments["claims"])):
+            if self.hashings >= 3 or len(frame(arguments)) > 65536:
+                raise PermissionError("hash utility quota")
+            self.hashings += 1
+            return {"sha256": [sha(c) for c in arguments["claims"]]}
         if name == "verify_source" and set(arguments) == {"record"} and isinstance(arguments["record"], dict):
             if self.verifications >= 3:
                 raise PermissionError("verification quota")
@@ -248,7 +274,7 @@ class MemoryBroker:
             raise ValueError("measurement storage limit")
         digest, obj = self.put(packet)
         size = read_size(read_envelope(memory, self.stage, digest, obj["origin"]))
-        if size > self.budget:
+        if self.condition != "FULL-JOURNAL" and size > self.budget:
             # Immutable orphan remains traceable; no checkpoint pointer is changed.
             return {"saved": False, "reason": "complete_read_envelope_limit",
                     "read_bytes": size, "budget": self.budget, "attempts_left": 2 - self.attempts}
@@ -256,8 +282,11 @@ class MemoryBroker:
         task = self.transport.tool("claim_task", task_id=self.task["id"],
                                    expected_revision=self.task["revision"], lease_seconds=120)
         index = {"stage": self.stage, "condition": self.condition,
+                 "assignment": self.assignment,
                  "memory_sha256": digest, "measurement_sha256": private_digest,
                  "parent_memory_sha256": self.index.get("memory_sha256")}
+        if self.condition == "FULL-JOURNAL":
+            index["publication_history"] = self.index.get("publication_history", []) + [digest]
         self.task = self.transport.tool("checkpoint_task", task_id=task["id"],
             expected_revision=task["revision"], release=True,
             result=frame(index).decode().strip(), next_step=chr(ord(self.stage) + 1))
