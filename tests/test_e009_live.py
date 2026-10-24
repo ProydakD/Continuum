@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import Mock, patch
 
-from research.e009_live import amend_plan, create_plan, load_plan, next_assignment, pilot_next, verify_model
+from research.e009_live import amendment_limits, amend_plan, create_plan, load_plan, next_assignment, pilot_next, verify_model
 from research.e009_provider import ProviderFailure
 from research.e009_raw import write_once
 from research.common import digest
@@ -155,6 +155,38 @@ class LiveTests(unittest.TestCase):
         receipt.write_text("{}")
         with self.assertRaisesRegex(ValueError, "pre-amendment outcome"):
             load_plan(self.directory)
+
+    def test_deadline_amendment_preserves_prior_amendment_and_other_budgets(self):
+        first = amend_plan(self.directory, "schema amendment")
+        original = Path(first["path"]).read_bytes()
+        second = amend_plan(self.directory, "measured latency exceeds original bound",
+                            deadlines={"attempt_seconds": 240, "request_seconds": 1000, "stage_seconds": 3600})
+        _, plan, _ = load_plan(self.directory)
+        self.assertEqual(Path(first["path"]).read_bytes(), original)
+        self.assertEqual(plan["_execution_binding_sha256"], second["sha256"])
+        self.assertEqual(plan["limits"], {**self.plan["limits"], "tool_calls": 24,
+                         "attempt_seconds": 240, "request_seconds": 1000, "stage_seconds": 3600})
+        self.assertEqual(plan["assignments"], self.plan["assignments"])
+
+    def test_live_dispatch_uses_locked_deadlines_without_repeating_availability(self):
+        self.confirm()
+        amend_plan(self.directory, "latency correction", deadlines={
+            "attempt_seconds": 240, "request_seconds": 1000, "stage_seconds": 3600})
+        with patch("research.e009_live.HTTPSProvider", return_value=self.provider()) as factory, patch(
+                "research.e009_live.run_chain", side_effect=RuntimeError("wiring probe only")) as runner:
+            with self.assertRaisesRegex(RuntimeError, "wiring probe only"):
+                pilot_next(self.directory, authorize=True)
+            self.assertEqual(factory.call_args.kwargs["attempt_seconds"], 240)
+            self.assertEqual(runner.call_args.kwargs["limits"]["request_seconds"], 1000)
+            self.assertEqual(runner.call_args.kwargs["limits"]["stage_seconds"], 3600)
+
+    def test_deadlines_must_be_explicit_finite_and_allow_retries(self):
+        variants = [{"attempt_seconds": 240}, {"request_seconds": 1000}, {"stage_seconds": 100},
+                    {"attempt_seconds": True}, {"stage_seconds": float("inf")}, {"request_seconds": -1},
+                    {"output_tokens": 32000}, {"responses": 999}]
+        for deadlines in variants:
+            with self.subTest(deadlines=deadlines), self.assertRaises(ValueError):
+                amendment_limits(self.plan["limits"], deadlines)
 
 
 if __name__ == "__main__":

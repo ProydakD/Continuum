@@ -1,6 +1,7 @@
 """Locked availability/pilot execution. Credentials are process memory only; never CLI arguments."""
 import argparse
 import json
+import math
 from pathlib import Path
 import random
 import sqlite3
@@ -13,6 +14,23 @@ from .e009_provider import HTTPSProvider, ProviderFailure
 from .e009_protocol import PROTOCOL_VERSION
 from .e009_raw import write_once
 from .e009_revision import sha
+
+DEADLINE_FIELDS = {"attempt_seconds", "request_seconds", "stage_seconds"}
+
+
+def amendment_limits(previous, deadlines=None):
+    deadlines = {} if deadlines is None else deadlines
+    if not isinstance(deadlines, dict) or set(deadlines) - DEADLINE_FIELDS:
+        raise ValueError("only explicit deadline fields can change")
+    limits = {**previous, "tool_calls": 24, **deadlines}
+    attempt, request, stage = (limits.get("attempt_seconds", 40), limits["request_seconds"], limits["stage_seconds"])
+    if any(type(value) not in (int, float) or not math.isfinite(value) or value <= 0
+           for value in (attempt, request, stage)):
+        raise ValueError("invalid execution deadline")
+    # Four attempts plus registered backoff/jitter, unless a longer Retry-After intervenes.
+    if request < 4 * attempt + 14.75 or stage < request:
+        raise ValueError("deadline hierarchy cannot accommodate bounded retries")
+    return limits
 
 
 def execution_sources():
@@ -81,10 +99,12 @@ def read_locked_plan(directory):
                 or amendment["parent_plan_sha256"] != expected):
             raise ValueError("amendment hash chain changed")
         execution = amendment["execution"]
+        expected_limits = amendment_limits(plan["limits"],
+            {key: value for key, value in execution["limits"].items() if key in DEADLINE_FIELDS})
         if (set(execution) != {"source_hashes", "image", "protocol_version", "limits",
                               "transport_directory", "transport_not_before"}
                 or execution["image"] != plan["image"]
-                or execution["limits"] != {**plan["limits"], "tool_calls": 24}
+                or execution["limits"] != expected_limits
                 or execution["protocol_version"] != 2
                 or execution["transport_directory"] != f"transport-amendment-{index:03}"
                 or type(amendment["start_assignment"]) is not int
@@ -108,7 +128,7 @@ def load_plan(directory):
     return directory, plan, expected
 
 
-def amend_plan(directory, reason):
+def amend_plan(directory, reason, *, deadlines=None):
     """Explicit append-only execution amendment; assignments and prior outcomes never change."""
     directory, plan, plan_hash = read_locked_plan(directory)
     if not reason.strip():
@@ -130,7 +150,7 @@ def amend_plan(directory, reason):
                                            for row in db.execute("SELECT record FROM attempts")])
     number = len(list((directory / "amendments").glob("*.json"))) + 1
     execution = {"source_hashes": execution_sources(), "image": plan["image"],
-                 "protocol_version": PROTOCOL_VERSION, "limits": {**plan["limits"], "tool_calls": 24},
+                 "protocol_version": PROTOCOL_VERSION, "limits": amendment_limits(plan["limits"], deadlines),
                  "transport_directory": f"transport-amendment-{number:03}", "transport_not_before": not_before}
     amendment = {"schema": "e009-pilot-amendment-v1", "parent_plan_sha256": plan_hash,
                  "parent_binding_sha256": plan["_execution_binding_sha256"], "reason": reason,
@@ -234,7 +254,8 @@ def pilot_next(directory, *, authorize=False):
     provider = HTTPSProvider(plan["base_url"], plan["primary_model_candidate"],
                              directory / plan.get("transport_directory", "transport"),
                              authorize=authorize, stop_path=directory / "STOP",
-                             protocol_version=plan.get("protocol_version", 1))
+                             protocol_version=plan.get("protocol_version", 1),
+                             attempt_seconds=plan["limits"].get("attempt_seconds", 40))
     episode = make_episode(assignment["world"], "e009-pilot-world-" + str(assignment["world"]))
     result = run_chain(directory / "runs" / assignment["id"], episode, assignment["condition"], assignment["track"],
                        provider, plan["image"], limits=plan["limits"], protocol_version=plan.get("protocol_version", 1))
@@ -250,6 +271,9 @@ if __name__ == "__main__":
     parser.add_argument("--directory", required=True)
     parser.add_argument("--image")
     parser.add_argument("--reason")
+    parser.add_argument("--attempt-seconds", type=float)
+    parser.add_argument("--request-seconds", type=float)
+    parser.add_argument("--stage-seconds", type=float)
     parser.add_argument("--authorize", action="store_true")
     parser.add_argument("--retry-failed-availability", action="store_true")
     args = parser.parse_args()
@@ -258,7 +282,8 @@ if __name__ == "__main__":
         result = create_plan(args.directory, args.image)
     elif args.mode == "amend":
         if not args.reason: parser.error("--reason required for amendment")
-        result = amend_plan(args.directory, args.reason)
+        deadlines = {key: getattr(args, key) for key in DEADLINE_FIELDS if getattr(args, key) is not None}
+        result = amend_plan(args.directory, args.reason, deadlines=deadlines)
     elif args.mode == "verify-model": result = verify_model(args.directory, authorize=args.authorize,
                                                           retry_failed=args.retry_failed_availability)
     else: result = pilot_next(args.directory, authorize=args.authorize)
