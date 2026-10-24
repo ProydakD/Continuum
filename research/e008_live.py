@@ -368,6 +368,9 @@ def resume_failure(study, job, result, provider, *, resumption=None):
     status = last_http_status(provider, 0, job["id"])
     if provider_failure_action(result.get("failure_type"), status) != "recover_next_position":
         raise SeriesStopped("non-transient provider failure; no new model context")
+    if resumption and resumption.get("amendment_id") == "E008-A008" and status == 502:
+        from . import e008_socket_resumption
+        return e008_socket_resumption.recover_failure(study, job, result, provider, resumption)
     if resumption and resumption.get("amendment_id") == "E008-A007" and status == 502:
         from . import e008_deadline_resumption
         return e008_deadline_resumption.recover_failure(study, job, result, provider, resumption)
@@ -405,7 +408,11 @@ def run(study, *, authorize_api=False, max_positions=None, amendment_path=None, 
             return {"terminal": True, "new_positions": 0, "new_network_requests": 0,
                     "research_complete": False}
         extension = None
-        if resumption and resumption.get("amendment_id") == "E008-A007":
+        if resumption and resumption.get("amendment_id") == "E008-A008":
+            from .e008_socket_resumption import prepare_admission, parent
+            prepare_admission(study, resumption)
+            extension = parent()
+        elif resumption and resumption.get("amendment_id") == "E008-A007":
             from .e008_deadline_resumption import prepare_admission
             prepare_admission(study, resumption)
             extension = resumption

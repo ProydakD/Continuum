@@ -304,7 +304,10 @@ def audit_transition(study, registration, amendment, timeline, *, resumption=Non
         if binding != expected:
             raise PermissionError("prospective position lacks its exact model/source admission binding")
     trace.verify()
-    if resumption and resumption.get("amendment_id") == "E008-A007":
+    if resumption and resumption.get("amendment_id") == "E008-A008":
+        from .e008_socket_resumption import audit_clock
+        audit_clock(study, resumption, timeline)
+    elif resumption and resumption.get("amendment_id") == "E008-A007":
         from .e008_deadline_resumption import audit_clock
         audit_clock(study, resumption, timeline)
     else:
