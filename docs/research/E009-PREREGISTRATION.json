@@ -1,8 +1,8 @@
 {
   "experiment": "E-009",
-  "revision": "draft-006",
+  "revision": "draft-007",
   "preregistered": false,
-  "status": "pilot protocol amendment001 frozen; ordered batches and explicit schemas verified; live calibration resumed from first unfinished assignment; no final freeze",
+  "status": "measured response latency exceeded original40s cap; amendment002 frozen, pilot resumed at005 with bounded240/1000/3600s deadlines; no final freeze",
   "parent_commit": "21513287458da664e2b84ff06f42c360b2d01501",
   "primary_model_candidate": "gpt-6.1-sol",
   "primary_model_verified": true,
@@ -99,9 +99,15 @@
   "api_requests_at_availability_check": 1,
   "api_accounting_source": "pilot-001/availability plus pilot-001/transport attempt ledgers; query for current counts",
   "pilot_protocol_version": 2,
-  "pilot_amendment_sha256": "56507e32ea405796d7a33e4618276cf5eb7735d84f5049604e1b2eb03f4efc41",
-  "pilot_amendment_scope": "preserve original plan/first failed outcome; exact JSON query fields, sequential <=16 tool calls/batch and <=24/stage, credential-safe parsed response retention; no model/world/order changes",
-  "pilot_completed_assignments_before_amendment": 1,
-  "pilot_resume_assignment": "pilot-002",
-  "calibration_version_policy": "report protocol versions separately, retain failures; do not infer old outcome success after implementation repair"
+  "pilot_amendment_sha256": "3e9379b82b74acaea7add28ed227822e6ca8f8dfce7e745b4039f50ea0a78508",
+  "pilot_amendment_scope": "preserve all prior outcomes and assignments; explicit240s attempt/1000s request/3600s stage deadlines, all other budgets and protocol2 unchanged",
+  "pilot_completed_assignments_before_amendment": 4,
+  "pilot_resume_assignment": "pilot-005",
+  "calibration_version_policy": "report protocol versions separately, retain failures; do not infer old outcome success after implementation repair",
+  "pilot_deadlines_seconds": {
+    "attempt": 240,
+    "request": 1000,
+    "stage": 3600
+  },
+  "latency_evidence": "Two separate new responses to exact public failed-request inputs completed in46.517s and44.825s; not replacement outcomes or a latency quantile estimate"
 }
