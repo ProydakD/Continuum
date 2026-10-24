@@ -139,6 +139,33 @@ class BrokerTests(unittest.TestCase):
             value = broker.transport.tool("get_object", sha256=index[name])
             self.assertTrue(base64.b64decode(value["content_base64"], validate=True))
 
+    def test_exponent_overflow_is_not_a_json_number(self):
+        with self.assertRaises(ValueError):
+            parse_frame(b'{"x":1e999}\n')
+
+    def test_condition_cannot_change_on_existing_task(self):
+        first = self.broker(condition="F1")
+        first.call("read_memory", {})
+        first.publish({"format": "F", "payload": "x"}, {})
+        with self.assertRaises(ValueError):
+            self.broker("B", condition="F0", task_id=first.task["id"])
+
+    def test_e_is_readonly_after_complete_chain(self):
+        task_id = None
+        for stage in "ABCD":
+            broker = self.broker(stage, task_id=task_id)
+            broker.call("read_memory", {})
+            broker.publish({"format": "F", "payload": stage}, {})
+            task_id = broker.task["id"]
+        last = self.broker("E", task_id=task_id)
+        self.assertEqual(last.call("read_memory", {})["memory"]["payload"], "D")
+        with self.assertRaises(PermissionError):
+            last.publish({"format": "F", "payload": "E"}, {})
+
+    def test_seed_metadata_counts_against_read_limit(self):
+        with self.assertRaises(ValueError):
+            self.broker(seed={"format": "F", "payload": "x" * 500}, budget=600)
+
 
 if __name__ == "__main__":
     unittest.main()

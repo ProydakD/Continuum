@@ -98,6 +98,9 @@ Pilot-кандидат: 12 отдельных training/calibration миров, F
 не только payload; одинаковые вывод/инструменты для факторных условий.
 FULL-JOURNAL учитывается с фактическим полным размером; его преимущество
 информационного доступа раскрывается, не выдаётся за равный объём памяти.
+Инфраструктурный broker считает полный compact JSON worker reply с result,
+origin/stage/sha256/trust и LF; binary backend MCP отдельно. Будущий Responses
+tool-output wrapper и полный API input учитываются отдельно, а не как payload.
 Учёт: input/output tokens, unknown usage, read/write bytes, MCP envelope,
 версии, V1 calls/CPU/time, отказы, retries, T2 development, N=1/10/100/1000.
 
@@ -133,3 +136,7 @@ TLS проверяется; редиректы с Authorization не выпол�
 
 Возобновление: сначала Continuum bootstrap/get/claim; затем первый незавершённый
 gate из E009 checkpoint. Не перезапускать завершённые E008/model outcomes.
+
+Изолированный deterministic handoff, boundary controls и настоящий post-commit
+Docker kill проверены в E009-SANDBOX-HANDOFF.md. Следующий gate — model-capable
+controller/runtime и raw replay; это не разрешение пропустить остальные gates.

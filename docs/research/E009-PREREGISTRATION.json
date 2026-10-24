@@ -2,7 +2,7 @@
   "experiment": "E-009",
   "revision": "draft-002",
   "preregistered": false,
-  "status": "offline full-chain kernel; no model outcomes; live isolation still pending",
+  "status": "offline full-chain and Docker/MCP handoff gates; no model outcomes; model controller still pending",
   "parent_commit": "21513287458da664e2b84ff06f42c360b2d01501",
   "primary_model_candidate": "gpt-6.1-sol",
   "primary_model_verified": false,

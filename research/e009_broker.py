@@ -3,6 +3,7 @@ import base64
 from copy import deepcopy
 import hashlib
 import json
+import math
 from pathlib import Path
 import queue
 import subprocess
@@ -34,7 +35,13 @@ def parse_frame(raw):
         return result
     def constant(_):
         raise ValueError("nonfinite JSON number")
-    return json.loads(raw.decode("utf-8"), object_pairs_hook=pairs, parse_constant=constant)
+    def number(value):
+        parsed = float(value)
+        if not math.isfinite(parsed):
+            raise ValueError("nonfinite JSON number")
+        return parsed
+    return json.loads(raw.decode("utf-8"), object_pairs_hook=pairs,
+                      parse_constant=constant, parse_float=number)
 
 
 def read_envelope(memory, stage, digest, origin):
@@ -165,6 +172,8 @@ class MemoryBroker:
         previous = chr(ord(stage) - 1) if stage != "A" else None
         if previous and index.get("stage") != previous:
             raise ValueError("missing, repeated or out-of-order checkpoint")
+        if index and index.get("condition") != condition:
+            raise ValueError("condition differs from existing assignment")
         self.index = index
         if condition == "C0":
             self.previous = read_envelope(None, None, None, None)
@@ -246,11 +255,11 @@ class MemoryBroker:
         private_digest, _ = self.put(private)
         task = self.transport.tool("claim_task", task_id=self.task["id"],
                                    expected_revision=self.task["revision"], lease_seconds=120)
-        index = {"stage": self.stage, "memory_sha256": digest, "measurement_sha256": private_digest,
+        index = {"stage": self.stage, "condition": self.condition,
+                 "memory_sha256": digest, "measurement_sha256": private_digest,
                  "parent_memory_sha256": self.index.get("memory_sha256")}
         self.task = self.transport.tool("checkpoint_task", task_id=task["id"],
             expected_revision=task["revision"], release=True,
             result=frame(index).decode().strip(), next_step=chr(ord(self.stage) + 1))
         self.index, self.committed = index, True
         return {"saved": True, "stage": self.stage, "sha256": digest, "read_bytes": size}
-

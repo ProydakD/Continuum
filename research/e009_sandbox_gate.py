@@ -1,7 +1,6 @@
 """Real Docker/MCP boundary and crash-recovery gate; never a model BRI result."""
 import argparse
 import base64
-import hashlib
 import json
 from pathlib import Path
 import queue
@@ -75,7 +74,7 @@ def pipe_reader(pipe, inbox):
             return
 
 
-def run_stage(directory, image, db, registry, stage, condition, task_id):
+def run_stage(directory, image, db, registry: EvidenceRegistry, stage, condition, task_id):
     directory.mkdir()
     actor = condition + ":" + stage + ":" + uuid.uuid4().hex
     worker = directory / "worker"
@@ -85,7 +84,6 @@ def run_stage(directory, image, db, registry, stage, condition, task_id):
     argv = worker_command(image, name, worker, "worker.py")
     transport = BinaryMCP(db, actor, directory.parent.name, directory / "mcp")
     process = None
-    broker = None
     record = {"stage": stage, "condition": condition, "actor": actor, "command": argv,
               "initial_worker_hashes": initial, "mcp_pid": transport.process.pid,
               "crash_requested": stage == "C", "api_calls": 0}
