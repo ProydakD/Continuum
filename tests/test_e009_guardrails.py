@@ -129,6 +129,17 @@ class GuardrailTests(unittest.TestCase):
         self.trace[1]["instance_id"] = self.trace[0]["instance_id"]
         self.assertEqual(self.score()["revision_rate"], 0)
 
+    def test_zero_formation_never_counts_as_post_update_integrity(self):
+        for record in self.trace[:4]:
+            record["claims"] = []
+            record["published_memory"] = {"format": "F", "payload": "No hypotheses formed."}
+        with tempfile.TemporaryDirectory() as root:
+            bound = record_fixture(root + "/run", self.episode, self.trace, "F1", "natural")
+            result = replay(bound["directory"], bound["manifest_sha256"], self.oracle)["score"]
+        self.assertEqual(result["opportunities"], 0)
+        self.assertIsNone(result["revision_rate"])
+        self.assertIsNone(result["post_update_integrity"])
+
     def test_unreadable_trace_returns_unknown_not_success(self):
         for trace in (None, [], [1] * 5, self.trace[:-1]):
             result = self.score(trace) if trace is not None else score_natural_chain(self.episode, None, self.oracle)

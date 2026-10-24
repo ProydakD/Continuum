@@ -308,7 +308,7 @@ def score_natural_chain(episode, trace, oracle, condition="S1"):
     return {**base, "opportunities": total if known else None, "known_opportunities": total,
             "successful_revisions": successes, "revision_rate": successes / total if known and total else None,
             "post_update_integrity": bool(all(technical) and correct_answer and answer_basis
-                                          and all(s["history_valid"] and s["evidence_valid"] for s in snapshots[1:])),
+                                          and all(s["history_valid"] and s["evidence_valid"] for s in snapshots[1:])) if total else None,
             "observed_known_revision_rate": successes / total if total else None, "transitions": transitions,
             "invalid_measurements": sum(not r["valid_measurement"] for r in transitions),
             "preservation": preservation_summary(transitions, [technical[i - 1] and technical[i] for i in (1, 2, 3)])}
