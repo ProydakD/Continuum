@@ -155,6 +155,9 @@ class EpisodeTests(unittest.TestCase):
         old[1]["bases"] = [["c:H"]]
         old[2]["bases"] = [["c:D1"]]
         new = deepcopy(self.trace[1]["claims"])
+        # Changing the observed predecessor changes its exact historical hash.
+        for claim in new:
+            claim["previous_sha256"] = sha(next(c for c in old if c["id"] == claim["id"]))
         result = natural_opportunities(old, new, active_evidence(self.episode, "A"), active_evidence(self.episode, "B"), self.oracle)
         self.assertGreater(result["opportunities"], 0)
         self.assertEqual(result["revision_rate"], 1)

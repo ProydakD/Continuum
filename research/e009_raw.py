@@ -86,7 +86,7 @@ def replay(directory, expected_manifest_sha256, oracle):
         if stage != "E":
             memory = deepcopy(event["record"].get("published_memory"))
             journal.append({"stage": stage, "claims": deepcopy(event["record"].get("claims", []))})
-    result = (score_natural_chain(episode, trace, oracle) if binding["track"] == "natural"
+    result = (score_natural_chain(episode, trace, oracle, binding["condition"]) if binding["track"] == "natural"
               else score_chain(episode, trace, oracle, binding["condition"]))
     # Reopen every file after evaluation. No SQLite reader is used against raw artifacts.
     if any(file_hash(directory / name) != digest for name, digest in manifest.items()):

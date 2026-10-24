@@ -286,7 +286,7 @@ def replay(directory, expected_manifest, oracle):
         raise ValueError("container reused between stages")
     if frame(read("terminal.json")) != frame([read(f"{s}/terminal.json") for s in "ABCDE"]):
         raise ValueError("terminal aggregate differs")
-    score = (score_natural_chain(episode, trace, oracle) if track == "natural"
+    score = (score_natural_chain(episode, trace, oracle, condition) if track == "natural"
              else score_chain(episode, trace, oracle, condition))
     if any(digest(run / name) != expected for name, expected in manifest.items()):
         raise ValueError("replay mutated raw files")
