@@ -1064,3 +1064,48 @@ execution commit `4f8661fe6497ecc2fd9befe9c38a8b494a7babb3`, runtime sources,
 instructions, inputs, gold и analyzer не менялись. Последующая документационная
 ревизия не является refreeze или новой experimental identity. Все прежние
 negative results сохранены; полный E009 остаётся незавершённым.
+
+### Промежуточный результат 2026-10-25: строгий контрольный gate провален
+
+Срез `measurement-015/monitor-009/ANALYSIS-001.json` содержит **572/1224**
+terminal outcomes: 571 structurally valid, прежний один `provider_failure`,
+652 pending. Из 177 завершённых constructed controls **176 meaning-exact**,
+177 carrier-exact и 177 component-exact. Это уже наблюдаемый отказ строгого
+**384/384 all-exact gate**, а не только ожидание остальных результатов.
+Оставшиеся назначения не могут устранить зафиксированное несовпадение.
+
+`validate-0564`, replica 2 случая `control-537-missed_dependent-S`, неверно
+воспроизвёл **`K.previous_sha256`**. В frozen input, исходящем public-only request
+и gold находится одна и та же 64-символьная строка. Raw message и сохранённый
+output содержат одинаковую 66-символьную строку: в выравнивании добавлено `1c`
+на zero-based offset 45. Это прямая ошибка буквального копирования, а не
+расхождение интерпретаций естественного языка или несовпадение gold с входом.
+Причина появления лишних символов внутри провайдера не установлена.
+
+Указатель evidence `/current_claims/6` ведёт к нужной записи K, поэтому carrier
+coverage остаётся true; coverage не доказывает правильность скопированного
+значения. Остальные поля этого ответа совпали. Downstream components также
+совпали с gold, включая уже ожидаемые false для dependent revision и traceability;
+это **не отменяет meaning failure** и не означает успешную dependency repair.
+Первая реплика того же входа, `validate-0253`, сохранила исходную строку и прошла
+все три проверки. Обе реплики оставлены, выбора лучшего ответа нет.
+
+Независимая прямая проверка входа, raw JSON message, parsed output, gold и первой
+реплики записана в `monitor-009/CONTROL-FAILURE-AUDIT.json`. Raw response
+`run-001/transport/responses/000564.json` имеет SHA256
+`6ef16e58b1f6ee4d421ad2c7182242486e45260d0b0cd3f927d5fcea2b22ab61`.
+Исходный статус `structurally_valid` сохранён: структурная корректность и точность
+значения — разные проверки. Ответ не исправлялся и не запрашивался повторно.
+
+Raw audit всех 572 terminal requests подтвердил исходящий контракт и reported
+usage: **1 414 396 input / 1 812 911 output tokens**, 572 attempts, unknown usage 0;
+цена неизвестна. Новые реальные пары согласны в 97/97 случаях, старые reused —
+в 17/18; это agreement, не semantic correctness реальных текстов.
+
+Runner продолжает оставшиеся назначения: прежний stop rule касается двух
+последовательных provider failures, а не этой структурно допустимой field error.
+PLAN, runtime, inputs, gold, instructions и analyzer неизменны; обновлён только
+отчёт. До окончания прогона и полного разбора ошибок measurement revision не
+меняется. Провал конечного контрольного gate не доказывает универсальную
+неспособность модели и не завершает E009; public BRI и heldout readiness по-прежнему
+не валидированы.
