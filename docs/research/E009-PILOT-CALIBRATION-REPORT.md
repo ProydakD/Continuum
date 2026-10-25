@@ -1139,3 +1139,22 @@ unknown usage 0, стоимость неизвестна. Подробности
 и `RAW-REQUEST-USAGE-AUDIT.json`. Изменился только внешний forensic script, не frozen
 analyzer, adapter, runner, inputs или правила оценки. Исходы не исправлялись и не
 повторялись; полный прогон и E009 ещё не завершены.
+
+Дополнение **2026-10-26**: в `validate-0776`, replica 1 view
+`bb2de55995a8321713c06d79`, наблюдается третий такой отказ. При HTTP 200/completed
+снова получен `image_generation_call` со статусом `failed` и только полями
+`id/type/status`, без `result` и изображения. Исходящий запрос не содержит tools;
+отказ `unregistered output item type` воспроизведён. Raw response SHA256:
+`a89e824325f54bec494413ab7f7a5bc5f2fb9d630526f0821d701b1f8121e2c3`.
+Failed usage 1739 input / 1295 output tokens включено; результат не исправлялся
+и не повторялся. `validate-0777` structurally valid, остановка после двух
+последовательных provider failures не сработала.
+
+Срез `monitor-012/ANALYSIS-001.json`: **780/1224** terminal, 777 structurally valid,
+три provider failures, 444 pending; controls 240/241 meaning-exact и 241/241
+carrier/component-exact. Прежний control failure `validate-0564` и FAILED gate
+сохранены. Read-only audit всех 780 запросов завершился exit 0: reported usage
+**1 934 119 input / 2 469 006 output**, unknown usage 0; стоимость неизвестна.
+Forensics — `monitor-012/PROVIDER-FAILURE-AUDIT.json`. Новых изменений adapter,
+runner, analyzer, gold или runtime не было. Повторяемость формы отклонения не
+устанавливает его внутреннюю причину или реальное исполнение tools у провайдера.
