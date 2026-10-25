@@ -263,3 +263,35 @@ silently refreeze`. Завершённый пилот не перепривяз�
 старых source hashes и ровно одного нового файла. Будущим запускам потребуется
 отдельный явный execution binding; текущая транзакция проверяет offline-анализ,
 а не совместимость нового checkout с исполнением старого pilot plan.
+
+## 10. Проспективная калибровка независимой реконструкции, версия 1
+
+В `research/e009_adjudication.py` зафиксирован контракт public-only reconstruction.
+Модель получает только инструкцию измерителя и публичные документы с сохранёнными
+payload, stage и provenance metadata; private sidecar, hidden world, scores и
+инженерный casebook не передаются. Каждое поле получает known/unknown/conflicting,
+ссылки на точные цитаты либо JSON pointers; validator вычисляет UTF-8 offsets.
+Существование цитаты не доказывает entailment: `semantic_verified=false` даже при
+структурно корректном результате. Unknown и конфликт не подставляются в полные claims.
+
+До model runs заданы 16 synthetic controls: S, JSON внутри F, проза, shared fields,
+отсутствующий origin, изменённые proposition/bases/status/previous hash, конфликт,
+обновление истории, prompt injection, нечитаемая память, ошибочная длина массива,
+явное отсутствие текущих claims и JSON после обычного не-JSON псевдокода.
+Дополнительно — первые два packet SHA в каждом слое S, F без journal, FULL из
+предыдущего public manifest, без выбора по private score или исходу.
+Каждый из 22 входов получает два независимых, не связанных историей API-контекста:
+44 запроса, serial concurrency=1, gpt-6.1-sol, максимум 16000 output tokens,
+240 s на transport attempt, 1000 s на logical request, не более 4 транспортных
+попыток с прежним backoff/Retry-After. Модель не получает feedback или repair turn.
+Невалидные ответы не заменяются успешными; сетевые ошибки учитываются отдельно.
+
+Предварительный gate для **расширенной калибровки**, не final validity: все 32
+синтетических ответа должны иметь корректную структуру/цитаты и точные ожидаемые
+значения, unknown/conflict/coverage; все 12 реальных — корректную структуру/цитаты.
+Любой сбой оставляет gate закрытым. Межконтекстное согласие на реальных данных —
+описательная метрика, не доказательство истины. Все исходы сохраняются независимо
+от gate; изменение контракта после результатов требует новой версии/регистрации.
+20 targeted tests (9 новых и 11 observation regression) прошли до запуска.
+Run plan, input/gold/contract/source hashes и результаты находятся во внешнем
+`measurement-002`; gold существует только для synthetic controls и недоступен модели.
