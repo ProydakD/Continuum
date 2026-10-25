@@ -785,3 +785,74 @@ readiness остаются false.
 Новый контракт должен сохранить все старые результаты и неизвестные компоненты;
 исправление формата цитат само по себе не означает завершения измерительной задачи,
 power/N, T2-линий или всей научной программы E-009.
+
+## 19. Составные witnesses и первая трасса публичных переходов
+
+Добавлен отдельный `research/e009_public_witnesses.py`, schema
+`e009-public-witnesses-v1`. `compose_witnesses` проверяет объединение точных
+диапазонов цитат **в одном привязанном документе**. Обязательства явно задают
+claim ID, поле, время, identity/assertion/scope и необходимые qualification/lineage.
+Координаты — Unicode codepoints, полуоткрытые интервалы, не UTF-8 bytes. Пробел,
+табуляция, CR и LF могут разделять цитаты; другие символы не нормализуются.
+Повторяющаяся цитата требует явного offset. Совпадающие слова из другого места,
+документа, claim или времени не заполняют пропуски. Недостающее `not`, qualification
+или required role не превращается в success.
+
+Это **условная проверка покрытия заданных обязательств**, не распознавание их
+смысла и не entailment. Ошибочные или недостаточные host annotations остаются
+возможными. `obligation_semantics_verified`, `causal_truth_verified` и
+`registered_bri_rescored` равны false. Прежние evaluator, PLAN и scores неизменны;
+добавление нового execution source не даёт права запускать старый frozen analyzer
+под новым набором исходников или ослаблять его binding guard.
+
+Post-hoc диагностика выполнена на **всех 252** запечатанных outputs. Для **216/216
+controlled** цитаты совместно покрывают исходные required declarations. Единственное
+отличие от старой проверки — `scope-043`; зарегистрированные **215/216 и gate=false**
+сохранены. Все **36 original controls остаются unscored**, без выдуманного gold;
+их новая coverage-state — unknown из-за отсутствующих semantic obligations.
+Это не новый проспективный PASS и не доказательство natural validity.
+
+На всех 108 controlled cases разбиение witness по словам, перестановка и повтор
+цитат сохранили coverage; удаление первого содержательного слова оставило пробел.
+Повторно проверены **216 прежних мутантов**: 108 неправильных значений с реальной
+достаточной цитатой всё ещё covered, но value-incorrect; 108 правильных значений с
+нерелевантной цитатой uncovered. Так явно отделено покрытие текста от правильности
+значения. В первом external diagnostic script была опечатка в имени второй группы:
+одна assertion проверяла пустую выборку. Скрипт сохранён, имя исправлено, размеры
+обеих групп явно проверены как 108 и анализ выполнен снова; все ранее записанные
+результаты совпали, перезаписи score не было.
+
+`trace_public_statuses` сохраняет before/after observations и неизвестные BRI
+components. Интеграция охватывает **все 18 исходных входов**, а не выбранный успех:
+четыре FULL journals содержат **17 source documents и 13 соседних переходов**;
+у остальных 14 нет before state. Все 36 final model observations сохранены.
+Промежуточные 17 статусов размечены host после просмотра источников, с точными
+цитатами/offsets и hashes полного документа. Это не blind independent gold,
+не новые model outputs и не восстановление private oracle. Финальные аннотации
+четырёх FULL согласуются с восемью соответствующими model observations.
+
+Наблюдаемые current-to-current переходы: undetermined→supported **2**,
+supported→undetermined **1**, undetermined→refuted **5**, refuted→undetermined **2**.
+Ещё **3** перехода идут от supported исторического prior-investigator к текущему
+undetermined. Они **не считаются отказом агента от собственного прежнего убеждения**.
+Все 13 — описания смены статуса, не 13 успешных root revisions. Root identity,
+revision opportunity, proposition identity, допустимые основания/causal expected
+status, dependent/independent claims, traceability и prediction ещё требуют
+проверки. Шесть BRI components сохраняются unknown, границы по всем 18 назначенным
+входам **[0,1]**; это не оценка эффективности и не 18 независимых научных эпизодов.
+
+Пройдены **106 targeted tests**: 19 новых и 87 регрессионных. Проверены составные,
+переставленные, перекрывающиеся цитаты, отрицание, wrong binding/time/document,
+неоднозначные вхождения, Unicode, отсутствующий before и историческая attribution.
+IDE сообщил две weak warnings (лишние скобки, helper мог бы быть static), без
+ошибок; build success сопровождается limited diagnostics и не заменяет тесты.
+Все 1263 scope raw hashes совпали до/после анализа. Новых API-запросов **0**.
+
+Следующий измерительный шаг — исполняемая source-bound таблица revision opportunities
+и BRI component assessments на существующих development episodes: отдельно публичные
+утверждения, отдельно provenance допустимого evidence и ожидаемый causal status.
+Нельзя заполнять пробелы наблюдения private gold или объявлять status change корректным
+пересмотром. Нужны положительные и отрицательные вмешательства для каждого компонента,
+сохранение всех назначенных эпизодов и uncertainty, затем проспективная проверка под
+новой идентичностью. Public BRI, variance/power/N, две T2-линии, финальная
+пререгистрация, отдельно разрешённый heldout и полный научный отчёт не завершены.
