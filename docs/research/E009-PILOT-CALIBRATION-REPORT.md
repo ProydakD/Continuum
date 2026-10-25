@@ -295,3 +295,31 @@ payload, stage и provenance metadata; private sidecar, hidden world, scores и
 20 targeted tests (9 новых и 11 observation regression) прошли до запуска.
 Run plan, input/gold/contract/source hashes и результаты находятся во внешнем
 `measurement-002`; gold существует только для synthetic controls и недоступен модели.
+
+### Промежуточное наблюдение, серия ещё выполняется
+
+Зафиксирован plan SHA `8e70f25946a9e7c9440b9c3fd0de2e8fe8731281721256ca9fc188f16501ece5`.
+Реальный запрос подтвердил доступность declared model gpt-6.1-sol; credential
+передан через getpass только в память процесса. Нормализация входа без потери
+payload/metadata проверена round-trip для всех 22 входов.
+
+В неизменяемом `CALIBRATION-PROGRESS-003.json` получены первые **20/44** исходов:
+16 synthetic (15 exact/structurally valid, 1 invalid) и 4 реальных public packets
+(4 structurally valid, семантическая истинность не установлена). 20 transport
+attempts, reported input=27937, output=18372, unknown usage=0, стоимость неизвестна.
+Повторные контексты ещё не завершены; парное согласие не оценено.
+
+`judge-010` сохранил обе конфликтующие версии status и все ожидаемые значения,
+но выдал `coverage=complete` вместе с непустым `unresolved`. Валидатор v1
+отклонил ответ. В отдельной диагностической копии изменение только `unresolved`
+на пустой список делает schema/witness validation успешной; ни один model output
+не изменён и исходный invalid не пересчитан в успех. Это наблюдаемое противоречие
+coverage metadata, а не потеря альтернатив status. Диагноз и SHA сохранены в
+`CONTROL-10-DIAGNOSIS.json`.
+
+Предварительный gate v1 уже закрыт из-за этого исхода. Серия продолжается по
+исходному плану без feedback, repair turns и выбора успешных повторов. До её
+завершения нельзя менять связанные execution sources или запускать исправленную
+версию под тем же binding. Следующий шаг — дождаться именно действующего процесса,
+сохранить все 44 исхода, затем разобрать отрицательные результаты и при необходимости
+зарегистрировать следующую версию контракта. Исследование не завершено.
