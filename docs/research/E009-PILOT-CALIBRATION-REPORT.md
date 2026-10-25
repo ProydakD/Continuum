@@ -180,3 +180,75 @@ Controlled остаётся группой с гарантированными �
 После этого остаются две независимо изолированные T2-линии, финальные
 preregistration/power/N/resources, held-out, robustness, независимый анализ
 и полный научный отчёт. Held-out здесь не открывался и не запускался.
+
+## 9. Public-only observation: первая проверка измерения (2026-10-25)
+
+Добавлен отдельный read-only `research/e009_public_observation.py`:
+`observe_public_memory` получает **только фактический ответ `read_memory`**;
+`compare_public_measurement` сравнивает private claims лишь после извлечения.
+Зарегистрированные scorer, broker, protocol и исходы пилота не изменены.
+Модуль извлекает явные JSON-объекты, сохраняет JSON pointers, UTF-8 byte offsets,
+SHA полного public view и каждой исторической записи. Он не интерпретирует всю
+прозу: даже `equal_explicit_objects` оставляет `public_state_verified=false`.
+Отсутствие извлечённого объекта не означает отсутствие знания в тексте.
+
+Повторно проверены SHA всех **16167 raw files**, 120 receipts и 480 слотов A–D.
+Для всех **438 доступных публикаций** найден реальный successor read; 42 слота
+не имеют публикации. Текущие public envelopes совпадают с сохранёнными trace.
+Экспортированы 438 sidecar-free public packets, отдельно от assignment/private
+mapping. У FULL сохранён весь доступный journal: seed есть в controlled,
+но отсутствует в natural; прошлые версии не подставляются вместо текущих.
+Actor metadata остаётся публичной: экспорт не объявляется анонимным или слепым.
+Проверено обратное восстановление 2387 извлечённых объектов по их witnesses.
+
+| Представление | Равные явные объекты | Различающиеся | Синтаксическое воздержание | Нет явных объектов |
+|---|---:|---:|---:|---:|
+| S |179|6|0|0|
+| F, включая FULL |147|12|36|58|
+
+Все 6 прежних S-расхождений воспроизведены. В F более простой первоначальный
+сканер находил 161 равный набор; консервативное прекращение разбора после
+JSON-подобного malformed root переводит 14 из них в воздержание. Например,
+обычная запись `do=[[X,1]]` может остановить этот сканер до последующих корректных
+объектов. Это **ограничение наблюдателя, не дефект памяти и не ошибка модели**.
+Таблица не является оценкой семантической точности, полноты или efficacy.
+
+Из 12 F-различий **10 объясняются явно заданными общими полями в прозе**:
+032 A–D, 055 A–D, 120 A/C. В отдельном case-scoped скрипте 80 объектов
+восстановлены из публичных rows и shared assignments; все 80 совпали с private
+после восстановления. 20 mutation controls подтвердили, что изменение публичной
+version меняет результат, а удалённый origin не подставляется из private.
+Это инженерная демонстрация на выбранных случаях, выполненная после просмотра
+диагностики, **не независимая слепая adjudication и не универсальный parser**.
+
+Оставшиеся две F-пары различаются самими census arrays:
+
+- 020 C/J: public length=64, nonzero 10:2,12:1,13:1,50:2,54:2;
+  private length=62, nonzero только 10:2,12:1,13:1. Публичный массив согласован
+  с sparse EA в том же тексте; private нельзя считать эталоном публичного знания.
+- 035 D/C1: public length=65, private length=67, различаются также позиции
+  ненулевых элементов. Оба массива не имеют требуемой длины 64; ни один нельзя
+  молча исправлять по другому. Зарегистрированные оценки оставлены неизменными.
+
+43 targeted unit tests прошли: 11 новых observation tests и 32 guardrail/contract
+regressions. Контроли охватывают proposition, bases, status, provenance, omission,
+private-counterfactual independence, противоречащую прозу, duplicate IDs/JSON keys,
+nonfinite values, UTF-8 offsets и journal order. Первый прогон выявил ошибку
+извлечения вложенного фрагмента malformed root; ошибка исправлена, exit 1 сохранён.
+Первый corpus audit ошибочно требовал seed у natural FULL; это предположение
+исправлено по broker и реальным reads, повторный прогон завершился exit 0.
+Ни одна из этих ошибок не меняла исторические данные. Model/API calls=0.
+
+Артефакты: `C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-001`.
+Основные записи: `audit-002/PUBLIC-OBSERVATION-AUDIT.json`,
+`audit-002/PACKET-MANIFEST.json`, `audit-002/public-packets/`,
+`PUBLIC-RECONSTRUCTION-CASEBOOK.json`, scripts и command JSON.
+
+Следующий обязательный результат — реализовать и запустить независимую проверку
+public-only semantic reconstruction на этих calibration packets, с закрытым
+private mapping, field-level witnesses, противоречиями и явным unknown coverage.
+Нужны заранее заданные mutation controls и измеренная устойчивость к изменению
+private labels; совпадение с private само по себе не является критерием истины.
+До проверенного контракта и необходимой калибровки будущей версии final freeze,
+T2/final power и held-out остаются неготовыми. Семантически проверенных полных
+публичных состояний этим наблюдателем: **0**, не 438.
