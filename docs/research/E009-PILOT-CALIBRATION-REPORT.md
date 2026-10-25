@@ -1011,3 +1011,56 @@ meaning-exact и carrier-covered контрольных ответов с сов
 проверка спорных реальных случаев и только затем следующий measurement revision.
 Старые failed gates и scores не пересматриваются. На момент фиксации этого раздела
 новые model outcomes ещё не получены; полное исследование E009 не завершено.
+
+### Промежуточный результат 2026-10-25: незапрошенный image output
+
+Срез `measurement-015/monitor-006/ANALYSIS-001.json` содержит **304/1224**
+terminal outcomes: 303 structurally valid, один `provider_failure`, 920 pending.
+Все 97 уже завершённых constructed controls совпали по meaning, carriers и
+components; это **не 384/384 gate и не общая semantic validation**. Из 22 новых
+полных пар real views все согласуются, но agreement не устанавливает correctness.
+Старые 36 outputs и прежнее расхождение одной из 18 пар сохранены отдельно.
+
+`validate-0298`, replica 2 публичного view `10ebc9bd9fe9c63ce5fb9f06`
+(`pilot-047`, stage C), получил HTTP 200 и response status `completed`, но output
+включал **`image_generation_call`**, reasoning и message. Исходящий запрос точно
+совпадает с frozen public-only contract и **не содержит поля tools**. Дополнительный
+объект содержит PNG 1374×1145, 1 880 813 decoded bytes, `revised_prompt="dummy"`.
+Получение этих байтов подтверждено; причина появления объекта и реальное
+внутреннее исполнение у провайдера независимо не установлены. Изображение не
+рендерилось и не использовалось как наблюдение или дополнительный вход модели.
+
+Неизменный `e009_protocol.output_items` воспроизводимо выдаёт
+`unregistered output item type`; `HTTPSProvider.respond` сохраняет raw response
+до отклонения и записывает `invalid_response`. Это ожидаемый отказ строгого
+адаптера, а не основание разрешить новый output type. Наличие обычного JSON message
+рядом с изображением **не использовано для спасения результата**. Назначение
+остаётся failed в полном знаменателе; повторный запрос и изменение ответа не
+выполнялись. Следующий `validate-0299` завершился успешно; заранее установленное
+правило остановки после двух последовательных provider failures не сработало.
+
+Проверены hashes request/response, SQLite attempt record и воспроизводимость отказа.
+Raw body: `run-001/transport/responses/000298.json`, SHA256
+`fa1bd3e0bbc760a50dd35deb1c953297b89116b5c5dcd0f921510decf17af78b`.
+Подробности — `monitor-006/PROVIDER-FAILURE-AUDIT.json` и
+`monitor-006/RAW-REQUEST-USAGE-AUDIT.json` внутри `measurement-015`.
+Первый сохраняет failure и PNG hash без копирования изображения в отчёт; второй
+проверяет **все 304 terminal requests**, включая отклонённый ответ, непосредственно
+по raw responses и attempt ledger. Reported usage: **751 415 input / 969 381 output**
+tokens, 304 attempts, unknown usage 0; расход failed request включён, цена неизвестна.
+
+Frozen analyzer сохраняет model-count `gpt-6.1-sol:303, None:1`, поскольку adapter
+не вернул failed response вызывающему коду. Отдельный raw audit видит provider-reported
+model `gpt-6.1-sol` во всех 304 телах; это разные уровни наблюдения, не исправление
+старого результата и не независимое подтверждение личности underlying model.
+Ненулевая tools-token attribution ранее была только metadata caveat; теперь дополнительно
+наблюдается конкретное отклонение response envelope. Ни один из этих фактов не
+доказывает причину или конфигурацию сервера. Выводы об отсутствии server-side tools
+недопустимы; нужен отдельный последующий protocol/provider diagnostic.
+
+Это обновление только отчёта. Рабочий процесс не перезапускался, frozen PLAN
+`88c5f609e48c3ba9810841a380433452f14a18abc1fdce2e3c80863d372f9f3f`, исходный
+execution commit `4f8661fe6497ecc2fd9befe9c38a8b494a7babb3`, runtime sources,
+instructions, inputs, gold и analyzer не менялись. Последующая документационная
+ревизия не является refreeze или новой experimental identity. Все прежние
+negative results сохранены; полный E009 остаётся незавершённым.
