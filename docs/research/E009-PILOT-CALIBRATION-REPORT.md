@@ -374,3 +374,14 @@ Gate для расширенной калибровки остаётся стр�
 final validity и не разрешение held-out. Параметры транспорта/модели неизменны,
 новый plan/source binding отдельный. Никаких model feedback/repair turns; сохраняются
 все исходы. Артефакты v1 completion — `measurement-003`, новый запуск — `measurement-004`.
+
+V2 реально запущена с отдельным plan SHA
+`c69bcd6b6507d263e885615d71a37cb81b69e8570f93a83cb31d384d33286cb1`
+и code commit `e7d382dc153c723342a484a904682f1757b6bcd3`. Preflight проверил
+структуру ожидаемых outputs всех 24 controls и lossless public-input round-trip
+для 36 входов. В `measurement-004/CALIBRATION-PROGRESS-001.json` независимо
+проверены первые **6/72** исходов: 6 structurally valid и synthetic exact,
+6 attempts, reported input=7500, output=3599, unknown usage=0. Это только
+промежуточный срез; новая серия ещё выполняется, gate и semantic validity не доказаны.
+Credential остаётся исключительно в памяти нового процесса; завершённая v1
+не перезапущена, её 223 запечатанных файла не изменены.
