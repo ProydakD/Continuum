@@ -1109,3 +1109,33 @@ PLAN, runtime, inputs, gold, instructions и analyzer неизменны; обн
 меняется. Провал конечного контрольного gate не доказывает универсальную
 неспособность модели и не завершает E009; public BRI и heldout readiness по-прежнему
 не валидированы.
+
+### Промежуточный результат 2026-10-25: повторное отклонение response envelope
+
+Срез `measurement-015/monitor-010/ANALYSIS-001.json`: **663/1224** terminal,
+661 structurally valid, два `provider_failure`, 561 pending. Контроли:
+203/204 meaning-exact, 204/204 carrier-exact и component-exact. Единственное
+наблюдаемое контрольное несовпадение остаётся `validate-0564`; строгий gate FAILED.
+
+Второй provider failure — `validate-0625`, replica 1 view `618caa202038ff90d5f03dfa`.
+При HTTP 200 и response status `completed` вновь получен `image_generation_call`
+перед reasoning/message, хотя исходящий public-only request не содержал tools.
+На этот раз image object имеет только `id`, `type`, `status="failed"`: поля `result`
+и изображения **нет**. Это не второй полученный PNG и не доказательство внутреннего
+исполнения image tool. Raw body SHA256:
+`24a7b07c2503e86a816b170ca2da3c56778143a2cea988988cd567ad7e805e9f`.
+
+Строгий отказ `unregistered output item type` воспроизведён. Usage failed request
+2458 input / 3300 output tokens сохранено; accompanying message не использовано
+для спасения результата. Следующий `validate-0626` успешен, поэтому правило двух
+последовательных provider failures не остановило процесс.
+
+Внешний read-only audit первоначально завершился `KeyError: 'result'`, ошибочно
+предполагая payload у каждого image object. Его поправили для фактически отсутствующего
+поля; первоначальный exit 1 и traceback сохранены в `monitor-010/AUDIT-ERROR-001.json`.
+Исправленный audit завершился exit 0 и проверил все 663 исходящих запроса и raw
+attempts, включая оба отклонённых ответа: **1 643 416 input / 2 094 676 output**,
+unknown usage 0, стоимость неизвестна. Подробности — `monitor-010/PROVIDER-FAILURE-AUDIT.json`
+и `RAW-REQUEST-USAGE-AUDIT.json`. Изменился только внешний forensic script, не frozen
+analyzer, adapter, runner, inputs или правила оценки. Исходы не исправлялись и не
+повторялись; полный прогон и E009 ещё не завершены.
