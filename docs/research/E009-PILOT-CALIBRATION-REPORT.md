@@ -732,3 +732,56 @@ resource/retry policy и полный assigned denominator. Controlled exact gat
 На момент этого offline отчёта model calls **0**. Следующая проверка — реально
 исполнить замороженный calibration batch, сохранить все raw outputs/usage/errors,
 оценить контролируемые пары и agreement, не редактируя benchmark под ответы.
+
+## 18. Исполненная scope calibration: значения 216/216, строгий gate 215/216
+
+Замороженный план из §17 исполнен без изменения источников, инструкций, порядка,
+gold или evaluator. Реальный процесс session `91256`, PID `53220` завершил **252/252
+запроса с exit 0**. Все ответы структурно валидны. Провайдер во всех 252 ответах
+сообщил `gpt-6.1-sol`; это зафиксированная reported identity, не независимая проверка
+модели внутри сервера. Все запросы — отдельные Responses contexts без переданной
+истории предыдущих ответов. Утверждение о внутренней изоляции провайдера не делается.
+
+Зарегистрированный результат: **216/216 controlled value correct**, **215/216 strict
+witness exact**, следовательно **complete gate=false**. Все **126/126 пар реплик**
+совпали по observation, что не тождественно правильности. Ничего не исключалось из
+assigned denominator; 36 оригинальных наблюдений по-прежнему unscored. Нет transport
+retries, invalid outputs, missing outputs или unknown usage в этом завершённом batch.
+
+Единственный nonexact — `scope-043`, `expansion-008`, условие quoted_supported.
+Ответ правильно фиксирует текущий `A1=refuted` и отдельно цитирует два предложения:
+текущую позицию с прекращением действия прежних статусов и отнесение `supported` к
+отвергнутому account. Соединение этих двух literal quotes одним пробелом **точно
+равно** единственному required witness. Это наблюдаемое проявление ограничения,
+записанного **до outputs** в `PREOUTPUT-WITNESS-LIMITATION.json`. Оно не превращается
+в semantic error и не исправляется переписыванием frozen rubric: исходный результат
+**215/216, gate=false** сохранён. Post-hoc объяснение хранится отдельно.
+
+Дополнительная описательная проверка 36 original observations: **36/36** совпадают
+с уже существовавшим literal-reference status для выбранного target ID; все quotes
+каждого ответа находятся в последнем публичном документе соответствующего входа.
+Распределение по 18 различным targets: 9 refuted, 5 supported, 4 undetermined.
+Это не добавляет gold к зарегистрированным unscored controls и не доказывает
+универсальное entailment. Проверен лишь один target status на каждый из 18
+целенаправленно выбранных входов, не все claims, поля, эпизоды или компоненты BRI.
+
+Сохранены и запечатаны hashes **1263 raw files**. Фактические ресурсы: **252 transport
+attempts, 684264 reported input tokens, 24101 reported output tokens, 0 unknown-usage
+attempts**, стоимость неизвестна. Интервал запросов — около 1044 секунд. Ключ получен
+через getpass и не записывался в файлы/argv/model prompts/shared state. При сохранении
+одного большого UI-observation output возник Windows error 206: чрезмерно длинная
+shell-команда. Это ошибка наблюдения, не модели: тот же live handle был проверен
+повторно, процесс не перезапускался, полный журнал событий сохранён драйвером.
+
+Python execution sources и прежние данные неизменны. Новых изменений исполняемого
+кода здесь нет; прежние 87 targeted tests относятся к тем же source hashes. Выполнены
+сам batch, frozen analysis, отдельный post-hoc audit и новые baseline/modified/rollback
+проверки артефактов. Public BRI не пересчитывался, general natural validity и heldout
+readiness остаются false.
+
+Следующий незавершённый уровень — compositional witness support без зависимости от
+разбиения достаточного evidence на одну или несколько цитат, затем его применение
+к public BRI components с раздельными public observation и causal-gold assessment.
+Новый контракт должен сохранить все старые результаты и неизвестные компоненты;
+исправление формата цитат само по себе не означает завершения измерительной задачи,
+power/N, T2-линий или всей научной программы E-009.
