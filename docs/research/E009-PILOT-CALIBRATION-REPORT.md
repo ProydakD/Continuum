@@ -856,3 +856,112 @@ IDE сообщил две weak warnings (лишние скобки, helper мо�
 сохранение всех назначенных эпизодов и uncertainty, затем проспективная проверка под
 новой идентичностью. Public BRI, variance/power/N, две T2-линии, финальная
 пререгистрация, отдельно разрешённый heldout и полный научный отчёт не завершены.
+
+## 20. Компонентный evaluator на всём pilot: условные оценки, не новый validated BRI
+
+Добавлен `research/e009_component_assessment.py`, schema
+`e009-component-assessment-v1`. `assess_controlled_checkpoint` отдельно оценивает
+корневой статус, dependent repair, сохранение зарегистрированного независимого EA
+основания, false retraction и provenance. `assess_prediction` проверяет новый ответ
+и его basis; `controlled_chain_bounds` объединяет четыре назначенных checkpoint
+и финальный ответ, сохраняя unknown и отдельный technical outcome. Известный false
+не скрывается за другим unknown. Пустая панель не является успехом.
+
+Причинный эталон получает только допустимые для этапа evidence records; публичные
+claim fields поступают отдельным входом. Gold не заполняет пропущенные proposition,
+status, bases или predecessor hash. `basis_sound` различает неизвестного родителя,
+цикл и отозванный источник. Хорошая альтернативная basis не легализует другую
+недопустимую active basis. Точный predecessor hash проверяется только при наличии
+наблюдаемого полного предыдущего объекта; partial reconstruction не хешируется как
+якобы достоверный оригинал. Это development-контракт, а не замена frozen scorer.
+
+### Исполненный полный denominator и происхождение данных
+
+Новая post-hoc обработка охватила **120/120 pilot chains**: 60 controlled и 60 natural.
+Публичные публикации извлечены из подтверждённых MCP object/commit records;
+predecessor views — из фактических `read_memory` ответов worker wire. Measurement
+sidecar claims не использованы как публичное состояние. Финальный ответ сверён с
+worker final. Episode/catalog hashes проверены, stage evidence projections сопоставлены
+с фактическими public inputs. Все **16 167 запечатанных raw files** перепроверены
+до/после обработки; исходные scores не менялись. Новых API calls **0**.
+
+Для controlled сохранены **240 назначенных checkpoints** и 240 зарегистрированных
+изменений reference root status: seed→A, A→B, B→C, C→D. Это гарантированные сценарии
+дизайна, не 240 ошибок модели и не 240 независимых миров. Весь pilot содержит 12
+причинных миров; технически полны 109/120 цепочек. Знаменатели не сужались до них.
+
+Public extraction здесь всё ещё невалидирована: embedded object может относиться
+к истории, быть ограничен соседней прозой или наследовать общие поля. Поэтому
+результаты ниже **условны на правильность публичной интерпретации**. Отдельные
+validated-public bounds оставлены [0,1] для технически полных цепочек и [0,0] для
+наблюдаемых technical failures. Никакого retrospective PASS измерительной валидности.
+
+| Controlled condition | Назначено | Technical complete | Условные границы полного исхода |
+|---|---:|---:|---:|
+| F0 | 12 | 11 | [3, 11] / 12 |
+| F1 | 12 | 12 | [3, 11] / 12 |
+| S0 | 12 | 11 | [8, 8] / 12 |
+| S1 | 12 | 12 | [7, 8] / 12 |
+| FULL-JOURNAL | 12 | 12 | [0, 12] / 12 |
+
+Разная ширина этих интервалов отражает в том числе ограничения наблюдателя, не
+доказанное превосходство формата или утрату знания. Нельзя использовать эту таблицу
+как оценку эффекта F1−F0, окончательной дисперсии, power или N.
+
+По 240 checkpoints значения true/false/unknown: root **146/2/92**, dependent
+**136/2/102**, independent **132/2/106**, no-false-retraction **142/2/96**,
+traceability **115/15/110**. Дополнительно обработаны **все 36** прежних expansion
+projections без выбора удачной реплики: 24 controlled и 12 natural. Natural A1/C1
+не подменены искусственным controlled H/D panel; отсутствие полного chain не
+превращено в episode BRI. Все исходные поля и provenance сохранены.
+
+### Natural opportunity: отзыв evidence — не исправление прежней ложной веры
+
+Для 60 natural chains сохранены **180 назначенных переходов**
+(A→B, B→C, C→D); в 154 найден хотя бы один candidate predecessor
+object. Неполное извлечение не даёт права считать остальные переходы нулём
+возможностей. Единственная найденная данным наблюдателем root-with-dependent
+opportunity — `pilot-058`, S0, world 90, B→C: A1 `Y→Z` и зависимый A3 `Y⇝Q` меняются
+с supported на undetermined после отзыва EB/EC. A2 и A4 сохраняют независимое EA
+обоснование. Отдельная source-bound проверка статусов, bases, predecessor links,
+preservation и финального prediction дала true по всем этим проверкам.
+
+Составные цитаты восьми native claim objects до/после привязаны к полным публичным
+документам. Это host annotation с `semantic_scope_verified=false`, а не независимый
+blind gold. Более того, прежний supported был оправдан тогдашними источниками:
+**preexisting status error=false, supported-now-refuted=false**. Это корректная
+эпистемическая реакция на отзыв evidence, не доказательство исправления прежней
+фактически ложной гипотезы. Один найденный случай не является полным natural census.
+
+### Проверки и сохранённые исправления измерителя
+
+На всех 12 существующих pilot worlds исполнены **108 synthetic controls**:
+12 полных positive, 84 selective negatives (wrong root, missed dependent, lost
+alternative, false retraction, wrong predecessor, wrong prediction, stale
+alternative), 12 полностью ненаблюдаемых состояний. Положительные дали [1,1],
+ожидаемые отрицательные [0,0], неизвестные [0,1]. **384** reference statuses
+совпали с отдельным forward computation, не только с constraint oracle. Это
+проверки программы и конечного класса миров, не validation естественной прозы.
+
+Пройдены **59 targeted tests**: 18 новых и 41 по witnesses/semantic observables.
+IDE предупреждение о потенциально неинициализированном changed исправлено явным
+missing-stage guard; повторный lint сообщил только unittest weak warnings,
+build success имеет limited diagnostics. Новый полный replay после последней
+правки совпал с предыдущим итоговым diagnostic artifact целиком.
+
+Первая diagnostic версия сохранена, не удалена: она неверно превращала отсутствие
+поля внутри partial candidate object в отсутствие поля во всей публичной памяти
+и называла supported→undetermined после отзыва источников «erroneous supported».
+Исправлены общий адаптер и разделение трёх величин: потеря достаточного обоснования,
+новое refuted и preexisting status error. После исправления false для dependent и
+independent сократилось с 12 до 2, для traceability с 25 до 15; это поправка
+измерителя, **не улучшение ответов модели**. История diagnostic 001–004 сохранена;
+авторитетный текущий выход — `PILOT-PUBLIC-COMPONENTS-004.json`.
+
+Следующий шаг — исполнить проспективную проверку связи public observation→components
+на полном назначенном cohort, с отдельными контролями scope, общих полей, истории
+и зависимостей. Использовать существующие 36 annotations и все завершённые runs,
+не повторять их и не refreeze прежние PLAN. Требуется отдельная новая идентичность
+протокола/запуска и сохранение ошибок/unknown, затем измерение public BRI и научная
+калибровка. T2-линии, финальная пререгистрация, отдельно разрешённый heldout и общий
+исследовательский результат по-прежнему не завершены.
