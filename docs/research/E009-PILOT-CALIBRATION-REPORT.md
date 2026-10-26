@@ -1534,3 +1534,40 @@ identity/currentness/entailment. Measurement eligibility остаётся false.
 сохранены. Public BRI/opportunities, variance/power/N, две T2-линии, финальная
 пререгистрация, отдельно разрешённый heldout, robustness и общий E009 остаются
 незавершёнными. Ни форматный отказ, ни exit 0 не закрывают исследовательскую цель.
+
+## 27. Отдельная версия инструкции селекторов: локальный preflight
+
+Добавлен `research/e009_measurement/selector_instructions_v2.py`, не меняющий
+frozen `reconstruction.py` и остальные исходники measurement-017. Новый профиль
+заменяет ровно один блок декларации селекторов: плоские JSON-объекты без S/F
+обёрток, выбор схемы по формату документа, pointer относительно payload и
+Unicode-codepoint offsets для F. Остальной текст, валидатор, состояния полей и
+все ограничения semantic eligibility сохранены. Guard проверяет SHA-256 исходной
+инструкции и единственность заменяемого блока; изменение parent отвергается.
+
+Rendered candidate: **4682 UTF-8 bytes**, SHA-256
+`386fdbdc7c046a7030c917ce65e1f23f1e0da0bb74a4d4167893b8dee7f7a150`.
+Три generic-примера из фактического текста инструкции исполнены неизменённым
+resolver: вложенный S-pointer, F Unicode-span и F JSON-substring с null/empty
+list. Семь неверных wrappers/formats/roots/spans отвергнуты. Payload root и
+реальный ключ с именем `payload` различаются; запрета этого имени нет.
+Все пять semantic/identity/currentness/coverage/eligibility flags остаются false.
+Отдельный child-process check отверг изменённый parent. IDE diagnostics нового
+модуля пусты. Это conformance примеров, **не проверка поведения модели**.
+
+Подготовлен отдельный measurement-018: **восемь** fresh client contexts, 4 F/4 S.
+Шесть constructed cases одного pilot world 537 покрывают complete, shared fields
+и partial/conflict в обоих форматах; ещё два — прежние трудные F-view с восемью
+нелитеральными propositions и S-view со смещённой identity citation. Выбор и
+порядок seed 180092026 заданы до новых ответов. Старые outputs/gold не входят в
+model input; packet content совпадает с прежними публичными входами. Остальные
+26 случаев прежнего batch и полный control cohort **не исключены из
+дальнейшей валидации** и не считаются пройденными этим preflight.
+
+Начальный draft COHORT ошибочно унаследовал count=34 и selection prose от parent
+при восьми cases; preparation exit 0 этого не обнаружил. Расхождение найдено и
+исправлено до freeze/API; draft, причина и отдельная проверка counts/packet hashes
+сохранены. Runner/analyzer отличаются от 017 только импортом INSTRUCTIONS;
+их control flow не переписан. Новый запуск допускается лишь после freeze исходников,
+плана, входов, лимитов и учёта повторов. Исходов нового модельного запуска в этом
+разделе ещё нет; улучшение контракта и semantic validity не объявляются.
