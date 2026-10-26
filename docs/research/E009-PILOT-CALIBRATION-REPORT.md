@@ -3165,3 +3165,109 @@ C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement
 для отдельного source-first calibration protocol, с freeze до любого запуска.
 Независимая semantic adjudication, BRI/opportunities, power/N, T2,
 scientific preregistration, held-out и итоговый requirements audit остаются открыты.
+
+## 44. Source-first execution freeze и остановка прежнего paired run
+
+### 44.1. Наблюдаемый сбой сохранён, результаты не перезапущены
+
+Exec session 93152 завершилась с exit status 1: `ValueError` после старта
+`paired-0064`. Старый RUNNING.json содержит `execution_error`, но не traceback;
+TERMINAL.json с успешным завершением отсутствует. Отсутствие старого процесса
+проверено до нового запуска. Повторной отправки assignment 0064 не было.
+
+Финальная инвентаризация старого run: **594 assigned = 59 parsed + 4 missing
++ 1 interrupted without receipt + 530 unstarted**. В SQLite 64 requests,
+74 terminal attempts; request 0064 остаётся pending после одной попытки
+`attempt_deadline`, с неизвестным usage и нулём observed response bytes.
+Это не доказательство, что сервер ничего не вычислял. Новая запись результата
+за модель не создана, pending request не переименован в успешный или missing.
+
+Reported subtotal: **135 198 input / 118 523 output** tokens, 15 attempts с
+unknown usage; стоимость неизвестна. SQLite integrity_check — ok.
+После завершения процесса опечатаны **190 файлов** run, включая raw responses,
+receipts, requests и ledger. База живого процесса не объявлялась immutable.
+
+ANALYSIS-018 и независимые аудиторы проверили 63 receipts: 59 parsed schemas,
+236 negative answer canaries, 4 three-deadline missing patterns и 32 transport
+canaries. Проверены **1149 citations**: 637 native JSON, 93 native text,
+419 prose text. Три прежние missing control citations не исправлялись.
+Coverage reconciliation сохраняет все 594 строки, 297 пар и 658 proposed field
+rows. Старая метка `in_progress_or_receipt_pending` у 0064 означает orphan,
+а не живую работу; supplemental INTERRUPTED-RUN уточняет этот статус.
+Оба control gates остаются FAIL: raw 22/24, literal_witness 23/24.
+
+### 44.2. Воспроизведённая ошибка ожидания и граница вывода
+
+В frozen `HTTPSProvider.wait` условие цикла и аргумент sleep независимо читают
+monotonic clock. При переходе через конец ожидания между этими чтениями
+получается отрицательный интервал и `ValueError: sleep length must be non-negative`.
+Детерминированный offline reproducer с clock readings 0, 0.999, 1.001 воспроизвёл
+этот traceback на строке 188 исходного provider без сетевого обращения.
+
+Это доказанный дефект кода и согласующаяся с retry-boundary timing гипотеза
+реального сбоя, **не однозначно установленная причина данного завершения**:
+исходный exception stack runner не сохранил; другой ValueError на переходе
+retry нельзя исключить. Старый frozen provider и run не редактировались.
+
+Только новый `SourceFirstProvider.wait` вычисляет remaining один раз за итерацию
+и завершает ожидание при remaining <= 0. STOP и deadline guards сохранены.
+Проверены boundary crossing, истёкшее ожидание, STOP и deadline; старый reproducer
+по-прежнему воспроизводит ошибку. Нет подавления исключений или увеличения timeout.
+
+### 44.3. Отдельные 36 source-first Responses requests
+
+Созданы 36 requests для 18 ранее зафиксированных calibration sources:
+два отдельных response contexts на source, идентичные request bodies внутри пары,
+без previous_response_id, conversation, прежних ответов, candidate fields или
+private index. Exact public wrapper, исходный source, document bindings и
+инструкции сохранены. Origin model/run metadata остаются в source: полной
+слепоты и независимости backend не заявляем. Это не T2 и не causal contrast.
+
+Request bodies суммарно 440 796 bytes при одной отправке каждого, максимум
+19 892 bytes, лимит 262 144. Output cap 16 384; allowance 589 824 once /
+1 769 472 при трёх attempts — инженерная граница, не actual usage или бюджет.
+Transport policy: concurrency 1 внутри run, 240 секунд на попытку, максимум 3,
+backoff 30/90 секунд с учётом Retry-After, minimum gap 1 секунда.
+Общего лимитера между разными runs нет; прежний run уже завершился.
+
+Runner сохраняет raw до classification, проверяет все requests до первой
+отправки, связывает receipts с execution/source/request/raw/journal hashes,
+повторно проверяет completed prefix и отказывается replay при orphan или
+изменении receipt/raw/accounting. Сбой записи после raw не вызывает resend.
+Malformed/refused/incomplete ответы сохраняются без content retry;
+model mismatch и auth failures останавливают run, три последовательных
+availability exhaustions включают circuit stop. Gold/eligibility остаются false.
+
+Первый прогон: 21 test PASS, с ResourceWarning в тестовом SQLite соединении.
+Соединение теста закрыто явно; после wait fix и проверки malformed status
+**24 tests PASS без этого предупреждения**. Тесты используют реальный локальный
+AttemptLedger/raw files и fixture transport, но не сеть и не semantic oracle.
+Проверены все 36 endpoints, prefix resume, identity/policy/tamper guards,
+429 Retry-After, 502 retry, deadline exhaustion, unknown usage и raw-write failure.
+
+Preflight независимо от request builder сравнил все 36 requests с exact public
+packets; shared Python JSON dependency раскрыта. Execution SHA256:
+0251d8beb92eaddd398590fb6f53718b59ae5d76f0385d017d0aaadd9b03c0db.
+Freeze содержит **2810 файлов**, SHA256:
+3c821971d1d5f4eb329dfbde69fad476f534f7dd9b18714a328caffcbf45657b.
+
+### 44.4. Новый запуск и остающиеся ограничения
+
+После успешного preflight запущена отдельная exec session **81031**.
+Windows повторно выдала PID 28724, но process start другой:
+2026-10-26T17:02:37.3132138Z. PID без start time здесь не идентифицирует старый run.
+SOURCEFIRST-ANALYSIS-001 фиксирует первый request pending, 35 unstarted,
+один attempt с unknown usage, ни одного receipt. Нули reported tokens на этом
+снимке не означают нулевой расход. Credential хранится только в памяти процесса.
+
+Snapshot analyzer сохраняет все 36 denominators; classification replay использует
+тот же validator и не объявляется независимым semantic audit. Запуск не устраняет
+доказанные ограничения exact anchors: ownership, temporal semantics, composition,
+claim-universe completeness и semantic gold по-прежнему не установлены.
+BRI/opportunities, variance/power/N, две T2-линии, scientific preregistration,
+отдельно разрешённый held-out, robustness и requirements audit остаются открыты.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-006/.
+Следующий шаг — наблюдать ту же session 81031, не запускать старую 93152,
+сохранить полный исход source-first и выполнить независимую проверку разметки.
