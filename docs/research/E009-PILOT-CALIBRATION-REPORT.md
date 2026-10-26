@@ -3271,3 +3271,96 @@ Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-006/.
 Следующий шаг — наблюдать ту же session 81031, не запускать старую 93152,
 сохранить полный исход source-first и выполнить независимую проверку разметки.
+
+## 45. Независимая проверка source-first механики и первые transport outcomes
+
+### 45.1. Второй checker не использует production parser
+
+Создан отдельный `independent_sourcefirst.py`, использующий прежний независимый
+base contract из monitor-003, а не production `source_adjudication.py`.
+Отдельный процесс подтвердил: импорт аудитора не загружает production parser,
+`sourcefirst_io` или runner. Это независимая реализация механических проверок,
+не независимая модель, semantic adjudicator или новый источник истины.
+Общие written specification, Python JSON decoder и canonical serialization
+остаются общими зависимостями и возможными источниками correlated errors.
+
+JSON anchors проверяются через заранее перечисленные canonical RFC6901 paths
+в исходном payload, а не декодированием предложенного pointer production-кодом.
+Проверяются native types, payload/source/document hashes, codepoint spans и
+производные UTF-8 offsets, полная биекция document notes и claim/field sites,
+ссылки evidence на exact anchors, ограничения альтернатив и coverage support.
+Boolean document index не становится integer index; true, 1, 1.0 и string
+сохраняют различия. Эти проверки не устанавливают ownership или currentness.
+
+Полный suite: **17 tests PASS**. В том числе:
+
+- 96 явно заданных negative schema cases и 18 Responses-envelope cases;
+- bounds 4096 anchors, 256 references, 64 claims / 512 sites, 16 alternatives;
+- 18 source-only packets и все **1145 native nodes / 686 text spans**;
+- 15 сохранённых offline runs, **540 receipts**, с четырьмя status classes:
+  parsed, invalid, incomplete, refused;
+- 18 mutations реального snapshot, включая ложные counts, usage, request IDs,
+  ordinal, resource totals, receipt SHA и semantic promotion.
+
+686 spans — full string, first codepoint и last codepoint каждого непустого
+payload string, с удалением одинаковых интервалов внутри node. Это другой
+набор интервалов, не рост числа исходных документов по сравнению с §43.
+Offline abstention fixtures и synthetic anchors не являются model annotations.
+В тестах по-прежнему принимаются механически корректные unsupported owner,
+invented value 999, ложная temporal rationale и пустой claimed_complete inventory;
+semantic/ownership/temporal/completeness/gold/eligibility flags остаются false.
+
+### 45.2. Негативные тесты обнаружили ошибку самого аудитора
+
+Первый regression run завершился exit 1 с двумя FAIL. Для missing branch
+аудитор проверял receipt и итоговые counts, но не связывал status/resources
+строки snapshot непосредственно с sealed receipt. Совместное изменение
+status и summary могло пройти; отдельно изменённые row resources тоже проходили.
+Исходные файлы до исправления и literal stderr сохранены.
+
+В `verify_snapshot` добавлено прямое равенство row status, reason и resources
+с receipt во всех branches. Обе regression mutations теперь отвергаются;
+повторный полный suite 17 tests завершился exit 0. Реальные receipts/raw не
+редактировались, старый audit-005 сохранён как результат прежней версии.
+Новый audit-006 привязан к исправленному checker SHA.
+
+Дополнительно audit сверяет journal usage с raw usage, sequence request/attempt
+identities, monotonic accounting timestamps, receipt sidecars и hashes,
+сохраняет все **36 assigned endpoints / 18 source pairs**, а не только parsed.
+Missing-pattern verification пока поддерживает только три deadline attempts;
+иной missing reason намеренно потребует новой проверки, а не тихого PASS.
+
+### 45.3. Пока подтверждена потеря результата, а не semantic annotation
+
+Тот же source-first process 81031 / PID 28724 с start time
+2026-10-26T17:02:37.3132138Z остаётся живым; его не перезапускали.
+SOURCEFIRST-ANALYSIS-006: **1 missing + 1 in progress + 34 unstarted**,
+пять attempts с unknown usage, ноль parsed annotations. На снимке pending
+attempts = 0: второй request находился между попытками, что не равно завершению
+процесса. Первое назначение завершилось после трёх 240-секундных deadlines;
+интервалы 30/90 секунд и неизменный request body проверены по journal.
+
+Независимый audit проверил один missing receipt, все 36 request/source bindings,
+полный denominator и 10 negative transport canaries. **Ни одного actual model
+annotation или actual model anchor пока не проверено**: таких ответов на этом
+снимке нет. Reported token totals 0/0 не означают нулевой server usage или стоимость.
+Нулевые observed response bytes не доказывают недоступность модели: медленный
+полный ответ, задержка provider и другие причины остаются различимыми гипотезами,
+но данных для выбора между ними пока недостаточно.
+
+Текущие deadline/output/retry bounds не изменены. Если frozen batch остановится,
+latency/resource feasibility следующего протокола следует исследовать отдельным
+prospective design, не replay неудобного missing и не приписыванием ему ответа.
+Старый paired run 93152 остаётся завершённым с exit 1, 190 sealed files неизменны.
+Его failed gates и все предыдущие результаты сохранены.
+
+Auditor candidate SHA256:
+ab409ddc5357a459678ee1e7ca174f0e3431f11dfde47f5614007d88344487f0.
+Входные fixture files опечатаны отдельным manifest: 2211 файлов, 15 offline runs.
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-007/.
+
+Следующий шаг — сохранить outcome текущего frozen run и проверить появившиеся
+model annotations независимым checker. Механическая проверка не закрывает
+semantic adjudication, BRI/opportunities, variance/power/N, T2, scientific
+preregistration, отдельно разрешённый held-out, robustness или requirements audit.
