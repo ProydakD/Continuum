@@ -2395,3 +2395,122 @@ composed proposition и list nesting. Затем интегрировать boun
 Согласие моделей, majority vote и совпадение цитат не заменяют её. Все unresolved
 случаи, прежние gates и полный scope E-009 сохраняются; public BRI и scientific
 completion по-прежнему не установлены.
+
+## 35. Парные controls проверены; двухрежимный модельный запуск начат
+
+2026-10-26 создан и исполнен следующий local preflight после §34.
+Исходные 273 unlabelled questions, private null labels, source copies,
+старые contracts и результаты не изменялись. Затем начат новый авторизованный
+Responses run, а не повтор прежней terminal session 2699.
+
+### 35.1. Двенадцать заранее заданных пар и ограниченный oracle
+
+Созданы **12 paired controls / 24 endpoints**. В каждой паре question
+байтово одинаков после canonical serialization, source изменён и ожидаемый
+semantic projection различается. Это authored finite cases, не natural gold.
+
+Восемь interpretation pairs проверяют shared ownership, superseded occurrence,
+unknown против explicit absence, conflict64/65 против64/66, hash64 против66,
+bool/int/float/string, явно связанную object composition против недостаточного
+свидетельства и flat/nested symbolic lists. В обоих F-list inputs сохраняются
+одни Unicode offsets; padding не превращает flat list в nested.
+Частные expectations: восемь entailed, семь contradicted, один undetermined.
+Недостаточная композиционная связь в partial excerpt не объявлена опровержением.
+
+Четыре candidate-free review pairs проверяют exhaustive current inventory
+и shared fields, known null/unknown/absent, полные conflicting alternatives,
+target-stage currentness при физически переставленной истории.
+В последнем отрицательном случае исторический C-document стоит после текущего D;
+новый reader сохранил D как target, не применяя last-write-wins.
+
+Отдельный `control_oracle.py`, не импортирующий generator или annotation parser,
+вывел все 24 reference projections из явных правил controlled sources.
+Он ограничен этим конечным structured/explicit-source grammar; это **не**
+универсальный semantic oracle и не независимая естественно-языковая разметка.
+После такого вывода 24 synthetic annotations прошли существующий parser.
+Обнаружены все 24 намеренные мутации gold и 96 outer-private canaries.
+Все 12 пар сохранили question identity; source-order metamorphism прошёл.
+
+### 35.2. Уточнение facets до outcomes и проверенный runner
+
+До первого API-вызова явно определён scope четырёх facets:
+value_fidelity — выбранное содержимое и его composition;
+claim_field_binding — владелец/поле даже для исторического occurrence;
+currentness — временная актуальность occurrence независимо от владельца;
+complete_field_state — полное текущее поле именно названного claim.
+При отсутствии proposed values value fidelity может быть vacuous, но состояние
+unknown/absent всё равно проверяется отдельно. Это определения измеряемых
+аспектов, а не доказательство их причинной независимости.
+
+Уточнение сохранено отдельным файлом и добавлено к новым effective instructions.
+Предыдущий draft, его parser и результаты не переписаны. Это prospective
+уточнение неоднозначности до outcomes, не подгонка под модельные ответы.
+
+Новый runner использует неизменённый `sample_transport.py`, сохраняет raw
+responses до разбора, immutable receipts и CAS attempt ledger. Реализованы
+двухрежимный dispatch, control-prefix gate, запрет automatic orphan replay,
+проверка hashes completed raw перед resume и отсутствие content retries.
+
+Новый offline suite прошёл **21/21**. Проверены все 24 control schema fixtures,
+native/document-bound citations, отказ от частичного числового совпадения,
+quoted `"null"` против native null, duplicate/nonfinite literals, malformed
+envelopes, model mismatch, invalid/incomplete/refused outcomes, raw retention,
+prefix resume, changed request/raw, minimum gap, availability circuit и
+**синтетическая** последовательность 502 → 503 → 200 с паузами 30/90 секунд.
+Это не утверждение о таких HTTP failures в новом live run.
+Первый прогон завершился exit 1: три negative cases пытались повторно создать
+один write-once fixture path. Исправлено разделение тестовых каталогов;
+ошибка и исходный test сохранены. Добавлен regression malformed question shape.
+17 прежних contract tests переиспользованы как evidence неизменённого кода,
+а не объявлены повторно выполненными.
+
+### 35.3. Prospective gate, полный знаменатель и freeze
+
+Назначено **297 requests**: 24 controls, затем условные 18 candidate-free
+natural reviews и 255 natural interpretations. Все 24 controls выполняются
+даже после неверного/invalid ответа, если не сработала отдельная fatal,
+availability или operator остановка. Перед natural phase требуется 24/24
+точных authored projections и присутствие каждой document-bound citation.
+
+Если gate не пройден, terminal reason — `authored_control_gate_failed`,
+exit 3, а **все 273 natural assignments сохраняются как unstarted**.
+Это правило задано до outcomes. Пройденный finite gate также не присваивает
+natural gold; ошибки/invalid outputs внутри natural phase не вызывают
+content retries или semantic early stop. История ответов между requests не передаётся;
+server-side isolation остаётся непроверенной.
+
+До сети заморожены **1 668 файлов**, включая private controls, все 297 requests,
+code/tests, protocol и исходные dependency bindings.
+Execution HEAD: `ec36eb5c401f8ad0f729b362bffc9d435a57fc87`.
+Execution SHA-256: `28bda6e43df829ea09fc8e35175a75abd04a2195127bde6429bc6f42796f63d0`.
+Максимум 891 attempts; per-response caps — 4096 для interpretation и
+16384 для review. Полный requested output allowance — **1 536 000** за одну
+попытку каждого задания / **4 608 000** с тремя попытками.
+В отличие от draft §34, сюда включены controls. Это не billing cap или бюджет
+всего исследования. Canonical request bodies: 5 511–18 202 bytes,
+суммарно 3 128 463 bytes; стоимость и итоговые ресурсы ещё неизвестны.
+
+### 35.4. Уже наблюдаемый live результат, не финальная accuracy
+
+Process запущен с `gpt-6.1-sol`; session **7526**, Python PID **46128**,
+start UTC `2026-10-26T13:15:39.9772340Z`, подтверждён через Get-Process.
+Credential передан только через hidden getpass в process memory, без сохранения.
+
+Первый immutable snapshot `ANALYSIS-001.json`: шесть parsed controls,
+все шесть прошли свой authored check; одна полная пара из 12 наблюдаема как
+успешная. Семь attempts, один pending; 273 natural assignments ещё не начаты.
+Reported subtotal — 8 919 input / 3 545 output tokens; pending usage неизвестен.
+Шесть responses сообщают `gpt-6.1-sol`; есть шесть tools-metadata entries,
+но backend identity/tool isolation этим не установлены. Gate ещё **pending**,
+и этот snapshot не является окончательным 6/6 либо natural accuracy.
+
+Evidence-корень: `C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/`.
+Ключевые файлы: `control-pack-001/MANIFEST.json`, `CONTROL-VERIFICATION.json`,
+`FACET-SCOPE-CLARIFICATION.txt`, `runner-test-command-001/002.json`,
+`PROTOCOL.json`, `EXECUTION.json`, `FREEZE-MANIFEST.json`, `PREFLIGHT.json`,
+`LIVE-HANDLE-001.json`, `ANALYSIS-001.json` и raw journal в `run-001/`.
+Следующее действие — наблюдать **тот же** process до зарегистрированного
+terminal/error, затем запечатать raw, replay и независимо проверить gate,
+отдельно учесть все natural unstarted/completed outcomes. Timeout наблюдения
+не разрешает restart. Full E-009, natural semantic validity, public BRI и
+оставшиеся требования §26/34 по-прежнему не завершены.
