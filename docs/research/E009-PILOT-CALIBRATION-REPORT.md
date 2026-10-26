@@ -2514,3 +2514,67 @@ terminal/error, затем запечатать raw, replay и независи�
 отдельно учесть все natural unstarted/completed outcomes. Timeout наблюдения
 не разрешает restart. Full E-009, natural semantic validity, public BRI и
 оставшиеся требования §26/34 по-прежнему не завершены.
+
+## 36. Контрольный барьер остановил annotation run: 23/24, natural не запущен
+
+2026-10-26 тот же process из §35 завершился с **exit 3**,
+`authored_control_gate_failed`. Session 7526 получена как terminal,
+PID 46128 отсутствует; автоматический restart не выполнялся.
+Все 24 controls завершены, все ответы прошли parser; точные projections
+и citation checks прошли **23/24 endpoints и 11/12 пар**.
+Оставшиеся **273 natural assignments** — 18 reviews и 255 interpretations —
+сохранены как **unstarted**, не удалены из плана и не объявлены ошибочными.
+Это остановка по prospective engineering gate, не natural accuracy.
+
+### 36.1. Точные цитаты не предотвратили ложное принятие
+
+Единственный провал — `annotation-0022`, `pair-04-b`, поле
+`H.proposition`. Источник явно задаёт conflicting alternatives длиной
+**64 и 66**; неизменённый candidate содержит **64 и 65**.
+И native traversal, и отдельный подсчёт literal zero tokens подтверждают
+это различие. Selected block и complete current field совпадают между собой.
+
+Ответ модели — `entailed` для всех четырёх facets и общего verdict.
+При этом приведённая ею JSON-цитата буквально сохраняет **64/66**,
+а rationale описывает их как **64/65** и ошибочно принимает candidate.
+Все семь citations этого ответа действительно присутствуют в документе.
+Следовательно, quote presence не установила ни value fidelity,
+ни complete field state. Ожидаемые `value_fidelity` и
+`complete_field_state` остаются `contradicted`; binding и currentness —
+`entailed`. Ни ответ, ни заранее заданный reference не исправлены задним числом.
+
+### 36.2. Terminal evidence, ресурсы и границы результата
+
+Финальный `ANALYSIS-003.json` имеет SHA-256
+`12e0222f63f2efba2988b3ddf36eafa4056ab92b18078fded11878a1a1225b02`.
+Отдельный checker без импорта runtime classifier/annotation parser повторно
+разобрал все 24 raw responses, проверил canonical request hashes,
+вывел finite control projections из sources и сверил **229 citations**.
+Все citations присутствуют; независимый итог также 23/24 и 11/12.
+Область checker ограничена authored controls: это не независимая natural gold.
+
+Зафиксированы 24 attempts / 24 HTTP 200, без retries и unknown usage.
+Reported usage — **36 684 input / 24 418 output tokens**;
+elapsed от первой попытки до terminal — **862.599 секунды**,
+минимальный наблюдаемый межзапросный интервал — **1.000216 секунды**.
+Ответы сообщают `gpt-6.1-sol`; наличие tools metadata и reasoning items
+не доказывает backend identity или server-side tool isolation.
+Стоимость неизвестна. Знаменатель natural accuracy отсутствует.
+
+После проверки SQLite integrity, завершения process и удаления его lock
+запечатаны **76 файлов / 777 306 bytes**; journal содержит 49 событий.
+Все **1 668 frozen inputs** неизменны. Исходные partial snapshots §35
+сохранены как промежуточные, а не заменены финальным результатом.
+Evidence: `measurement-021/followup-001/monitor-001/` —
+`INDEPENDENT-CHECK-003.json`, `ARRAY-LENGTH-DIAGNOSTIC.json`,
+`RAW-SEAL.json`, `TERMINAL-SEAL-CHECK.json` и literal command records.
+
+Следующий эксперимент должен отделить проверяемую literal equality от
+семантических assertions: сначала локальный source-bound diagnostic guard
+на неизменённых 24 controls и полном unlabelled export, с явным abstention
+для unsupported composition/scope/currentness. Такой guard не должен
+переименовывать прежний failure в success, раскрывать private expected labels,
+подменять model verdict либо присваивать natural gold. Новое вмешательство
+потребует отдельного prospective comparison, а не повторного запуска этого run.
+Public BRI, natural opportunities, T2 development, power/N, preregistration,
+held-out и полный scientific completion E-009 остаются открыты.
