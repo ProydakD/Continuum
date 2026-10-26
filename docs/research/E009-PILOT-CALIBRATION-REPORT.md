@@ -3827,3 +3827,80 @@ preregistration, отдельно разрешённый held-out, robustness и
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-013/.
+
+## 52. Реальный запуск semantic reviewer: transport amendment и первые отказы
+
+Исполнитель monitor014 завершён и запущен, а не оставлен очередным prototype.
+Новый процесс: exec45287, PID48896, OS start2026-10-26T19:54:19.1015593Z.
+Первый assignment_started наблюдался после скрытого getpass-ввода credential
+в память процесса. Ключ не записывался в файл, .env, argv или evidence ledger;
+старый процесс exec91668 не перезапускался и его память не извлекалась.
+Запуск остаётся calibration, не held-out и не две независимые T2 development lines.
+
+### 52.1. Исполняемые запросы и проверки до первого обращения
+
+Предварительная сборка выявила реальное несовпадение:72 request bodies monitor013
+не содержали store:false, а унаследованный transport требует явного отказа от
+сохранения. Поэтому создано72 отдельных wire-копии, добавляющих **только store:false**.
+Исходные200 файлов controls, model input, instructions, output cap8192, порядок,
+private labels и rubric не изменены. Это prospective transport amendment,
+не скрытая правка результатов. Enforcement сервером retention/output cap не проверен.
+
+EXECUTION.json SHA256:
+bb5232872dbef6a40181b4e0a82058d26e52c2c5778b5f6755e4c32ebb399c8a.
+FREEZE-MANIFEST.json:3166 файлов; SHA256
+a0750d6168136677505d01db822f7288a12dee164c6d7ae60115ff9635ccc3bc.
+run_review.bound_input/validate_execution проверяют все72 привязки до отправки.
+drive сохраняет raw bytes до разбора, receipt hash и accounting; повторного запуска
+существующего run-001, content retry, model-switch rescore и automatic replay нет.
+ResourceProvider повторно используется без изменения frozen files:900s/attempt,
+3 availability attempts,30/90s+Retry-After,min1s,circuit3.
+Concurrency1 относится к каждому runner: глобальный limiter между двумя процессами
+не реализован. HTTP429 обрабатывается транспортом; стоимость и backend identity неизвестны.
+
+**8 runner tests PASS**, включая72 offline receipts, сохранение raw до classify,
+900s вместо унаследованных240s, network/429/Retry-After, circuit после9 attempts
+с69 unstarted, invalid content без retry, fatal model mismatch и credential echo guard.
+Mock receipts явно fixture:true; их72 parsed не являются результатом модели.
+
+### 52.2. Наблюдаемые model outcomes и независимое воспроизведение
+
+REVIEW-ANALYSIS-002:72 assignments = **6invalid,12parsed,1pending,53unstarted**.
+18 sealed receipts;19 attempts,1 pending/unknown usage.
+Reported usage:22796 input /5307 output; стоимость неизвестна.
+12 parsed verdicts совпадают с authored labels, false-support среди них0.
+Это **не12/12 semantic accuracy**: все72 остаются в denominator, шесть invalid
+не исключены, labels не стали independently verified gold. Engineering gate false.
+
+Отдельный audit_review не импортирует production validator. **5 tests PASS**:
+strict JSON, Unicode/text bounds, RFC6901, native types, mutation canaries и replay
+первого реального snapshot. Snapshot002 независимо проверен:18 receipts,
+12 exact anchors,72 rejected negative canaries. Анализатор использует production
+classifier, независимость относится к второму checker; общий stdlib JSON раскрыт.
+Checker создан после первых ответов, но не меняет замороженный контракт или оценки.
+
+Posthoc OFFSET-DIAGNOSTIC: в первых трёх invalid цитата совпадает со всем payload,
+однозначное начало0, но end84/81/59 вместо фактических89/83/62.
+Исходные raw/invalid сохранены. Нельзя из нарушения offsets заключать semantic failure,
+как нельзя из точной цитаты заключать entailment. Для следующей версии допустима
+проверяемая гипотеза о вынесении механических координат из работы модели; это
+ещё не реализованный эксперимент и не разрешение исправить текущие результаты.
+
+### 52.3. Основной resource900 продолжает прежний run
+
+Resource009 завершился invalid после двух attempts, один прежний network failure
+с неизвестным usage сохранён. Resource010 parsed;reported3024input/19072output,
+снова выше requested16384. Snapshot014:36 = **3invalid,7parsed,1pending,25unstarted**;
+12 attempts,2 unknown usage;totals33736input/187111output.
+Независимый audit:10 receipts,110 anchors,28 rejected negative canaries.
+OS identity старого PID24864/start18:18:34.3176714Z подтверждена19:58:36Z.
+Ни missing/invalid, ни прежние negative diagnostics не переписаны.
+
+Оба процесса продолжают работу. Следующая операция — получить оставшиеся raw,
+повторить independent replay, отдельно исследовать format failures и semantic
+label disagreements без relabel-to-pass. Full public BRI/opportunities, clustered
+power/N, две T2 lines, preregistration, отдельно разрешённый held-out, robustness
+и final requirements audit не завершены; scientific_completion=false.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-014/.
