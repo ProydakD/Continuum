@@ -3750,3 +3750,80 @@ held-out. Полный research scope, включая public BRI/opportunities, 
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-012/.
+
+## 51. Парные semantic-review controls и изоляция эталонов от model input
+
+Создан companion-controls-001: **12 authored semantic families × 3 representations**
+(prose, paraphrase, JSON) =36 public sources; по два candidate readings =72 review
+challenges. Это calibration, не held-out, не 72 независимых причинных мира.
+Проверяются direction, path/direct-edge, negation, numerator/denominator,
+historical replacement, carry-forward, wrong owner, live conflict, opaque token,
+explicit absence, component template и refuted proposition vs its unchanged content.
+
+### 51.1. Что заморожено и что ещё не стало gold
+
+Reference labels находятся только в private/references.json:36supported,
+27contradicted,6underdetermined,3conflicting. Public review input имеет allowlist:
+schema,evaluation_id,source,target_stage,claim_id,candidate. В 72 сформированных
+request bodies отсутствуют expected labels, author rationales и family labels.
+Opaque IDs/order отделяют public input от явных меток correct/adversarial.
+Исходники, private references, 72 request bodies, инструкции, policy, tests и
+зависимости закреплены CONTROLS-CANDIDATE.json:200 файлов.
+
+Rubric сравнивает faithful representation именованного публичного утверждения,
+а не истинность causal world. Несовпадение сериализации не считается смысловой
+ошибкой; refuted status не переписывает positive proposition в отрицание.
+Оценки supported/contradicted/underdetermined/conflicting требуют exact source
+anchors и объяснения identity/time/meaning. Само наличие anchors не проверяет entailment.
+
+Reference semantics **ещё не проверена независимо**. Generator и reference author
+не являются независимыми источниками истины; packet audit проверяет binding,
+isolation и counts, не правильность английских формулировок. Неоднозначности
+rubric/source должны сохраняться, а не устраняться после просмотра model outcomes
+без отдельной версии. В частности, contradicted относится к несовместимой
+репрезентации конкретного утверждения, не к утверждению о невозможности обеих
+направленных связей в мире.
+
+### 51.2. Исполняемые проверки и prospective gate
+
+semantic_review.request/validate/score проверяет allowlist, bindings, exact
+anchors и все назначенные denominators. **9 tests PASS**:72 input bodies,
+label-leak rejection, source mutation, binding/anchor errors, invalid/missing/
+refused/incomplete outcomes, unassigned IDs и guards от always-supported/
+always-underdetermined стратегий. Oracle-labelled fixture даёт72/72 только
+как тест scorer; это не результат модели, не semantic gold и не BRI.
+
+Заранее задан engineering triage gate: все72 parsed,0false-support на36adversaries,
+positive recall≥0.90 и label accuracy≥0.90 в каждой representation. Например,
+69/72 overall с21/24 в JSON не проходит. Это инженерный порог для дальнейшей
+calibration, не power-based criterion, не независимые72worlds и не разрешение held-out.
+Даже PASS не устанавливает authenticity receipts, reference validity или transmission isolation.
+
+Policy подготовлена для отдельного reviewer: gpt-6.1-sol,requested8192output,
+900s/attempt,3availability attempts,30/90s+Retry-After,concurrency1,min1s,
+circuit3; без content retries/model-switch rescore/automatic replay. Cap остаётся
+только запросом клиента, не проверенным server-side пределом. **0 новых model calls**.
+Новый процесс не наследует API_KEY; проверено только наличие переменной, без
+чтения/печати значения. В точном user-supplied attachment явного API_KEY assignment
+тоже нет. Секреты не искались в других файлах и не извлекались из живого процесса.
+Это не проверка доступности провайдера. Existing resource900 продолжает работать
+со своим credential; новый запуск reviewer не объявляется состоявшимся.
+
+### 51.3. Продолжение реального frozen run
+
+Actual008/source004 parsed:reported2857input/16683output, опять вышеrequested16384.
+Snapshot012: **2invalid,6parsed,1pending,27unstarted**,36assignments;
+10transport attempts,2unknown usage;totals27688input/140084output,costunknown.
+Independent audit:8receipts,94exactanchors,24negativeannotationcanaries.
+У resource900009 первая попытка закончилась network_failure через146.3148s,
+без response bytes, но request мог быть отправлен. После30.0009s началась
+вторая попытка того же запроса. Неизвестный usage не обнулён; процесс не перезапускался.
+
+Следующий шаг — проверить reference/rubric ambiguity и закончить исполняемый
+reviewer runner с безопасным вводом credential, затем собрать реальные calibration
+outcomes. Нельзя заменить это новым слоем формальной схемы или объявить prototype
+смысловой валидацией. Public BRI/opportunities, clustered power/N, две T2 lines,
+preregistration, отдельно разрешённый held-out, robustness и final audit не завершены.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-013/.
