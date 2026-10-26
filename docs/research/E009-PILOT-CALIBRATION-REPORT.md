@@ -2578,3 +2578,77 @@ Evidence: `measurement-021/followup-001/monitor-001/` —
 потребует отдельного prospective comparison, а не повторного запуска этого run.
 Public BRI, natural opportunities, T2 development, power/N, preregistration,
 held-out и полный scientific completion E-009 остаются открыты.
+
+## 37. Source-bound literal diagnostics: механическая проверка не заменяет смысл
+
+2026-10-26 создан и выполнен отдельный локальный candidate
+`measurement-021/followup-001/followup-001/literal_diagnostic.py`.
+Проектные runtime modules, прежний model run и frozen inputs не изменялись;
+новых API calls **нет**. Предыдущий результат 23/24 и 273 unstarted сохраняется.
+
+### 37.1. Реальный интерфейс, тесты и scope
+
+Первый smoke-check завершился exit 1: высокоуровневый
+`resolve_source_value` принимает прежний public memory envelope, а новый wire
+уже содержит экспортированный public request. Создавать фиктивный origin или
+переставлять documents для адаптации не стали. Candidate использует существующие
+strict pointer/JSON/symbolic-list primitives непосредственно над исходным payload,
+сохраняя его hash, document index, stage и Unicode/UTF-8 границы.
+Ошибка и version 1 сохранены; исправленная версия прошла **22/22 tests**.
+
+Сравнение различает bool/int/float/string/null, сохраняет длину, порядок,
+дубликаты и вложенность. Malformed/duplicate/nonfinite JSON не исправляется,
+symbolic lists не преобразуются в DNF. Object assembly имеет отдельное
+`construction_comparison`, но общий status остаётся `abstained`:
+proposed member names и composition не становятся семантическим доказательством.
+Interpretation proposal не сравнивается с самим собой как с source truth.
+Для unknown/absent без selected values нет vacuous success.
+Candidate-free review получает `not_applicable`, а не truth verdict.
+
+Все флаги semantic entailment, binding, currentness, complete field state,
+natural gold и measurement eligibility остаются false даже при literal equality.
+Тесты wrong-owner, historical selection и broad container намеренно показывают,
+что точное совпадение значения не устанавливает ни принадлежность, ни актуальность.
+
+### 37.2. Полные знаменатели и независимое воспроизведение
+
+Обработаны **все 297 неизменённых public wires**, без private expected labels.
+Для 24 controls: 12 literal/symbolic comparisons — восемь equal и четыре different;
+четыре abstentions — два empty-selection и два object composition;
+восемь source reviews — not applicable.
+`pair-04-b / H.proposition` даёт source **64/66**, candidate **64/65** и
+mechanical different. Это выявление несоответствия, **не исправленный model answer**.
+
+Для 273 natural questions: **167 symbolic-list equal**, **88 abstentions**
+(80 object, восемь interpret), **18 not applicable** source reviews.
+Все 80 constructed objects также совпали механически, оставаясь abstentions.
+Эти числа не являются natural accuracy, semantic coverage или независимой gold.
+Предлагаемые candidate values уже входят в исходный reconstruction pipeline;
+совпадение с выбранным фрагментом не разрешает спорные scope/composition assertions.
+
+Отдельный reader без импорта candidate повторил механические результаты всех
+297 wires. После этого сверены шесть authored limitation witnesses:
+wrong ownership, history, unknown/absence и положительная/неподтверждённая
+composition. Отвергнуты **1 188 outer-private canaries**. Все 1 668 frozen inputs
+и 76 sealed raw files прежнего запуска неизменны; никакие ответы не переписаны.
+Evidence: `DIAGNOSTICS.json`, `CANDIDATE.json`,
+`INDEPENDENT-DIAGNOSTIC-CHECK.json`, `LIMITATION-WITNESSES.json`,
+`test-command-001.json`, `diagnostic-command-001.json`, `verify-command-001.json`.
+
+### 37.3. Следующее проверяемое вмешательство, не готовый запуск
+
+Сохранён prospective **draft**, не scientific preregistration:
+две arms — raw и тот же source/question с source-bound mechanical witnesses.
+Проверяются конкурирующие гипотезы: меньше counting/type errors против возможного
+чрезмерного доверия literal equality при wrong scope/history/composition.
+Все 24 controls и 273 natural questions сохраняются: **594 requests**.
+
+В новом диагностическом comparison предлагается собрать обе natural arms
+даже при failed finite gate, но сохранить gate FAIL и все natural outcomes как
+unvalidated/ineligible. Это exploratory сбор, не отмена старого stop rule:
+прежний run остаётся terminal, его 273 unstarted не становятся completed.
+Ни agreement, ни gate PASS автоматически не дают gold/public BRI.
+Порядок arms должен быть заранее сбалансирован; private labels исключены из wire.
+Сами requests, supplement builder, runner tests и freeze ещё **не созданы**.
+Следующее действие — построить и проверить все 594 requests перед любой сетью.
+Full E-009, power/N, T2, scientific preregistration и held-out остаются открыты.
