@@ -4656,3 +4656,118 @@ revision opportunities/dispersion, isolated T2, preregistration,
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-021/.
+
+## 60. Полный reference-review pack: проверен и заморожен до запуска
+
+Продолжение checkpoint181 на прежнем TARGET. Выполнено создание
+реального review corpus, строгого IO-контракта и runner; это уже не
+только design предыдущего раздела. Старые запуски не перезапускались.
+
+### Все источники и закрытый expectation key
+
+Материализованы **30 cases / 60 точных requests**:
+18 реальных checkpoint units и 12 однофакторных искажений, по два
+независимых контекста на case. Сохраняются все исходные 18 checkpoints,
+включая seed и E, а не только успешно распарсенные ответы старого observer.
+Реальные proposals содержат 96 named record occurrences и 130 shared/unnamed
+units. Источники взяты из неизменённых публичных inputs; приватный world
+oracle, hidden measurement и ответы прежних observers не добавлены.
+
+Двенадцать контролей проверяют: evidence scope, temporal scope,
+admissibility/status, epoch/version, модельные альтернативы, numerator/
+probability, AND/OR basis, origin, predecessor, independent support,
+loss of justification/refutation и omission unnamed analysis.
+Изменение native bases сопровождается согласованным пересчётом
+candidate record hash: checksum inconsistency не служит коротким путём
+к ответу. Исходный публичный source при всех mutations неизменён.
+
+До любых вызовов pack001 заменён **pack002**, а первая версия сохранена.
+В два реальных positive cases добавлены буквально опубликованные reasons
+revocation: непустой record_assertions больше не является уникальной
+меткой отрицательного case. Это изменение дизайна до результатов,
+не исправление результатов модели задним числом.
+
+Отдельная реализация, не импортирующая builders/validator, проверила
+**60 requests, 30 неизменённых source payloads, все 12 mutations и 12041
+catalog anchors**. Private expectation key, case kind и mutation labels
+не передаются reviewer. Review order фиксирован seed20261027;
+previous_response_id отсутствует, store=false.
+
+### Строгий контракт без прежнего смешения coverage и unknown
+
+review_io.validate требует все named IDs, семь оценок полей, identity/
+native-encoding assessment и каждую proposed assertion unit.
+Вердикты supported, contradicted, underdetermined сопровождаются
+source anchor IDs и ограниченными rationale. Duplicate JSON keys,
+nonfinite values, неверные hashes/IDs, пропущенные поля, дубликаты,
+чужие ссылки и несовместимые coverage/missing не принимаются.
+
+Оценка относится к **faithfulness предложения**, не к causal truth.
+Правильно сохранённое unknown field может быть supported; неизвестность
+reviewer даёт underdetermined. Ни то, ни другое автоматически не является
+пропуском assertion set. Claim status отделён от source admissibility.
+Публичная проза и композиции допустимы; native serialization не выдумывается.
+
+review_scoring проверяет именно заранее заданный mutation target,
+а не произвольное несогласие reviewer в другом месте. Для явно изменённого
+literal требуется contradicted; для неустановленных origin/fields
+допускается сохранение underdetermined. Omission требует partial coverage
+со ссылкой на analysis. Связанность адреса — не доказательство entailment:
+semantic_gold, measurement_eligible и BRI автоматически не выставляются.
+
+### Проверки, регистрация и ресурсы
+
+**26 contract/scoring tests + 5 runner tests PASS**.
+В offline fixture реально созданы и проверены 60 receipts, journal,
+неизменность request bytes и отказ от повторного drive того же job.
+Это synthetic fixtures, **не модельные результаты**.
+
+Заморожены **191 файл**. Execution SHA-256:
+`f6a225dd2c1e8364a8672c9a2a6782b14b78bd2adbc4e48f76f5510e074dc51a`.
+FREEZE-MANIFEST SHA-256:
+`f0328d9e96a06afb4620188cd6dc5b5ec860aa25a416b33522513ac367258898`.
+Pack002 manifest SHA-256:
+`c8b9335ee01e1273aca9732a6d4695271d6d1146584229570b6f64dcc9c7182d`.
+
+Максимальный request body — 164892 bytes, сумма 4885002 bytes.
+План: gpt-6.1-sol через существующий Responses provider, 16384 requested
+output tokens на call, максимум 983040 по 60 calls; стоимость неизвестна.
+Serial concurrency1, deadline900s, до трёх availability attempts,
+backoff30/90s с Retry-After, без content retry и mid-run model switch.
+Все 60 назначений остаются в знаменателе. Stop — operator/fatal либо
+три последовательных availability-exhausted assignments; semantic failures
+сами по себе не останавливают batch.
+
+Для bounded review gate нужны все 60 parsed, 24 targeted negative
+rejections и 36 supported/complete positive reviews. Unknown, omissions
+и противоречия не исправляются молча. Это ограниченная calibration
+проверка, не 60 независимых миров и не доказательство полного E009.
+
+### Реальный launch gate и текущие прогоны
+
+prior_jobs_terminal проверяет **OS PID + start-time** и terminal records
+обоих прежних jobs до создания нового job и чтения credential.
+Реальная проверка дала ожидаемый exit1:
+registered_prior_runs_not_terminal. Оба прежних процесса действительно
+живы, terminal отсутствует. Gate не ослаблен, процессы не убиты.
+**Новый reference-review ещё не запущен, provider calls=0.**
+
+Full-record snapshot011: **17 invalid, 9 parsed, 1 pending, 9 unstarted**;
+27 attempts, одна unknown usage, 266642 input / 153102 output tokens.
+Независимо проверены 26 receipts, 161 anchor и 46 canaries.
+Все 17 invalid остаются coverage_hides_gaps; старый gate FAILED.
+Diagnostic сохраняет 224/224 literal named-field matches и 28 extras
+unadjudicated в своей неизменённой схеме.
+
+Primary snapshot033: **10 invalid, 21 parsed, 1 pending, 4 unstarted**;
+33 attempts, две unknown usage, 118628 input / 547736 output tokens.
+Проверены 31 receipt, 449 anchors и 84 canaries. Ошибка resource900-030
+annotation_contract сохранена; completed requests не повторяются.
+
+Далее — завершить и запечатать эти два jobs, затем запустить именно
+замороженный review, не новый дубликат. До завершения можно независимо
+подготовить отдельный replay-аудитор его результатов. Полный E009,
+semantic eligibility и все шесть BRI conjuncts ещё не подтверждены.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-022/.
