@@ -1796,3 +1796,116 @@ F offsets, shared scope, history/currentness и перечисление claim I
 типов, сохраняя исходные случаи и нерешённые метки, затем проверить баланс и ограничения
 экспорта до prospective API freeze. Не заменять это очередным подсчётом совпадений.
 Прежние failures, missing responses, требования §26 и полная цель E009 остаются открытыми.
+
+## 30. Полное парное покрытие authored-вопросов и prospective engineering sample (2026-10-26)
+
+### 30.1. Исполненные source-контрасты
+
+После §29 создан и исполнен следующий генератор, затем отдельный verifier.
+Первый запуск завершился exit 1: до фильтрации типов он пытался разобрать
+неразмеченную естественную F-прозу как JSON. Ошибка, traceback, исходный script
+и частично созданный `contrast-001` сохранены. Исправленный versioned generator
+пропускает unlabelled-входы перед JSON-парсингом, не удаляя их из общего корпуса.
+Он создал `contrast-002` и завершился exit 0.
+
+Получено 14 904 пары, 14 200 уникальных counterpart-вопросов и 10 639 источников.
+Различие counts важно: повторное использование endpoint не создаёт независимых наблюдений.
+Распределение новых пар:
+- 10 152 — переназначение author-record identity при сохранении литералов полей;
+- 2 304 — замена только завершающей author scope note с сохранением snapshot;
+- 1 344 — явное изменение authority исторического контейнера при сохранении legacy key;
+- 576 — явное исключение claim из shared scope;
+- 96 — явное назначение владельца coequal propositions при сохранении альтернатив;
+- 384 — изменение конечного перечня текущих records удалением последней записи;
+- 48 — использование уже существующего complete-mode источника вместо переписывания конфликта.
+
+Новые identity-контрасты включают все 10 128 native-F binding questions и прежние
+24 native-S случая без пары. Значения и отсутствие полей перемещаются вместе
+с декларацией identity; ссылки в явных incomplete/conflict notes согласуются с ней.
+Это синтетическое переназначение утверждений, не причинно-эквивалентное alpha-renaming.
+Не добавлены вымышленные native fields, не исправлены хеши, массивы или flat bases.
+Исходные unknown/conflicting controls остаются неизменными.
+
+Для native F создан валидный noncanonical JSON: selected field перемещён в начало
+записи, запись — в начало current_claims; пробелы удерживают прежний числовой диапазон.
+Сам question, его Unicode-codepoint offsets и выбранный literal не меняются.
+Отдельный recursive JSON span walker, не использующий renderer `serialize_spans`,
+заново находит точное поле по фактическому тексту. В сумме проверены 11 136 F binding
+ranges: прежние offsets и literal bytes сохранены, а source-grounded ответ изменён.
+Это проверка JSON-текста и явной authority, не general-prose semantic validity.
+
+48 конфликтных field-вопросов сопоставлены с уже существующими complete-mode
+источниками того же мира/формата. Исходные coequal массивы 64/65 не удалены и
+не превращены в единичное значение внутри конфликтного источника.
+Генератор не создавал «правильный» ответ редактированием исходного gold.
+
+### 30.2. Что проверено и чего это не доказывает
+
+Verifier читает actual public sources, независимо разбирает F ranges,
+проверяет native record identity и явные shared/history/coequal scope statements,
+а затем сравнивает выведенные endpoint-ответы с приватными метками.
+Проверены точное равенство вопросов, разные источники, заявленные transformations,
+сохранность выбранных литералов и отсутствие private outer fields.
+Все 14 904 новые пары проверены; расхождений source-derived меток — 0.
+
+Совместный `PAIR-REGISTRY.json` объединяет 21 480 прежних field/value пар,
+10 104 native-S permutation пар и 14 904 новых:
+все 46 488 исходных размеченных вопросов имеют ровно одну designated пару.
+Все 273 исходных вопроса без gold остаются отдельно; им не присвоены ответы.
+Предыдущие manifests, исходные вопросы и негативные результаты не изменены.
+
+Query-only правило не может различить два одинаковых вопроса с различающимися
+источниковыми ответами. Это свойство конструкции, не измеренная точность модели.
+Распознавание source-side форматирования или шаблонов всё ещё возможно;
+не установлены robustness, natural semantic gold или идентифицируемость public BRI.
+Количество пар не заменяет 12 исходных миров независимым N.
+Исходный paired registry — инженерный материал, не scientific completion gate.
+
+### 30.3. Зафиксирована выборка до получения модельных ответов
+
+Исполнен deterministic sampler: 52 пары, 104 уникальных endpoint requests,
+26 strata по две пары, все 12 исходных миров.
+Private endpoint labels: 48 entailed, 52 contradicted и 4 undetermined.
+Selection использует hash rank и разнообразие исходных verdicts там, где оно доступно,
+без модельных исходов. Приватные pair linkage, world, labels, пути и corpus hash IDs
+не добавляются в judge wire; каждый wire содержит только source и question.
+Endpoint order определён отдельно, а повторные endpoint не выдаются за повторы эксперимента.
+
+Protocol задаёт primary outcome: правильность обоих endpoints пары,
+macro-average по strata плюс отдельный micro-rate и числители/знаменатели.
+Missing/invalid/truncated/refused outcomes остаются в assigned denominator.
+Строгое прохождение 52 sample pairs не означает прохождения всех 46 488 вопросов.
+Quote presence — только дополнительная механическая проверка, не semantic proof.
+
+Предусмотрен Responses API, предпочтительная `gpt-6.1-sol`, concurrency 1,
+не более трёх transport/rate-limit попыток на assignment с паузами 30/90 секунд,
+учётом Retry-After и local deadline 240 секунд. Wrong verdict/invalid JSON не
+перезапускаются ради улучшения результата. После трёх последовательно исчерпанных
+availability assignments остальные явно остаются unstarted.
+Максимум — 312 попыток; wire files содержат 767 787 UTF-8 bytes суммарно
+(3 200–16 654 на запрос), инструкции — 1 825 bytes.
+Это измеренные bytes, не provider tokens или денежная оценка.
+
+Повторно открыты все 104 wire files. Четыре canary-поля приватного envelope
+отвергнуты, семь malformed answer fixtures отвергнуты.
+Синтетические тесты scorer дают 52/52 для искусственно точных ответов и 51/52
+при одном missing, invalid либо wrong verdict, сохраняя denominator 52.
+Эти числа проверяют scorer, а не отражают качество модели.
+API-вызовов на этом этапе нет; runner execution freeze ещё не выполнен.
+
+### 30.4. Материалы и следующий запуск
+
+Evidence-корень: `C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-019/followup-001/`.
+Сохранены `build-command-001.json` (exit 1), `build-command-002.json`,
+`validate-command-001.json`, `sample-command-001.json`, `sample-check-command-001.json`
+(последние четыре — exit 0), scripts, `SOURCE-CONTRAST-VALIDATION.json`,
+`PAIR-REGISTRY.json`, `SAMPLE-PREFLIGHT.json`, `EXPERIMENT-CONDITIONS.json`.
+Выборка, инструкции, protocol и private scoring inputs находятся в
+`engineering-sample-001/` с manifest; frozen runtime проекта не изменён.
+
+Следующий исполняемый шаг — реализовать bounded runner для этой уже выбранной
+когорты, проверить parser/export/retry/error handling локально, зафиксировать
+runner и все execution inputs до сети и начать реальную engineering API calibration.
+Не пересэмплировать когорту по ответам, не заменять запуск очередным status-only audit
+и не смешивать этот bounded engineering этап с окончательной scientific preregistration.
+Полная цель E009 и требования §26 остаются открытыми.
