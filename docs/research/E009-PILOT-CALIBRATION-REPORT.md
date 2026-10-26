@@ -3611,3 +3611,74 @@ requirements audit остаются незавершёнными.
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-010/.
+
+## 49. Явный смысл в прозе и неизвестная native-сериализация — разные наблюдения
+
+### 49.1. Сохранённое ограничение composition checker
+
+Второй source-002 ответ (004) получил от неизменённого v1 42/42 совпавших
+значения и 6/6 hashes, но только 18/48 подтверждённых support sites. Это не
+установленная ошибка модели: D содержит альтернативные явные membership
+фразы о текущих A1–A4/A5–A6; v1 также требовал пробел после hash heading.
+Отрицательный результат, код и candidate manifest v1 сохранены без изменений.
+
+Отдельный v2 извлекает альтернативные membership spans из самого источника и
+убирает требование завершающего пробела у heading. Полные bases/reasons
+assignments и связь имени с hash heading по-прежнему необходимы. Восемь
+тестов прошли; actual 003/004 имеют по 42/42 значения, 48/48 sites и 6/6 hashes.
+Это post-outcome исправление измерителя, не blinded validation, не прирост
+способности модели и не два независимых мира. Measurement eligibility не повышена.
+
+### 49.2. Пятый actual ответ: восемь unknown propositions с явными topic/value
+
+Resource900-005 прошёл механический контракт: reported 2615 input / 20682 output.
+Requested cap остаётся 16384, его server-side исполнение не подтверждено.
+Snapshot007: **2 invalid, 3 parsed, 1 pending, 30 unstarted** из 36; шесть
+попыток, одна с неизвестным usage. Totals: 19359 input / 85883 output, cost unknown.
+Independent audit: пять receipts, 52 exact anchors трёх parsed ответов,
+12 negative annotation canaries. Тот же exec91668 продолжает работать без restart.
+
+В одном документе source-003/D восемь именованных утверждений. Ответ оставляет
+proposition=unknown у всех восьми: полный прежний native record отсутствует.
+Однако source явно сообщает topics, значения, статусы и остальные поля.
+D4 содержит вложенное do(X=0); K — numerator 1 over 8, не probability one.
+Unknown native field нельзя автоматически считать отсутствием наблюдаемого
+пропозиционного содержания: §9 допускает свободную память без единого JSON-формата.
+
+Read-only diagnostic audit_source003_meaning.source_constraints/compare читает
+только публичный source и raw answer, не private index и не скрытый причинный мир:
+- 48/48 значений шести явно заданных полей совпали с source assertions;
+- 48/48 этих sites имеют source-owned support, восемь current records имеют
+  явные identity/current-version свидетельства в пределах данного документа;
+- у восьми unknown propositions anchors покрывают topic и stated value;
+  у K дополнительно покрыта numerator qualification;
+- native proposition exactness не оценена; исходный ответ не исправлен;
+- восемь previous hashes совпали как строки, но preimages отсутствуют:
+  это не проверка цепочки прежних records, в отличие от source-002.
+
+Topics и values сохраняются отдельно, включая возможные разногласия.
+J/K/I имеют bases EA, но буквальные reasons EA/ED/EE: подгонять одно под другое
+нельзя. Assertions о достаточности evidence и rationales модели не являются gold.
+
+### 49.3. Проверки и границы
+
+Восемь тестов прошли: семь field/unrequested-repair canaries, восемь вариантов
+неполных, неоднозначных или исторических clauses, неверный owner при верном
+значении, nested parentheses, source-binding mismatch, отдельный numeric qualifier
+и отсутствие мутации исходного ответа. Изменение source value не заменяется oracle.
+Тест сохраняет ограничение necessary-span правила: альтернативный достаточный
+путь к значению может не пройти этот detector. Это не доказательство отсутствия
+смысла и не общий natural-language adjudicator; оба результата source-specific/posthoc.
+
+Для будущего prospective канала нужно раздельно измерять literal/native fidelity,
+semantic constraints, identity/currentness и неопределённость. Канал одинаков для
+условий, не передаётся следующему участнику и не меняет текущий frozen batch.
+48 field matches и восемь topic links не дают полный BRI: прежнее состояние,
+dependency transitions и новый ответ этим одним документом не проверены.
+Обобщение формулировок, public BRI/opportunities, clustered variance/power/N,
+две T2 development lines, preregistration, отдельно разрешённый held-out,
+robustness и final audit остаются незавершёнными.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-010/COMPOSITION-V2-CANDIDATE.json
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-011/.
