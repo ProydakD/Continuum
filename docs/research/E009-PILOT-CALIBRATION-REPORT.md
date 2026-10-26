@@ -2276,3 +2276,122 @@ Project runtime и исходный репозиторий не изменяли
 Natural semantic validity, измерение public BRI/opportunities, variance/power/N,
 две T2-линии, scientific preregistration, отдельно разрешённый held-out,
 robustness и финальный независимый аудит остаются открытыми.
+
+## 34. Все unlabelled challenges экспортированы; два annotation contracts проверены offline
+
+2026-10-26 выполнен следующий шаг §33: создан отдельный source/question пакет
+для **всех 273** сохранённых unlabelled queries, без выборки по новым ответам.
+Execution HEAD локального экспорта: `702449ccd45f114f72ae839972da7a6e36bbc2f3`.
+Модельных API-вызовов на этом этапе **ноль**; labels не присваивались.
+
+### 34.1. Состав, сохранность и точные границы blinding
+
+255 вопросов относятся к nonliteral fixture interpretations; 18 — к hard real
+source reviews. Они используют **18 уникальных source packets**, а не 273
+независимых источника. Private provenance сохраняет 329 nonliteral occurrences
+и 18 source-review occurrences: всего 347, не дополнительный sample size.
+В уникальных packets — 37 document occurrences: 34 F и три S; документы
+истории между packets могут повторяться, это также не число независимых миров.
+
+Public wire каждого задания содержит ровно `source` и `question`.
+Исходные candidate_field/candidate_values сохранены как **предложения**, не gold.
+Original IDs, дополнительные provenance links и прежний challenge ledger находятся
+отдельно в private mapping. Все 273 expected_verdict по-прежнему null.
+Сохранены 18 байтово идентичных копий source files. Общий размер 273 wire files —
+**1 916 717 UTF-8 bytes**, без будущих model instructions.
+
+Blinding ограничен: exporter не добавляет private labels, provenance и прежние
+judge answers. Но origin actor/run/model/stage/trust уже входит в исходный public
+source и намеренно не удалялся. Это **не double-blind** и не доказательство
+provider-side isolation. Проверка leakage не означает отсутствия любых подсказок
+в исходном тексте. Author assertions и causal truth остаются разными величинами.
+
+Builder отверг 4 095 private-key mutation canaries. Отдельный reader, не
+импортирующий builder, проверил все 273 source/question пары, null labels,
+provenance, membership, 18 исходных source files и **295 package files**.
+Он отверг ещё 546 mutation canaries и прошёл 15 negative type/parser checks:
+bool/int/float различаются, Unicode не нормализуется, nesting и 64/65 сохраняются,
+duplicate JSON keys и nonfinite values отвергаются. Source instruction canary
+сохранён как данные, а не исполнен. Parent manifest из 11 473 files проверен;
+исходный пакет и предыдущие результаты не менялись.
+
+### 34.2. Почему нельзя повторно применить один трёхзначный judge
+
+255 interpretation questions распределены по operations:
+**167 symbolic_list, 80 object и восемь interpret**.
+Symbolic-list parsing сохраняет элементы, порядок и вложенность, но не доказывает
+ownership/currentness. Object member names — предложенная композиция; interpret
+proposal вообще не является literal copy. Resolver явно сохраняет semantic
+verification=false, и новый этап не снимает это ограничение.
+
+У всех 18 source-review questions форма `{candidate:null,kind:unlabelled_source_review}`.
+Здесь нет утверждения для классификации как entailed/contradicted/undetermined.
+Автоматически объявить null «верным», «неверным» или «неопределённым» означало бы
+подменить задачу. Поэтому реализованы **два отдельных provisional contracts**:
+
+- Interpretation: четыре facets — value_fidelity, claim_field_binding,
+  currentness, complete_field_state. У каждого verdict, typed evidence и rationale.
+  Overall verdict проверяется как конъюнкция: явное contradiction доминирует,
+  entailed требует всех четырёх entailed, иначе undetermined.
+- Source review: независимый inventory claim IDs, currentness и семи полей
+  version/origin/proposition/status/bases/reasons/previous_sha256; четыре состояния
+  known/unknown/absent/conflicting, native alternatives, evidence, rationale,
+  coverage claim и unresolved issues. Parser не подтверждает заявленную полноту.
+
+Оба режима требуют provisional=true. Evidence указывает document index и содержит
+exact text либо type-tagged native JSON. Bool/int/float/string не coercing;
+unknown/absent не заполняются значениями; conflicts и malformed alternatives
+не ремонтируются. Citation presence/meaning остаются отдельной проверкой:
+намеренно показано, что структурно правильная выдуманная цитата может пройти
+parser, но semantic validity и measurement eligibility от этого не становятся true.
+
+### 34.3. Фактические проверки и сохранённые ошибки
+
+Финальный offline suite — **17/17 PASS**, включая dispatch всех 273 исходных
+questions по двум режимам, cross-mode rejection, conjunction/uncertainty,
+native types, document bounds, duplicate keys, missing fields, invalid state
+cardinality, conflict64/65, known null, flat bases и provisional invariants.
+Это синтетические проверки контракта, не 273 модельных ответа и не natural accuracy.
+
+Первая команда экспорта завершилась exit 1 до claim/export: SDK Tool использует
+`input_schema`, не `inputSchema`. Versioned builder v2 исправил обращение
+к SDK и повторно использовал тот же pending object; export command 002 — exit 0.
+Ошибка и literal traceback сохранены. Первый parser suite прошёл 16 тестов;
+добавленный malformed-enum regression выявил шесть TypeError для list/dict
+вместо string. После явных type guards suite прошёл 17 тестов.
+Failing command 002 и исходный код до исправления также сохранены.
+
+### 34.4. Что готово к следующему выполнению, а что ещё нет
+
+Внешний evidence-корень: `C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/`.
+Пакет: `challenge-pack-001/MANIFEST.json`,
+SHA-256 `8eda31596ce9743f3a5c727e5ef7d588942c95bedd8cad7abf154509be4cd257`.
+Проверки: `INDEPENDENT-EXPORT-VERIFICATION.json`, `TASK-MODE-AUDIT.json`,
+`build-command-001/002.json`, `verify-command-001.json`,
+`contract-test-command-001/002/003.json` и соответствующие scripts.
+Кандидат: `annotation_contract.py`, две mode-specific instructions,
+`SCHEMA-EXAMPLES.json`, `ANNOTATION-PROTOCOL-DRAFT.json`, `CONTRACT-CANDIDATE.json`.
+Manifest кандидата фиксирует hashes, но **не означает execution-ready freeze**.
+
+Черновой порядок — сначала 18 candidate-free reviews, затем 255 interpretations
+в уже зафиксированном порядке внутри режима, без передачи ответов между requests.
+Предлагаемые per-response caps: 16 384 и 4 096 output tokens соответственно.
+Без ещё не созданных controls это 273 requests / максимум 819 attempts;
+requested output allowance — 1 339 392 за одну попытку каждого задания,
+4 018 176 при трёх. Это не измеренный расход, billing cap или token budget
+всего исследования; стоимость и runtime нового контракта ещё неизвестны.
+
+Следующий исполняемый шаг — создать и проверить 12 authored paired controls
+(24 endpoints), отдельно от natural challenges: shared/rejected scope,
+currentness, unknown/absence, conflict64/65, literal hash, native types,
+composed proposition и list nesting. Затем интегрировать bounded runner с
+существующим transport, проверить raw retention/invalid-output/error paths,
+заморозить фактические requests/instructions/controls/protocol/parser.
+Текущий draft не разрешает выдавать schema pass за semantic gold или запускать
+ещё не проверенный transport. Новая сеть пока не запускалась.
+
+Принятие semantic labels требует отдельной source-grounded adjudication с
+явными доказательствами, competing interpretations и разрешением разногласий.
+Согласие моделей, majority vote и совпадение цитат не заменяют её. Все unresolved
+случаи, прежние gates и полный scope E-009 сохраняются; public BRI и scientific
+completion по-прежнему не установлены.
