@@ -4534,3 +4534,125 @@ revision opportunities/dispersion, две isolated T2 lines, main preregistratio
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-020/.
+
+## 59. Все checkpoints: assertion matrix и области evidence
+
+Продолжение checkpoint179 на том же TARGET. Старые прогоны, prompts,
+источники и результаты не редактировались. Новый кандидат — внешний;
+этот коммит изменяет только отчёт.
+
+### Полный публичный материал, а не только удачные ответы
+
+Для всех **18 checkpoint units / 17 inputs / 3 selected traces / 2 worlds**
+создана source-only assertion matrix: **96 именованных record occurrences**
+из ранее привязанного lineage reference и **130 дополнительных либо общих
+смысловых фрагментов**. Включены seed framing, evidence, analysis, revocation,
+общие области полей, metadata сериализации и наблюдаемые E answer/basis.
+Условные зависимости, неопределённые альтернативы, правила интервенций
+и определения численных значений не выкинуты как «неименованные».
+
+Каждый фрагмент имеет точный source address, семантическую роль и
+evidence/subject scope. Это явно авторское разбиение: одна единица может
+быть bundle нескольких утверждений. Оно не создаёт native claim ID,
+не дописывает семь полей и не превращает публичную assertion в causal truth.
+
+Отдельная реализация проверила исчерпание всего непробельного текста
+и всех JSON-свойств каждого текущего payload. Именованные строки
+исключаются из текстовой проверки только после точного связывания
+с существующим reference. **Широкая ссылка именованной записи на весь
+документ не может скрыть удаление analysis или другого свободного текста.**
+Проверены 18 payload, 96 named records и 130 дополнительных/shared units.
+Это проверка источниковой полноты при объявленном разбиении, а не
+независимая сертификация смысла каждой области.
+
+### Evidence scope меняет интерпретацию model sets
+
+Из публичных фрагментов выделены **17 утверждений о наборах моделей**.
+В пяти checkpoint имеются вложенные области evidence:
+EA alone допускает более широкий набор, а EA с интервенционными
+источниками — более узкий. Во всех **5/5** случаях узкий набор вложен
+в широкий; конфликтов точных наборов в одинаковой области не обнаружено.
+
+Например, F0 B одновременно сохраняет [23,167,311,455] для EA alone
+и model455 для EA+EB+EC. Natural B/D сохраняют восемь observational
+альтернатив и две при совместных evidence. Это не competing current
+conclusions в одной области. Новый contradictions сравнивает одинаковые
+trace, stage и evidence_scope; тест сохраняет обнаружение настоящего
+расхождения при одинаковой области.
+
+В первом запуске scoped extractor не распознал буквальные списки без
+квадратных скобок. Exit1 и исходная версия сохранены. Добавлена явная
+грамматика «indices are / allows»; source text не изменялся.
+
+### Девять дополнительных claims B
+
+Разобраны все девять дополнительных claims record-006-1 с сохранением
+**63 field state/value cells** и 13 точных source references.
+Вместе с Q20 это **23 вхождения / 161 ячейка**, не независимые миры.
+Вводный абзац B полностью учтён: девять содержательных единиц плюс
+stage metadata и serialization metadata.
+
+Сохранены EA-only и combined-evidence scopes, точные counts/do/total,
+явное отсутствие revocations, объяснения исключения семейств и статус
+historical assertions как не-evidence. Claim status, origin, version,
+predecessor не выводятся из source admissibility, номера этапа или автора.
+
+Для «EC agrees» сохранены конкурирующие контекстные чтения:
+согласие с идентифицированной моделью либо с предыдущим account
+модельного отбора. Численный критерий agreement, дополнительная authority
+или отдельная dependency из этой короткой фразы не выдуманы.
+Это post-hoc чтение автора, уже видевшего output, не independent gold.
+
+### Проверки и следующий экспериментальный шаг
+
+**21 тест PASS**. Дополнительно к source exhaustion проверены: потеря
+unnamed analysis за широкой named citation, исторический адрес вместо
+текущего, численная подмена, EA-only→combined scope, удаление альтернативы,
+ложный claim status, counts/do, выдуманные origin/version/predecessor/native
+binding. Вторая реализация повторила 17 scoped sets, пять nesting pairs,
+девять B records, 63 ячейки и 13 source bindings. Автор общий.
+
+MATRIX-CANDIDATE: **43 файла**, SHA-256
+`29ac9d0f840fb57f2a005daadf4e6b2140c090f4acc6068201dbc93078b78214`.
+ASSERTION-MATRIX SHA-256:
+`a07a0a45dcd9157aa4dde81a49b7eac402378554d513a0186fa01db8366be4c3`.
+B adjudication SHA-256:
+`b7dc2e9a7834667bd0a3e36d4c71d0cf76003c852361cfa286ed68d1a9c39478`.
+
+Составлен **design, ещё не execution registration**, ограниченного
+source-faithfulness review: все 18 реальные checkpoint плюс 12
+одиночных искажений, два независимых контекста на case — 60 запросов.
+До запуска нужны фактический corpus/непередаваемый expectation key,
+независимая проверка всех mutations, строгий output contract, preflight
+и freeze точных requests/scripts/order. Предложенный gate требует нуля
+false acceptance на mutations и отсутствия неразрешённых semantic
+contradictions/omissions на real reference; unknown не становится PASS.
+Model agreement само по себе не gold. Нужна фальсифицируемая ограниченная
+валидация, а не бесконечное требование универсального доказательства языка.
+Новых provider requests этим кандидатом не запускалось.
+
+### Наблюдённые результаты продолжающихся прогонов
+
+Full-record snapshot009: **12 invalid, 7 parsed, 1 pending, 16 unstarted**;
+20 попыток, одна с unknown usage, 182084 input / 118706 output tokens.
+Независимый replay: 19 receipts, 153 anchors, 38 canaries.
+Все 12 invalid остаются coverage_hides_gaps; зарегистрированный gate FAILED.
+Появились parsed A и два E; E agreement относится к наблюдаемому output,
+не доказывает correctness нового причинного ответа. Frozen diagnostic:
+224/224 literal named-field matches, 28 extras по-прежнему unadjudicated
+в его собственной схеме. Новый A добавил пять ещё не разобранных extras;
+Q20/Q21 overlays не переписывают старые исходы.
+
+Primary snapshot031: **9 invalid, 19 parsed, 1 pending, 7 unstarted**;
+30 попыток, две с unknown usage, 106734 input / 500395 output tokens.
+Проверены 28 receipts, 400 anchors и 76 canaries. Оба exec/PID/start-time
+подтверждены живыми, перезапуска и повтора completed requests не было.
+
+Semantic eligibility и полный BRI всё ещё не подтверждены. Full-source
+reference review должен вести к эмпирически пригодному измерению, после
+чего сохраняются все требования основного E009: шесть conjuncts,
+revision opportunities/dispersion, isolated T2, preregistration,
+отдельно разрешённый heldout, robustness и независимый итоговый анализ.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-021/.
