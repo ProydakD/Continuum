@@ -4865,3 +4865,117 @@ Primary exec91668/PID24864/start2026-10-26T18:18:34.3176714Z подтвержд�
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-023/.
+
+## 62. Закрытый primary, реальный запуск review и спорная native encoding
+
+Продолжение от checkpoint185: завершена первая незавершённая операция,
+затем запущен уже зарегистрированный review без изменения корпуса,
+модели, критериев или порядка. Исходный TARGET и четыре роли сохранены.
+
+### 62.1. Primary завершён и запечатан
+
+exec91668 завершился с exit0, all_assignments_terminal,36/36. Проверка ОС
+подтвердила отсутствие исходного PID24864/start2026-10-26T18:18:34.3176714Z;
+TERMINAL присутствует, PROCESS.lock отсутствует. До этого процесс не
+перезапускался из-за истечения времени наблюдения.
+
+Финальный snapshot037: **25 parsed и11 invalid**,37 transport attempts,
+0pending и1unknown usage. Сообщённые tokens:132632input/609056output;
+это не полный известный расход с учётом unknown attempt, стоимость неизвестна.
+Независимый replay подтвердил36receipts,585anchors и100negative canaries.
+Все36 назначений сохранены, successful parsing не равен semantic validity.
+
+Неизменённый валидатор повторно вызван для диагностики исключений, без
+пересчёта результатов: **8 text_anchor_mismatch и3 evidence_without_exact_anchor**.
+Отсутствие точного source witness — наблюдаемая проблема измерительного
+контракта, а не доказательство ложности всех содержащихся в ответе убеждений.
+Snapshot SHA256:
+754a895dc7b46b7a9ed6ace34df94d615009b9ece68f3cd4421ac98b00c5ada2.
+Запечатаны148 исходных файлов; PRIMARY-RAW-SEAL.json SHA256:
+5510ea2f25d7dc376643ed62a3a4b8ad80acb4567cf79ad721e55b63d3f5b0ba.
+Оба старых job теперь CLOSED; их результаты не ремонтируются и не повторяются.
+
+### 62.2. Запущены настоящие review-запросы
+
+Q22 run_reference_review.py --authorize проверил прежние TERMINAL и реальные
+PID/start: оба исходных процесса отсутствуют. Запущен ровно ранее замороженный
+EXECUTION f6a225dd2c1e8364a8672c9a2a6782b14b78bd2adbc4e48f76f5510e074dc51a,
+pack002/freeze191, serial1. Credential передан через masked getpass только
+в память процесса; значение не сохранено в артефактах или аргументах.
+
+Новый **exec26111/PID25764/start2026-10-26T23:29:48.3718646Z** наблюдён живым.
+Все60 назначений продолжаются по зарегистрированному stopping rule,
+без content retry, автоматического ремонта, model switch или ранней
+остановки по отрицательному semantic/contract результату.
+
+Snapshot005: **6 parsed,1 pending-or-unreceipted,53 unstarted**. В согласованном
+SQLite snapshot пока6attempts и0pending attempts: следующая папка появилась
+между чтением ledger и файловым обходом. Это состояние передачи работы,
+не утверждение о завершении седьмого запроса. Reported82360input/16282output.
+Независимо проверены6receipts,68anchors и34negative canaries. Знаменатели
+остаются36positive и24negative; positive_pass4, negative_pass0 (контрольные
+mutation-ответы в этом snapshot ещё не получены).
+
+Первые два supported ответа относятся к одному trace3/seed с **нулём named
+records и одной no-memory envelope unit**. Дополнительная literal проверка
+подтвердила совпадение этой unit с публичным payload и root witness.
+Это не проверка семипольных записей, dependency repair или двух независимых
+миров. Ещё два accepted ответа относятся к trace1/E с одной prediction unit.
+
+### 62.3. Оба контекста отвергли метаданные native encoding в trace2/D
+
+review-002-1 и002-2 прошли строгий JSON/anchor/denominator контракт, но оба
+получили зарегистрированный **positive_pass=false**. Для всех8 записей они
+поддержали identity и56 field assessments, а также22 дополнительные units
+и complete coverage. При этом все8 native_encoding assessments в обоих
+контекстах — contradicted. Между ними нет verdict/coverage disagreements;
+anchor sets совпадают,89 из94 rationale различаются. Согласие не объявляется
+истиной.
+
+Зарегистрированный all36-positive критерий и combined bounded gate уже
+**FAILED**. Это не повод исключать случай, менять private expectation key,
+переключать модель или прекращать оставшиеся запросы.
+
+Проверка публичного источника отделила два вопроса. Stage C содержит8
+буквальных JSON объектов версии4 и фразу о current claim objects for successor
+hashing. Stage D — проза с общей version5/origin, обновлёнными status/bases/
+reasons, восемью явными previous_sha256 и явно неизменёнными propositions.
+Независимое составление этих полей воспроизвело все8 предложенных объектов
+и их вычисленные canonical hashes. Все56 field state/value pairs совпали.
+Но строки текущих JSON объектов и их вычисленные current digests **не
+присутствуют буквально** в D; опубликованные previous hashes не равны
+утверждению о публикации current D serialization.
+
+Прослежена цепочка метаданных: Q19 public_lineage.evidence имеет default
+native=True; caller explicit_unchanged_proposition_and_shared_scopes не
+переопределяет его. Q22 сохраняет native_record, record_sha256 и общий label
+exact_literal_or_explicitly_declared_record. Он не различает явную композицию
+полей, условное наследование объектной схемы и source-native current carrier.
+
+Сохранены обе интерпретации: (1) exact-native/hash утверждение избыточно для
+текущей прозы, и отказ reviewer согласуется с источником; (2) label мог
+подразумевать объявленную объектную композицию, а не буквальную JSON запись,
+поэтому часть расхождения связана с неоднозначностью контракта. Отсутствие
+literal строки само по себе не доказывает невозможность наследования схемы.
+Вычислимость hash сама по себе не доказывает публикацию соответствующего
+native объекта. Ни одна интерпретация не подменяет неизменённый run score.
+
+ENCODING-DISAGREEMENT-001.json SHA256:
+8100296d2663b3bed7574d63cde9b275f5a69a4c7aa50be0bc942e9512478ad6.
+14-file DIAGNOSTIC-CANDIDATE SHA256:
+53ae3455ac381067e4ce149642530eaf897b52f17ead23c1557f3363a823b2b3.
+Это posthoc диагностика тем же автором, не независимый semantic gold.
+
+### 62.4. Следующая проверяемая операция
+
+Продолжить существующий exec26111, независимо replay следующие реальные
+receipts, сохранить все positive rejections, mutation checks и расхождения.
+Не создавать новый удобный study вместо завершения текущих60 назначений.
+Проспективно может потребоваться раздельная типизация literal native hash,
+declared field composition и conditional reconstructed digest — но она
+**не применена** к замороженным input/key/prompt или текущим scores.
+Full E009, пригодность измерения всех6 BRI conjuncts, T2, main preregistration,
+отдельно разрешённый heldout и итоговый аудит остаются незавершёнными.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-024/.
