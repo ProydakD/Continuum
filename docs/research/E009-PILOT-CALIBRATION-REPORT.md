@@ -3364,3 +3364,98 @@ C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement
 model annotations независимым checker. Механическая проверка не закрывает
 semantic adjudication, BRI/opportunities, variance/power/N, T2, scientific
 preregistration, отдельно разрешённый held-out, robustness или requirements audit.
+
+## 46. Закрытие source-first run и prospective short-ack диагностика
+
+### 46.1. Полный batch завершён без аннотаций
+
+Frozen source-first run monitor-006 завершился по availability circuit: runner
+exit 2, shell-tool exit 1. Все 36 назначений сохранены: **3 missing, 33 unstarted,
+0 annotations**. Девять попыток дали восемь `attempt_deadline` и один
+`network_failure`; последний продолжался 182.9180646 секунды, а не 240 секунд.
+Для первых двух назначений наблюдались три 240-секундных deadline, для третьего
+— два deadline и network failure. Журнал сохраняет интервалы повторов 30/90 секунд.
+Нет raw response, HTTP status или observed response bytes. Usage всех девяти
+попыток неизвестен; reported 0/0 не означает бесплатное выполнение на сервере.
+
+Процесс 81031 больше не выполняется. Закрытый run опечатан по 13 файлам; запуск
+не возобновлялся и missing назначения не переигрывались. Отдельная проверка
+PowerShell показала: неявное завершение оболочки после Python exit 2 возвращает
+tool exit 1, а `exit $LASTEXITCODE` сохраняет 2. Оба исходных статуса оставлены
+в evidence, без выдуманной дополнительной ошибки Python. Старый paired run
+93152 также остаётся закрытым: exit 1, 190 sealed files неизменны.
+
+Старый independent auditor намеренно отклонил новый unsupported outcome; его
+ошибка exit 1 сохранена. Отдельный `audit_sourcefirst_v2.py` добавляет только
+наблюдённую комбинацию трёх исчерпанных deadline/network-failure попыток без
+HTTP status/body bytes и с неизвестным usage. Он не приравнивает network failure
+к deadline и не устанавливает сетевую первопричину. **6 tests PASS**, независимый
+финальный audit всех 36 назначений PASS, 36 negative availability canaries
+отклонены. Старый auditor/candidate не изменён. Все признаки semantic validity,
+independent gold и measurement eligibility остаются false.
+
+### 46.2. Отдельный эксперимент transport/resource feasibility
+
+После проверки остановки предыдущего процесса создан и до первого API-вызова
+заморожен новый протокол: **small_before → source_short_ack → small_after**.
+Малые запросы побайтно одинаковы. Средний содержит полный public wrapper
+source-002 как inert source data. Во всех трёх модель должна ответить только
+`READY`, а не выполнить прежнюю полную аннотацию. Private index и прежние ответы
+не передавались. Это три новых идентификатора, не replay старых missing.
+
+Endpoint прежний, Responses API, requested model `gpt-6.1-sol`; доступность
+проверена фактическими вызовами, не списком моделей. Ресурсный контракт задан
+заранее: output cap 64, actual attempt deadline 90 секунд, максимум три попытки,
+паузы 30/90 секунд с Retry-After, concurrency 1, minimum gap 1 секунда, без
+content retries или автоматического resume. Request body: 272 / 12041 / 272
+байта. Output allowances 192 once / 576 all-attempts — не usage, не цена и не
+суммарный бюджет исследования. **12 offline tests PASS**, frozen files: 2835.
+
+Execution SHA256:
+e0be28f51883238283df08bc018789474dbe15fdf9ea527100f0136136b60723.
+Freeze SHA256:
+5ebde48f8aa72173f649982393d3a1c57b331953d92b7c8f3bb03f2b9186806d.
+
+### 46.3. Наблюдения, независимая проверка и ограничения
+
+Все три назначения завершились с первой попытки: HTTP 200, reported model
+`gpt-6.1-sol`, буквальный ответ `READY`; runner и shell exit 0.
+
+- small_before: attempt 4.604073286 s; request 4.625926495 s; usage 336 input / 5 output.
+- source_short_ack: attempt 4.858450174 s; request 5.858508587 s; usage 3882 input / 5 output.
+- small_after: attempt 6.494466782 s; request 7.483396769 s; usage 336 input / 5 output.
+
+Суммарный reported usage: **4554 input / 15 output tokens**, unknown-usage
+attempts 0; денежная стоимость неизвестна. Run опечатан по 16 файлам.
+Независимый stdlib checker без production classifier повторно проверил все три
+request/raw/receipt/ledger bindings, модель, текст, usage, timing и denominator;
+**30 negative canaries PASS**. Первичная попытка получить live process identity
+оказалась слишком поздней: процесс уже завершился. Эта ошибка сохранена;
+exec handle 60471 и terminal PID 27200 известны, OS start time не наблюдался
+и не восстановлен догадкой.
+
+Все три raw response содержат tools metadata, хотя клиент не передавал tools.
+Это не доказательство tool execution; backend identity и server tool isolation
+не проверены. Совпадение reported/requested model само по себе их не доказывает.
+
+Гипотезы: ограничение может зависеть от объёма ответа/полной задачи, от transient
+provider conditions или иной сетевой причины; прежние результаты их не
+различают. Короткие ответы показывают доступность endpoint в эти моменты и
+успешный приём данного полного контекста, **но не причинное объяснение прежних
+сбоев, не feasibility полной аннотации и не её семантическое качество**.
+Источник один, порядок фиксирован, времена/задачи/deadlines различаются; нет
+рандомизации, IID-репликаций, статистической мощности или causal estimate.
+Decision thresholds относятся только к READY/HTTP/model/timing проверкам.
+
+Следующий шаг — отдельная prospective resource amendment для полной аннотации:
+обосновать увеличенный attempt deadline, сохранить прежний full-source контракт,
+18 sources × 2 новых назначения, все 36 denominators и output cap 16384; сначала
+build/tests/freeze, затем фактический запуск. Не выбирать только удобный источник,
+не переписывать прежний run и не повышать short-ack до semantic evidence.
+Неизвестные расходы, failed gates и отрицательные результаты сохраняются.
+Semantic adjudication, BRI/opportunities, variance/power/N, T2, scientific
+preregistration, отдельно разрешённый held-out, robustness и requirements audit
+по-прежнему не завершены.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-008/.
