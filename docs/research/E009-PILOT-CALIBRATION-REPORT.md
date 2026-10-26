@@ -1381,3 +1381,67 @@ witnesses, четыре состояния полей и unresolved semantic tra
 исключения трудных случаев. Native-ID совпадение, компонентная доступность и
 unit PASS не валидируют public BRI. Полный E009 и scientific preregistration
 по-прежнему не завершены; prospective calibration требует отдельной freeze.
+
+## 25. Source-selection contract: смысловые предложения не исчезают
+
+Подготовленный F-probe выполнен, exit 0. Из 329 unmatched F-значений для
+217 bases/reasons найдены символьные списки с совпадающей вложенностью;
+для 104 propositions — отдельные query/value-компоненты. Восемь propositions
+одного view (`bb37f91692b4e430cf5ffe44`) требуют нелитерального преобразования.
+Все 14 диагностических self-controls прошли. Это поиск, **обусловленный прежними
+model values**, а не независимое подтверждение смысла: совпадающие компоненты
+могут принадлежать истории, отрицанию или другой строке. Восемь случаев
+не исключены из будущего измерения и не переобозначены ошибками.
+
+В изолированном пакете реализован новый контракт `e009-source-reconstruction-v1`:
+
+- `resolve_expression`: literal source copy, явное декодирование bare-identifier
+  lists без изменения вложенности/порядка/повторов, object assembly из source
+  expressions и **явно маркированный `interpret` proposal со source witnesses**.
+  Нет default/search/eval, конструктора исправленного массива или подмены
+  значения в literal selector. Неподдержанная нотация остаётся видимой через
+  proposal/unknown, а не преобразуется эвристически в «правильный» ответ.
+- `materialize_reconstruction`: все семь полей, known/absent/unknown/conflicting,
+  отдельные identity, scope и currentness witnesses, distinct conflict alternatives
+  и declared coverage. Known null не становится absent; unknown запрещает
+  complete coverage. Для currentness/absence/complete-coverage нужен witness в
+  последнем документе, **но его расположение не доказывает entailment**.
+- Нелитеральные propositions могут быть сохранены как candidate values, даже
+  когда не выражаются допустимыми конструкторами. Они не выдаются за source copy.
+  `semantic_entailment_verified`, `identity_verified`, `currentness_verified`,
+  `coverage_verified` и **`measurement_eligible` всегда false**. Это transport /
+  proposal contract, не законченный semantic observer и не средство зачесть BRI.
+
+52 unit tests прошли; новые файлы не имеют IDE diagnostics. Включены случаи,
+которые намеренно проходят mechanical shape, но не заслуживают semantic PASS:
+ложное объявление absence, совпадающее значение из другого ID, неподтверждённое
+semantic proposal и исторический/отвергнутый контекст. Они показывают границу
+проверки, а не «успешную валидацию» этих утверждений.
+
+С supplied selectors полный контракт проверен на 192 прежних constructed cases /
+1536 claims: 10 704 known, 24 unknown и 24 conflicting fields сохранены.
+Дополнительно все 329 F-значений прошли **одно-полевое** упражнение: 217
+symbolic-list, 104 object assembly, восемь interpret proposals; остальные шесть
+полей в каждом таком упражнении намеренно unknown. Это не новый полный ответ
+на исходный view и не исправление прежних model outputs. Scope/currentness
+witnesses в этих fixtures заданы инженером и не являются independent gold.
+Все материализованные результаты остаются ineligible для measurement.
+
+Следующий ограниченный **engineering feasibility run** готовится отдельно как
+measurement 017, без ослабления старого FAILED gate. Заранее выбраны 34 fresh
+contexts: все 16 constructed mode/format cases fixed pilot world 537 и все 18
+views с unmatched literals (15 F, 3 S). Это намеренно трудный posthoc challenge
+subset, не репрезентативная выборка и не основной тест. В модель пойдут только
+новые инструкции и публичные документы, без gold, прежних ответов или истории
+других контекстов. Назначения, код, инструкции, analyzer, лимиты/stop/retry и
+ресурсы фиксируются до запуска. Обсуждать успешность этого run можно только по
+фактическим исходам; даже 34 mechanical successes не валидируют public BRI.
+Runner/analyzer проверены в отдельном offline child process с запрещённым
+network и фиктивным credential: два valid, один duplicate-key invalid, два
+provider failures; зарегистрированная остановка exit 2 оставила шестое назначение
+pending. Analyzer воспроизвёл эти статусы и два authored-value matches, exit 0.
+Реальный run этим fixture-тестом не создавался; модельных запросов в нём нет.
+
+Полный semantic observer, независимые identity/currentness/entailment labels,
+prospective calibration, power/N, T2-линии и scientific preregistration остаются
+открытыми этапами. Старые наблюдения/отрицательные результаты не переписаны.
