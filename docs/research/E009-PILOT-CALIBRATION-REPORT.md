@@ -3682,3 +3682,71 @@ robustness и final audit остаются незавершёнными.
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-010/COMPOSITION-V2-CANDIDATE.json
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-011/.
+
+## 50. Общий proposition companion: две независимые оси вместо case-specific парсеров
+
+### 50.1. Новые реальные наблюдения не переписывают старые исходы
+
+Поздний actual source-003/006 подтвердил 48/48 явных значений, но только 40/48
+selected support sites неизменённым checker. Все восемь оставшихся sites —
+previous_sha256: собственные имена и hash values совпадают, однако heading
+отсутствует в anchor registry ответа, хотя присутствует в source. Этот пробел
+сохранён без добавления цитат или ослабления checker. Восемь proposition strings
+совпали с явной композицией source topics/values; 005 оставил эти поля unknown.
+Это восемь расхождений native-state на одном источнике, не независимые миры.
+
+Actual 007/source-004 также parsed: 8 claims, 56 known fields, 13 exact anchors,
+claimed_complete. Source явно задаёт template proposition={query,value};
+это композиция явно указанных частей, а не обязательно копия одного литерала.
+Заявленная полнота и значения не получили общего semantic gold.
+Reported usage007: 2857 input / 20690 output; превышение requested16384 сохранено.
+Snapshot010: **2 invalid, 5 parsed, 1 pending, 28 unstarted** из 36; 8 attempts,
+1 unknown usage; totals24831input/123401output, costunknown. Independent audit:
+7 receipts,81exactanchors,20negativeannotationcanaries. Тот же exec91668 работает.
+
+### 50.2. Отдельный prospective протокол, не замена полного исследования
+
+В monitor012 создан proposition_lanes.registry/validate и отдельные инструкции
+e009-proposition-lanes-v1. Использованы существующие packet/canonical/type/reference
+операции независимого checker; expressions/reconstruction проекта уже умели
+хранить interpret proposals, поэтому их повторная реализация не нужна.
+Frozen runtime, прежние контракты, запросы и ответы не изменялись.
+
+Native lane здесь строго означает **точное буквальное копирование**, не полную
+реконструкцию содержания. Meaning lane хранит произвольный JSON-кандидат смысла
+с источниками и неопределённостью; строка, объект или массив не навязывают
+внутренний формат памяти. Unknown literal допускается вместе с предложенным
+смыслом; точный opaque literal — с unknown meaning. Шаблонная сборка относится
+к meaning с явными компонентами, а не автоматически к literal copy.
+Нельзя использовать copy-rate как primary measure, иначе он искусственно
+предпочтёт structured memory свободной прозе.
+
+Цитата хранится один раз в registry, use sites содержат ID, а не многократные
+копии длинных strings. Это гипотеза снижения ошибок linking, не доказанный эффект.
+Identity/currentness/coverage остаются отдельными предложениями. Structural PASS
+не означает entailment, world truth, native-field ownership или transmission isolation.
+Новый канал — только proposition companion; он не заменяет семь полей, переходы,
+dependencies, provenance, новый ответ и полную конъюнкцию BRI.
+
+### 50.3. Что действительно проверено
+
+**9 tests PASS**:14 malformed-binding/cardinality/reference mutations отклонены;
+четыре семантически подозрительных adversaries с корректными anchors проходят
+механику, но не получают ни одного semantic/measurement/BRI PASS. Это явное
+ограничение, не ложная оценка semantic accuracy. Проверены независимость осей,
+exact-copy против constructed string, bool/int/float/null, конфликт, absence,
+неверные spans/hashes/IDs, Unicode и отсутствие исполнения source instructions.
+Три authored paraphrases проверяют привязки, не понимание парафразов моделью.
+
+Для нового companion сделано **0 model calls**. Инструкции, протокол, код,
+тесты и зависимости закреплены LANES-CANDIDATE.json. H1 (снижение неоднозначности),
+H2 (сохранение семантической неопределённости) и H3 (меньше quote-link failures)
+остаются конкурирующими непроверенными гипотезами. Перед empirical pilot нужны
+отдельно замороженные source-only controls, resource policy и независимый rubric;
+сохраняются все назначенные/invalid/missing outcomes. Без реальных ответов и
+смысловой проверки этот prototype не даёт semantic calibration и не разрешает
+held-out. Полный research scope, включая public BRI/opportunities, power/N,
+две T2 lines, preregistration, robustness и итоговый audit, остаётся открытым.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-012/.
