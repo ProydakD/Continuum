@@ -4424,3 +4424,113 @@ claims: 56 из 56 буквальных сравнений полей восьм
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-019/.
+
+## 58. Полный носитель и безымянные assertions: разные оси измерения
+
+Продолжение checkpoint177, без перезапуска двух живых прогонов.
+TARGET по-прежнему ContinuumResearch/project; исходный Continuum не изменён.
+Изменение этого коммита — только данный отчёт. Новый измерительный кандидат
+хранится отдельно и не подключается к замороженным model requests.
+
+### Источники до предложений модели
+
+Создан lossless inventory всех **18 текущих публичных документов**
+трёх выбранных трасс: 17 уникальных inputs, два causal worlds.
+Сохранены **113 неперекрывающихся carrier units**: 55 текстовых строк,
+40 буквальных именованных записей, 8 evidence, 4 analysis, 2 revocation,
+4 envelope/prediction. Метаданные и пробельные разделители не удаляются.
+Отдельная реализация восстановила все 18 payload без изменения содержания.
+
+Это полнота носителя, **не доказательство полноты множества утверждений**.
+Текстовая строка может содержать несколько assertions, общую область полей
+или указание сериализации. Inventory не превращает historical document
+в текущую память, отсутствующий record field в known:null, source ID в
+claim identity либо вопрос E в уже сделанное предсказание.
+
+### Разбор ранее открытых 14 дополнительных claims
+
+По публичным источникам рассмотрены четыре дополнительных claims из
+record-002-2 (F0 C) и по пять из record-004-1/2 (natural S D).
+Сохранены все **98 ячеек state/value семи полей**.
+Эти 14 вхождений не считаются 14 независимыми фактами.
+
+В C семь единиц полного вводного абзаца включают revocation/admissibility,
+census, альтернативные модели, dependent/independent status,
+потерю обоснования прежней идентификации и metadata сериализации.
+Четыре дополнительные записи покрывают новые группы содержания;
+dependent/independent status также выражены восемью именованными записями.
+«Model455 больше не обоснована» не заменено на «model455 опровергнута».
+Прозаические переформулировки — явно авторские post-hoc readings,
+не слепой независимый эталон.
+
+В D обе аннотации сохраняют одинаковые **5/5 публичных блоков содержания**:
+три evidence, revocation и analysis. Сопоставление учитывает точные counts,
+do, total, admissibility, withdrawn IDs/epoch/reason, обе оставшиеся модели
+и полный текст analysis. При этом буквальное совпадение state/value равно
+**26/35 пар полей**, а whole-proposal, включая labels, — **0/5**.
+
+Причина различия наблюдаема: первый ответ помещает record в proposition,
+admissibility — в status и использует public evidence ID; второй сохраняет
+весь evidence wrapper в proposition, оставляет claim status unknown и
+использует observer label. Revocation аналогично допускает два размещения.
+Это не основание автоматически считать status или identity правильными:
+source admissibility, epistemic claim status, speech act и scope identity
+должны оцениваться раздельно. Источник не устанавливает claim version,
+origin или predecessor этих безымянных bundles. Epoch3 не есть version3.
+Для analysis сохранены evidence roles с **unspecified** логикой; AND/OR
+не выведены из одного перечня источников.
+
+Отдельная реализация проверила 15 literal source bindings, сохранность
+98 ячеек и точное содержание десяти D-bundle вхождений.
+Обе реализации написаны тем же агентом, уже видевшим ответы:
+**independent semantic gold не получен**, старые outcomes не пересчитаны.
+
+### Проверки и воспроизводимость
+
+**17 тестов PASS**. Контроли выявляют удаление analysis, пробел в текстовом
+покрытии, подмену temporal address, admissibility polarity, census quantity,
+intervention, удаление модельной альтернативы, выдуманную AND/OR-структуру,
+подмену revoked source/epoch и дописывание origin/predecessor.
+Проспективная функция coverage раздельно возвращает carrier_set_complete
+и all_fields_resolved: неизвестные поля не маскируют пропущенный носитель,
+а полный носитель не выдаётся за semantic coverage или eligibility.
+
+Две локальные ошибки диагностики сохранены с exit1:
+сначала перепутаны canonical-input SHA и file SHA, затем при соединении
+предложений потеряны точки. Исправлены привязка двух разных хешей и
+точный разделитель; источники, ответы и зарегистрированные gates не менялись.
+
+SCOPE-CANDIDATE: **45 файлов**, SHA-256
+`57108db04e754854795715a0978f8842c7c3fb5dd227c3eea5b17b626589ad33`.
+Inventory SHA-256:
+`598177a758c5f695ec4f64f5e98e4cfd9576e12516ae33a27fea970570c625a9`.
+Adjudication SHA-256:
+`63b335d21a3f2f1c6d7d95accc163049b4220cd55101428fc07136fcd5799839`.
+
+### Свежие зарегистрированные результаты
+
+Full-record snapshot007: **8 invalid, 4 parsed, 1 pending, 23 unstarted**;
+13 попыток, одна с unknown usage, 145888 input / 84374 output tokens.
+Проверены 12 receipts, 17 catalogs, 134 anchors и 24 negative canaries.
+Все восемь invalid остаются coverage_hides_gaps; all36-parsed gate FAILED.
+Новый parsed B содержит ещё девять дополнительных claims: они пока
+не adjudicated. Старый frozen diagnostic показывает 168/168 буквальных
+именованных полей и 23 unadjudicated extras, поскольку не читает новый
+Q20 overlay. Не подменяем эту метку ретроспективным PASS.
+
+Primary snapshot029: **9 invalid, 17 parsed, 1 pending, 9 unstarted**;
+28 попыток, две с unknown usage, 100986 input / 468776 output tokens.
+Независимая механическая проверка: 26 receipts, 360 anchors, 68 canaries.
+Оба исходных exec/PID/start-time сохранены, новые observer calls этим
+кандидатом не запускались. Ожидание не трактуется как завершение/ошибка.
+
+Далее: остальные безымянные assertions, конкурирующие scope/identity
+readings и независимое семантическое обоснование полного reference.
+Только после этого — новая preregistered measurement validation, не
+исправление текущих результатов задним числом. Все шесть BRI conjuncts,
+revision opportunities/dispersion, две isolated T2 lines, main preregistration,
+отдельно разрешённый heldout, robustness и итоговый независимый аудит
+остаются незавершёнными требованиями полного исследования.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-020/.
