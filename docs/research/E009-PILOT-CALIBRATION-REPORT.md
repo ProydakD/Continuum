@@ -2974,3 +2974,104 @@ Evidence:
 Следующее действие — продолжать тот же run и оба независимых audits по новым
 snapshots, сохраняя gaps/negative results до terminal seal и полного raw analysis.
 Natural measurement/gold/public BRI, power/N, T2, preregistration и held-out открыты.
+
+## 42. Полные denominators и границы natural field coverage
+
+2026-10-26 продолжена та же session 93152 / PID 28724 без нового API launch.
+Создан отдельный post-freeze coverage inventory: исходные запросы, labels,
+порядок, transport policy и результаты не изменялись.
+
+### 42.1. Назначение, источник и документ — разные единицы
+
+Для всех **594 assignments / 297 question pairs** восстановлены связи:
+execution registry → исходный public wire → точный request → snapshot receipt.
+Сверены source/question canonical hashes, file SHA и natural source catalog.
+В каждой паре сохранены оба endpoints, включая missing, pending и unstarted.
+
+Source key включает experimental stage и canonical full-source hash.
+Сохранены target stage, упорядоченные document indices, собственные stage/format,
+declared SHA, отдельные canonical document/payload hashes и origin metadata.
+Одинаковый payload не сливает документы разных стадий или разных источников.
+Null document stage сохранён как null, а не подставлен из target stage.
+
+Получены **24 control и 18 natural source clusters**; у natural источников
+**37 document occurrences: 34 F и 3 S**. Вместе с controls — 63 occurrences
+на уникальных источниках, но **1248 document exposures** в назначенных запросах.
+Эти повторения не являются независимыми наблюдениями.
+Hash-based identity также не доказывает semantic ownership или currentness.
+
+### 42.2. Обнаруженное ограничение дизайна
+
+Natural assignments состоят из 18 candidate-free review questions и
+255 interpretation questions, каждая в двух arms: **36 + 510 = 546 calls**.
+
+| Named interpretation field | Questions | Assigned arm calls |
+|----------------------------|-----------|--------------------|
+| proposition                | 88        | 176                |
+| bases                      | 86        | 172                |
+| reasons                    | 81        | 162                |
+| version                    | 0         | 0                  |
+| origin                     | 0         | 0                  |
+| status                     | 0         | 0                  |
+| previous_sha256            | 0         | 0                  |
+
+У трёх источников назначен только source review; у остальных количество
+interpretation questions неодинаково. Диапазон по всем источникам — 0–32.
+Нули в таблице означают отсутствие таких заданных interpretation questions,
+а не отсутствие соответствующих полей в исходном тексте.
+
+Candidate-free review учитывается отдельно, с null named claim/field.
+Его нельзя автоматически превратить в семь независимо проверенных измерений
+или известный полный набор claim IDs. Отдельный список model field proposals
+содержит ссылки на receipt и JSON pointer, но semantic labels остаются false.
+Таким образом, этот challenge set сам по себе не удостоверяет полное измерение
+семи полей, public BRI или полноту opportunities.
+
+### 42.3. Проверки inventory и сохранённая ошибка
+
+**24 unit tests** покрыли семь статусов, полные denominators и парные связи,
+native types, сохранение document stages, candidate-free review и отсутствие
+автоматического перехода от model proposal к gold.
+Другой checker без импорта inventory implementation повторно сверил все
+594 rows, 297 pairs, 42 clusters, 63 document occurrences, group totals,
+receipt bindings и все 504 наблюдаемые model field-proposal rows.
+**16 намеренных искажений** denominators/status/source/pair/document/proposal/
+group/semantic flags были отклонены. Общая зависимость Python JSON остаётся.
+
+Первый запуск checker завершился с exit 1 / KeyError: rows:
+был ошибочно предположен общий интерфейс citation и schema audit.
+Фактический citation interface — checked/result_sha256; исходный код, traceback
+и correction record сохранены. Исправлен доступ к интерфейсу, а не критерий
+проверки, результаты модели или coverage artifact. Повторный запуск успешен.
+Одна команда создания report patch не исполнилась из-за JS template quoting;
+ошибка до исполнения сохранена, patch повторён с исправленным quoting.
+
+### 42.4. Датированный снимок, не окончательный результат
+
+ANALYSIS-013: **57 receipts = 56 parsed + 1 missing**, один pending request,
+536 assignments unstarted. Natural: 8 parsed source reviews и один missing;
+все 510 interpretation calls ещё не начаты. Все восемь parsed natural reviews
+заявляют claimed_complete и содержат суммарно 48 claim occurrences /
+336 fields со state=known. Это наблюдаемые заявления модели, не доказанная
+полнота источников и не 48 независимых claims.
+
+Оба auditors сверили тот же набор receipt hashes: 56 schema-valid annotations,
+224 negative answer mutations, один three-deadline missing с 8 transport
+mutations и **941 citations**. Прежние три отсутствующие control citations
+сохранены; новых missing citations в восьми natural answers не найдено.
+Все эти проверки не устанавливают semantic accuracy.
+
+На snapshot: **63 transport attempts**, 56 reported responses,
+шесть завершённых unknown-usage attempts и один pending.
+Reported subtotal **124 141 input / 99 669 output** tokens; unknown usage
+не равен нулю, стоимость неизвестна. Assignment 0058 ещё pending;
+observation timeout не послужил поводом для restart.
+Control gates по-прежнему FAIL: raw 22/24, literal_witness 23/24.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-004/.
+Следующий содержательный этап — source-first adjudication contract для полного
+claim/field inventory с явными unresolved cases и проверкой независимости labels.
+Он не должен принимать model agreement, scope claims или этот ограниченный
+challenge set за semantic gold; frozen live run и его negative results сохраняются.
+Полная научная задача, power/N, T2, preregistration и held-out остаются открыты.
