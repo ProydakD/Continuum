@@ -3904,3 +3904,96 @@ power/N, две T2 lines, preregistration, отдельно разрешённы
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-014/.
+
+## 53. Закрытый reviewer run: ошибки координат и дефект сопоставимости контролей
+
+Существующий exec45287 завершился с фактическим shell/runner exit0:
+all_assignments_terminal,72/72,unstarted=[]; PID48896 отсутствует.
+Повторного запуска нет. Все292 файла run-001 закреплены REVIEW-RAW-SEAL.json,
+SHA256 f7ad9f19121db11190c2ff81973a0a396c1ce38444904f9debca0243f52f3d5a.
+Frozen requests, исходные authored labels и исходные classifications сохранены.
+
+### 53.1. Полный результат заранее заданного engineering gate
+
+REVIEW-ANALYSIS-005: **62parsed,10invalid**,72 assigned/72 terminal receipts,
+72 HTTP200 attempts,0 availability retries,0 pending/unknown usage.
+Reported usage91121input/23686output; стоимость неизвестна.
+Attempt duration:median12.618s,mean12.795s,range8.347–22.406s;
+минимальный наблюдаемый interattempt gap1.000226s.
+Это feasibility именно короткого control reviewer, не полного annotation workload.
+
+Независимый contract replay:72 receipts,67 exact anchors,372 rejected negative
+canaries; production validator не импортируется. Он проверяет mechanics,
+не semantic entailment. Основной authored-label score **60/72**,
+positive recovery29/36; наблюдаемых false-support среди parsed ответов0.
+**Заранее заданный gate не пройден** и задним числом не меняется.
+
+| Представление | Назначено | Parsed | Invalid | Primary authored-label matches |
+| ------------- | --------: | -----: | ------: | -----------------------------: |
+| JSON          |        24 |     24 |       0 |                             23 |
+| Paraphrase    |        24 |     16 |       8 |                             16 |
+| Prose         |        24 |     22 |       2 |                             21 |
+
+Все72 остаются в denominator. Это12 authored families, не72 независимых миров.
+Нельзя называть60/62 accuracy модели или считать отсутствие наблюдаемого
+false-support доказанной надёжностью на всех отрицательных случаях.
+
+### 53.2. Что именно сломалось в десяти invalid
+
+Posthoc diagnose_reviews отдельно читает immutable raw и не переписывает receipts.
+**5 tests PASS**: неправильный end при точной цитате, отсутствующая/повторяющаяся
+цитата, ошибочная identity/hash binding, invalid JSON и все72 denominators.
+Во всех10 invalid цитата имеет единственное точное вхождение в исходный payload,
+но заданные моделью offsets неверны. Эти10 не превращены в parsed.
+
+У диагностически извлечённых raw verdicts70/72 совпадений с authored labels,
+но это не новый primary score и не semantic accuracy: extraction posthoc,
+labels сами требуют проверки, invalid остаются invalid. Raw verdict одинаков
+в22/24 тройках family×positive/negative across representations.
+Наблюдаемая концентрация offset failures в текстовых вариантах — свойство этого
+инструмента и этих контролей; она не устанавливает causal format effect для
+произвольной памяти. Точная цитата сама по себе не доказывает её смысловую роль.
+
+### 53.3. Два parsed расхождения нельзя автоматически считать ошибками модели
+
+Absence/prose: reference=underdetermined,model=contradicted. Модель считает
+приписывание X->Y несовместимым с явным отсутствием proposition у H.
+Конкурирующие объяснения прежние: невыполнение explicit rubric rule либо
+неоднозначная граница content uncertainty / attribution contradiction.
+
+Numerator/JSON: reference=supported,model=contradicted. Literal JSON содержит
+numerator1,denominator8,**unit=count_out_of_total**. Candidate называет это
+probability1/8. Prose прямо утверждает probability1/8, paraphrase говорит об
+eight equally weighted cases; JSON не содержит такого bridge.
+Модель аргументирует mismatch quantity kind, а не ошибку арифметики.
+
+Это существенная проблема construction validity: три numerator источника
+не устанавливают одну и ту же явно утверждённую величину. Нельзя выдавать
+эту тройку за чистый representation-invariance test и приписывать отличие
+формату. Reference supported не становится gold из намерения автора.
+При этом старые labels/score/denominator не исправлены и не скрыты.
+
+### 53.4. Решение и оставшаяся работа
+
+Текущий run закрыт, failed gate сохранён. Следующий опыт должен сначала
+устранить неоднозначность source equivalence и category definitions в отдельной
+prospective версии, затем проверить перенос детерминированных координат в
+harness. Нужны прежние wrong-owner/time/polarity/quantity adversaries.
+Если исправляются и источники, и механизм references, old-vs-new сравнение
+не изолирует эффект anchors: нужны matched arms с одинаковыми исправленными
+входами либо строго ограниченный feasibility claim.
+
+Это не требование структурировать внутреннюю память участников. Natural-memory
+generalization, public seven-field reconstruction, dependency transitions,
+full BRI/opportunities, clustered power/N, две T2 lines, preregistration,
+отдельно разрешённый held-out, robustness и final audit остаются незавершёнными.
+
+Основной resource900 остаётся тем же exec91668/PID24864/start18:18:34.3176714Z.
+Snapshot016:3invalid,8parsed,1pending,24unstarted;13attempts,2unknown usage;
+40222input/205090output. Independent audit:11receipts,131anchors,32canaries.
+Resource011 parsed с6486input/17979output:requested16384 всё ещё не hard limit.
+OS identity подтверждена20:14:06Z, current012; observation timeout не трактовался
+как завершение или основание перезапуска.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-015/.
