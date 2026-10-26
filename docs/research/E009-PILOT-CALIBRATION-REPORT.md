@@ -2144,3 +2144,135 @@ Evidence-корень: `C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifa
 четырёхусловный анализ с сохранением failures. Timeout наблюдения не разрешает restart.
 Engineering gate даже при успехе не закрывает natural gold/public BRI,
 полный corpus, scientific preregistration и остальные требования §26.
+
+## 33. Четыре engineering условия: terminal результаты и независимая арифметическая проверка
+
+2026-10-26 завершены все **416 назначений**. Session 2699 завершилась с exit 0;
+terminal receipt, отсутствие Python PID 24580 и lock подтверждены отдельно.
+Это тот же запуск §32, без рестарта, замены вопросов или повторов ради вердикта.
+Все 1 016 frozen files остались неизменными. Execution HEAD и SHA — из §32.2.
+Новый код анализа и локальные диагностические проверки не меняют frozen scorer.
+
+### 33.1. Все назначенные исходы, без исключения invalid
+
+| Условие         | Parsed / 104 | Invalid | Верные endpoints / 104 | Верные пары / 52 | Strict gate |
+|-----------------|-------------:|--------:|-----------------------:|-----------------:|-------------|
+| string_raw      |           98 |       6 |                     98 |               46 | FAILED      |
+| string_resolved |          100 |       4 |                    100 |               48 | FAILED      |
+| typed_raw       |          104 |       0 |                    104 |               52 | PASSED      |
+| typed_resolved  |          104 |       0 |                    103 |               51 | FAILED      |
+
+Macro и micro pair rates совпадают: в каждом из 26 strata ровно две пары.
+Они равны 46/52, 48/52, 52/52 и 51/52 соответственно. Missing, refused,
+incomplete и unstarted — ноль. Parsed не означает correct: один typed ответ неверен.
+Только `typed_raw` прошёл зарегистрированный **sample engineering gate**;
+полный corpus gate, independent natural gold и public BRI этим не пройдены.
+Исторические 46/52 из §31 не включены в contemporary control и не пересчитаны.
+
+Все десять invalid — ответы string contracts с non-string evidence items.
+Их сырые JSON verdict совпадают с authored labels, но это лишь posthoc диагностика:
+они остаются invalid и проваленными endpoints/pairs. Ни reparsing с ослабленным
+контрактом, ни конвертация object/array/int в string, ни content retries не применялись.
+Typing здесь одновременно меняет schema и явность инструкции; наблюдаемое
+улучшение нельзя отделить от устранения неоднозначности output contract.
+
+### 33.2. Зарегистрированные парные контрасты
+
+В таблице B — обе пары верны, T — только treatment, C — только control,
+N — ни одна; delta = (T − C) / назначенное число пар. Это описательные
+paired counts, не независимые trials и не причинная population estimate.
+
+| Contrast           | Все 52: B/T/C/N | Delta | Applicable 18: B/T/C/N | Unchanged 34: B/T/C/N |
+|--------------------|-----------------|-------|------------------------|-----------------------|
+| typing_at_raw      | 46/6/0/0        | +6/52 | 14/4/0/0               | 32/2/0/0              |
+| typing_at_resolved | 47/4/1/0        | +3/52 | 15/3/0/0               | 32/1/1/0              |
+| locating_at_string | 45/3/1/3        | +2/52 | 13/2/1/2               | 32/1/0/1              |
+| locating_at_typed  | 51/0/1/0        | −1/52 | 18/0/0/0               | 33/0/1/0              |
+
+Difference-of-differences sums: −3 на всех 52, −1 на applicable 18 и −2 на
+unchanged 34; средние — эти суммы, делённые на соответствующие denominators.
+Applicable locating contrasts: +1/18 для string и 0/18 для typed.
+Unchanged-input controls дают +1/34 и −1/34 **без изменения входа**.
+Три string invalid-versus-parsed discordances наблюдаются на byte-identical
+requests. Поэтому общий +2/52 нельзя приписать locator, а −1/52 не доказывает
+вред locator. Stochastic/backend variation остаётся конкурирующим объяснением.
+Williams balance, 280 unique bodies, 52 исходные пары и все assigned denominators
+перепроверены; IID p-values и победа общего semantic измерителя не заявляются.
+
+### 33.3. Parsed ошибка J.proposition: цитата есть, вывод неверен
+
+`factorial-0365`, endpoint 92, typed_resolved, field_observation J.proposition:
+ожидается `entailed`, получено `contradicted`. Source явно сохраняет две
+равноправные конфликтующие J alternatives с counts arrays длиной **64 и 65**.
+Candidate содержит те же две alternatives, а не две копии 64-element array.
+
+Отдельная диагностика проверила decoded lengths, буквальное число integer tokens
+и точное равенство source/candidate alternatives. Rationale модели ошибочно
+утверждает, что candidate повторяет 64-element array. Malformed 65-element
+alternative нигде не исправлялась. На этом nonbinding endpoint **locator не
+передавался**. `factorial-0367` (typed_raw) получил байтово тот же request и
+ответил `entailed`; оба string условия также ответили верно.
+Request SHA-256: `c69617373ec10e322043f07c0472cd78351ba712b08b08d422c3ab4f834111ad`.
+
+Secondary evidence-presence:
+string_raw raw-substring 96/98, decoded 98/98;
+string_resolved 98/100 и 100/100;
+typed_raw 104/104, typed_resolved 104/104.
+Это доля parsed answers, в которых присутствуют все процитированные items;
+пустых evidence arrays здесь нет. У неверного 0365 обе цитаты присутствуют.
+Наличие точной цитаты не устанавливает правильность интерпретации, identity,
+currentness, coverage или причинного утверждения.
+
+### 33.4. Исполнение, расходы и независимая проверка
+
+Всего **418 terminal attempts**: 416 HTTP 200, один 502 и один 503.
+Оба availability failures относятся к string_raw `factorial-0398`:
+502 → 503 → 200. Реальные паузы — 30.000436 и 90.000647 секунд,
+не повторы ради исправления ответа. Minimum observed inter-attempt gap —
+1.000157 секунды. SQLite integrity=ok; незавершённых requests/attempts нет.
+833 полных journal records и **1 254 raw files / 7 067 998 bytes** запечатаны.
+Elapsed run time — 3 631.736 секунд, не оценка latency одного запроса.
+
+Reported subtotal: **892 594 input / 56 378 output tokens**;
+usage двух failed attempts неизвестен, не ноль. Стоимость неизвестна.
+Все 416 responses сообщают `gpt-6.1-sol`; это не независимая backend identity.
+Наблюдаются 416 message и 58 reasoning items, без returned tool-call items.
+Tools usage metadata: 123 136 input / 0 output tokens; наличие metadata
+при omitted client tools не доказывает ни исполнение tools, ни server isolation.
+
+Отдельный checker, не импортирующий registered scorer, воспроизвёл endpoint/pair
+counts, macro/micro, 12 contrast tables и три interaction sums. Он проверил
+416 source/question exports, 104 старых raw hashes, все 418 canonical wire hashes
+(включая завершающий LF), 418 raw response hashes/sizes и Williams balance.
+Это независимая **арифметическая** проверка; семантическая независимость labels
+не возникает от повторного подсчёта. Все command records содержат literal
+stdout/stderr/exit; финальные analysis/check/diagnostic/seal commands — exit 0.
+
+Evidence-корень: `C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-020/followup-001/`.
+Итог: `ANALYSIS-004.json`,
+SHA-256 `2bd343b595e5f0f510b93dd961057e806b4c9eaf759dbe181ec667789cbbb1b4`.
+В `monitor-001/`: `INDEPENDENT-CHECK-004.json`, `FAILURE-DIAGNOSTIC-004.json`,
+`ARRAY-LENGTH-DIAGNOSTIC.json`, `TERMINAL-TOOL-OBSERVATION.json`,
+`TERMINAL-SEAL-CHECK.json`, `RAW-SEAL.json` и исполняемые проверяющие scripts.
+Предыдущие partial snapshots сохранены как partial, не заменены задним числом.
+
+### 33.5. Следующее проверяемое действие и граница результата
+
+Не продолжать настройку judge до прохождения уже наблюдавшегося finite sample.
+Следующий шаг — создать отдельный blinded source/question пакет для **всех 273**
+сохранённых unlabelled challenges из measurement-019/pack-002: 255 уникальных
+nonliteral fixture questions и 18 hard real views. Отделить private provenance
+и прежние outputs от public inputs, сохранить все duplicates/provenance links,
+проверить manifests, byte identity и отсутствие private keys; не изобретать gold.
+
+Это подготовка независимой source-grounded adjudication, а не adjudication сама
+по себе. Model agreement или majority vote не становятся ground truth; ambiguous
+и unresolved случаи должны оставаться видимыми. До новой сети нужны prospective
+annotation protocol, контрольные задания, output contract, accounting и freeze.
+Новый пакет не является held-out: это ранее отобранные engineering challenges.
+
+Project runtime и исходный репозиторий не изменялись; отчёт дополнен отдельным
+разделом. Старые failed gates, все negative results и E-003–E-008 сохранены.
+Natural semantic validity, измерение public BRI/opportunities, variance/power/N,
+две T2-линии, scientific preregistration, отдельно разрешённый held-out,
+robustness и финальный независимый аудит остаются открытыми.
