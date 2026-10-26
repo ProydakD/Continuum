@@ -1571,3 +1571,112 @@ model input; packet content совпадает с прежними публич�
 их control flow не переписан. Новый запуск допускается лишь после freeze исходников,
 плана, входов, лимитов и учёта повторов. Исходов нового модельного запуска в этом
 разделе ещё нет; улучшение контракта и semantic validity не объявляются.
+
+## 28. Measurement-018: завершённый preflight и native-context diagnostic
+
+### 28.1. Условия и исходы, 2026-10-26
+
+Execution revision: `4b7d98a2e11c03779f5864a45699f0822c4c86a5`.
+План `9b2beaae4640ab498de78df6fad2bcb0c88828fa351496794cd1e8a43214cb70`
+и 104 файла зафиксированы до API. Восемь назначенных слотов сохранены:
+
+- `syntax-001`: complete F, structurally valid, 56/56 полей control совпали.
+- `syntax-002`: shared fields S, structurally valid, 56/56 совпали.
+- `syntax-003`: complete S, structurally valid, 56/56 совпали.
+- `syntax-004`: трудный S-view `f0c61753af03832bb9fada9f`, structurally valid;
+  независимого semantic gold для этого view нет.
+- `syntax-005`: трудный F-view `bb37f91692b4e430cf5ffe44`, provider failure.
+- `syntax-006`: partial/conflict S, structurally valid, 56/56 совпали.
+- `syntax-007`: shared fields F, provider failure.
+- `syntax-008`: partial/conflict F, provider failure.
+
+Итого **5 structurally valid, 3 provider failures**, pending=0. Каждый из трёх
+неполученных ответов исчерпал четыре попытки с локальным deadline 240 секунд.
+Два последних provider failures завершили runner по зарегистрированному правилу
+остановки, уже после попытки всех восьми слотов. Это не доказательство
+недоступности сервера и не ошибка знаний writer. Ответы не исправлялись.
+
+Наблюдаемость: **F 1/4, S 4/4**; это выбранный малый engineering cohort, не
+оценка причинного эффекта формата или инструкции. Только **4 из 6** назначенных
+constructed controls наблюдаемы: их 224 состояния и 224 значения совпали с
+авторским gold. Два недоступных controls не исключены и не считаются пройденными.
+Полного control pass, закрытия прежнего strict-384 failure или semantic
+calibration этот результат не даёт.
+
+### 28.2. Transport, происхождение и сохранность
+
+19 transport attempts: 5 completed HTTP responses и **14 attempt_deadline** с
+неизвестным usage. Для 11 повторов проверены задержки и неизменный wire body.
+Reported subtotal: 12 460 input / 36 534 output tokens; это не полный расход и
+не стоимость. 8 × 4 × 32 000 = 1 024 000 — максимальный requested output allowance
+с повторами, не billing cap. Тариф и backend accounting не установлены.
+
+Все пять responses сообщают `gpt-6.1-sol`; независимой проверки backend identity
+нет. Все восемь wire requests не содержат `tools`, однако пять usage objects
+приписывают этому полю 296 input tokens. Получены reasoning/message items, без
+function/image calls. Конфигурация server-side tools и изоляция истории этим не
+доказаны. Host model identity для локального анализа не раскрыта инструментами.
+
+Runner записал terminal code 2; PowerShell launcher вернул 1. Отдельный локальный
+fixture с `raise SystemExit(2)` воспроизвёл mapping: implicit shell exit=1,
+explicit `exit $LASTEXITCODE`=2. Сохранены обе величины, а не подмена одной другой;
+OS exit дочернего API-процесса отдельно не перехвачен. Frozen runner не менялся.
+Процесс отсутствует, session 44888 завершена и не перезапускалась. Raw seal:
+34 файла, 802 801 байт; SQLite integrity=ok, WAL/SHM отсутствуют. Старые данные,
+frozen источники и отрицательные исходы сохранены.
+
+### 28.3. Posthoc диагностика полей и native ID
+
+Новая локальная диагностика повторно материализовала исходные пять outputs и
+сохранила все восемь назначенных строк, включая недоступные. Наблюдаемы
+**38 утверждений, 266 полей**: 264 known, 1 unknown, 1 conflicting, 0 absent.
+Все **266 выражений значений — literal**, interpretation proposals=0.
+`symbolic_list`, `object`, `interpret` и состояние absent этим live-прогоном не
+проверены; выбранный нелитеральный F-view ответа не дал. Offline capability
+checks не заменяют отсутствующее эмпирическое подтверждение.
+
+Все 1105 исходных selector occurrences разрешаются без ремонта. Распределение:
+194 F selections, для которых native identity не выводится; 584 S occurrences
+с совпадающим ближайшим `id`; 313 S occurrences без native ID; 14 S coverage
+selections вне claim-specific проверки. Это повторяющиеся ссылки, не 1105
+независимых наблюдений. Другого native ID в этих разрешённых S occurrences не
+обнаружено; совпадение ID всё равно не доказывает смысл, currentness или coverage.
+
+Из 313 ссылок без native ID **26 являются селекторами значений** в точно
+совпавших authored controls: 24 shared-field values и две coequal J alternatives.
+Правило «нет собственного id — отвергнуть значение» здесь отвергло бы эти
+наблюдаемые контрольные значения. Shared scope, общий текст currentness и
+локальная native identity требуют разных проверок; ни отсутствие ID, ни широкая
+ссылка сами по себе не являются меткой semantic error.
+
+В `syntax-006` H.previous_sha256 остался unknown с пустым values. J.proposition
+сохранён conflicting с двумя исходными counts arrays длиной **64 и 65**: malformed
+альтернатива не исправлена и не отброшена. K.bases сохранён как плоский список
+`["e:EA", "c:J"]`, без выдуманной DNF/conjunction/disjunction.
+
+В трудном S-view все 42 field-value selectors указывают на записи C1–C6 с теми
+же native IDs, по исходным корням `/5`–`/10`. Дополнительный witness `/4/text`
+используется 12 раз для claim/status currentness; это одна selection записи
+`type=analysis`, а не 12 независимых доказательств. Отсутствие здесь собственного
+ID не доказывает ошибку; роль этого текста и смысловая текущесть не прошли
+независимую adjudication. Все пять semantic/identity/currentness/coverage/
+eligibility flags по-прежнему false; public BRI не вычисляется как валидированный.
+
+### 28.4. Проверяемые материалы и незакрытый шаг
+
+Внешний корень evidence: `C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-018/`.
+Замороженные входы и исходы: `PLAN.json`, `FREEZE-MANIFEST.json`, `ANALYSIS-008.json`,
+`monitor-001/RAW-SEAL.json`, `monitor-001/TERMINAL-DIAGNOSTICS.json`,
+`monitor-001/EXIT-STATUS-RECONCILIATION.json`. Новые исполняемые posthoc checks:
+`followup-001/analyze_native_context.py` и `followup-001/qualify_observations.py`;
+результаты `NATIVE-CONTEXT-AUDIT.json`, `OBSERVATION-LIMITS.json` и соответствующие
+command records с literal stdout/stderr/exit. Оба diagnostic commands завершились
+с exit 0; API на этом шаге не вызывался. Это не независимая semantic разметка.
+
+Следующая методическая потребность — проверяемая независимая adjudication смысла,
+identity, currentness и полноты плюс transport feasibility для недоступных F-cases.
+Нельзя заменять её совпадением селекторов, повторным запуском до успеха, удалением
+трудных случаев или объявлением conditional 4/4 полным прохождением. Все дальнейшие
+API-изменения требуют нового prospective плана и сохраняют текущие failures.
+Полная исследовательская цель, прежние failed gates и требования §26 остаются
+открытыми; этот раздел не объявляет main study, heldout или исследование завершёнными.
