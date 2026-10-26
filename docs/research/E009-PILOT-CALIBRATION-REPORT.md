@@ -3459,3 +3459,76 @@ preregistration, отдельно разрешённый held-out, robustness и
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-008/.
+
+## 47. Prospective resource900: возвращение к полной аннотации
+
+Short-ack не заменяет основную задачу. В monitor-009 построен, проверен,
+заморожен и фактически запущен новый полный source-first протокол: **18 sources
+× 2 fresh contexts = 36 назначений**. Повторно предъявляются те же стимулы,
+но с новыми идентификаторами `resource900-001..036`, отдельным journal и новым
+resource policy. Это не resume старого run; его 3 missing/33 unstarted,
+девять неизвестных usage и все прежние отрицательные результаты сохранены.
+
+Единственный изменённый транспортный механизм — actual per-attempt deadline:
+**240 → 900 секунд**, в отдельном `ResourceProvider._attempt`. Унаследованный
+transport передаёт 240, поэтому тест проверяет, что низкоуровневый exchange
+действительно получает 900 и это отражено в terminal attempt observation.
+Policy записывается до создания нового ledger; старый ledger не изменяется.
+900 — прагматичный engineering envelope 3.75×, а не эмпирически установленное
+достаточное время. Transient conditions, сложность полной задачи и объём ответа
+остаются конкурирующими объяснениями; причинный эффект timeout не измеряется.
+
+Все 36 request files побайтно равны соответствующим запросам parent protocol.
+Сохранены source order, полный public-only wrapper, instructions, output cap
+16384, модель `gpt-6.1-sol` и критерии контракта. Нет private index, прежних
+ответов, model switch или content retry. Лимиты: три availability attempts,
+30/90 секунд с Retry-After, concurrency 1, minimum gap 1 секунда. CLI resume
+убран; неполный/orphan journal не даёт основания автоматически повторять запрос.
+Функция replay проверяет завершённые receipts, но CLI не открывает старый job.
+
+Output allowance: 589824 once / 1769472 all-attempts; это не usage, стоимость или
+общий бюджет исследования. Номинальное время всех 36 назначений при трёх
+попытках: 101555 секунд; circuit после трёх подряд исчерпанных назначений —
+8462 секунды. Cleanup, scheduling и дополнительные Retry-After могут увеличить
+elapsed time; общего deadline нет. Денежная стоимость и input token estimate
+неизвестны. Все 36 denominators сохраняются независимо от circuit.
+
+**32 offline tests PASS**: все 36 назначений, binding/order/cap mutations,
+неотрицательные wait boundaries, Retry-After, raw-before-receipt, отсутствие
+content retry, orphan/replay guards и raw/escaped credential-echo guards.
+Retained fixture manifest содержит 4088 файлов; это fake-provider evidence,
+не реальные аннотации. До первого API-вызова заморожены **2884 файла**;
+независимое построение ожидаемых requests проверило все 36 входов.
+
+Execution SHA256:
+fb803e41fed80b0a4a41edfb049dcedda196d885565038daef9c73d57158a180.
+Freeze SHA256:
+670f44c1164477254634a3b809b906314d6e328158064f2efccfd0598ddfcdd0.
+
+Новый процесс exec91668 / PID24864 запущен; OS start time независимо прочитан
+как 2026-10-26T18:18:34.3176714Z. Snapshot001: одно назначение pending,
+35 unstarted, одна попытка с неизвестным usage, ни одного receipt/annotation.
+Это наблюдение процесса и journal, не вывод только из lock-файла.
+Снимок сохраняется даже при дальнейшем продвижении run; новые outcomes требуют
+новых версий analysis/audit, а не перезаписи этой точки наблюдения.
+
+Отдельный independent auditor проверяет prospective900 policy, unchanged parent
+bindings, все 36 denominators, raw/receipt/accounting и прежний полный contract.
+Он не импортирует production classifiers. **4 audit tests PASS**: 16 mutations
+actual pending snapshot отклонены; пять retained offline runs / 180 receipts
+проверены, 704 negative annotation canaries отклонены; 36 synthetic transport
+canaries проверяют deadline/network patterns, включая all-network-failure.
+Проверка короткого deadline теперь явно создаёт deadline-нарушение даже при
+исходном network failure, а не ошибочно требует 900 секунд от network failure.
+Старые auditors и frozen implementations не изменены. Actual snapshot001 audit
+PASS означает 36 bindings, но **0 actual model annotations / 0 actual anchors**.
+
+Далее: наблюдать тот же exec91668 без перезапуска по observation timeout;
+сохранять каждый missing/invalid/parsed outcome и независимо проверять реальные
+аннотации, если они появятся. Receipt/точный anchor/parsed contract не доказывает
+семантическую корректность. Semantic adjudication, BRI/opportunities,
+variance/power/N, две T2 development lines, scientific preregistration,
+отдельно разрешённый held-out, robustness и requirements audit не завершены.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-009/.
