@@ -1158,3 +1158,42 @@ carrier/component-exact. Прежний control failure `validate-0564` и FAILE
 Forensics — `monitor-012/PROVIDER-FAILURE-AUDIT.json`. Новых изменений adapter,
 runner, analyzer, gold или runtime не было. Повторяемость формы отклонения не
 устанавливает его внутреннюю причину или реальное исполнение tools у провайдера.
+
+### Промежуточный результат 2026-10-26: отклонены обе реплики одного входа
+
+Срез `measurement-015/monitor-015/ANALYSIS-001.json`: **1035/1224** terminal,
+1030 structurally valid, пять `provider_failure`, 189 pending. Контроли:
+325/326 meaning-exact, 326/326 carrier-exact и component-exact. Единственный
+контрольный mismatch остаётся `validate-0564`, поле `K.previous_sha256`;
+строгий gate FAILED, независимо от ещё не завершённых назначений.
+
+Четвёртый отказ (`validate-0862`, replica 1, view `7a1ecb1c0707ed5302283fe0`)
+и пятый (`validate-1033`, replica 2, view `bb2de55995a8321713c06d79`) имеют
+ту же наблюдаемую форму: HTTP 200/completed, unsolicited `image_generation_call`
+перед reasoning/message, image object `status="failed"`, только `id/type/status`,
+без `result` и изображения. Исходящие public-only requests не содержат tools;
+строгий отказ `unregistered output item type` воспроизведён для обоих raw bodies.
+Их SHA256 соответственно:
+
+- `d65bd3034f183c145bb44ebbc956214ba2d1a0513adff68c5c59ef54c337626c`;
+- `e99eb19746d8f44d3d088c03b4f0d2876aa823e6b5745d53bfded73a12c919c4`.
+
+`validate-0776` и `validate-1033` — заранее назначенные разные реплики одного
+входа, а не повтор после ошибки. SHA256 обоих исходящих request-файлов совпадает:
+`98fdc8bbc4bc33d6a232f3908d52f2239ffd66f8850786d54eee10a1bd900cf8`.
+Таким образом, теперь наблюдаются два протокольных отказа для одного и того же
+запроса в отдельных контекстах. Это не устанавливает причинность конкретного
+содержимого, детерминированность провайдера, реальное исполнение image tool или
+идентичность underlying model. Ни один accompanying message не спасает результат.
+Все пять отказов сохранены в знаменателе; usage четвёртого 2299/2462 и пятого
+1738/1254 input/output tokens включено. Следующие `validate-0863` и `validate-1034`
+structurally valid; правило остановки после двух последовательных provider failures
+не сработало. Работающий evaluator не перезапускался, frozen protocol не менялся.
+
+Read-only audit всех 1035 terminal requests/attempts завершился exit 0:
+**2 551 711 input / 3 256 795 output** reported tokens, unknown usage 0, стоимость
+неизвестна. Новые реальные пары: 294 scorable и 294 agreeing; отдельно переиспользованы
+18 старых пар, из них согласны 17. Agreement не является проверенной корректностью.
+Forensics — `monitor-015/PROVIDER-FAILURE-AUDIT.json` и
+`RAW-REQUEST-USAGE-AUDIT.json`. Public BRI, general semantic validity и heldout
+readiness не установлены; этот промежуточный срез не завершает E009.
