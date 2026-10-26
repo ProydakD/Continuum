@@ -1197,3 +1197,68 @@ Read-only audit всех 1035 terminal requests/attempts завершился ex
 Forensics — `monitor-015/PROVIDER-FAILURE-AUDIT.json` и
 `RAW-REQUEST-USAGE-AUDIT.json`. Public BRI, general semantic validity и heldout
 readiness не установлены; этот промежуточный срез не завершает E009.
+
+## 22. Measurement 015: зарегистрированная остановка 2026-10-26
+
+Evaluator завершился с **exit 2**, `reason=consecutive_provider_failures`.
+Это подтверждено терминальным ответом exec session 88044, `RUNNING.json` и
+отсутствием прежнего PID 36904, а не истечением времени наблюдения.
+Последние назначения `validate-1058` и `validate-1059` исчерпали по четыре
+transport attempts: соответственно HTTP `[502,503,503,503]` и `[503,503,503,503]`.
+Фактические интервалы между попытками соблюдают записанные retry deadlines
+(около 2, 4 и 8 секунд); соблюдён и cooldown между двумя контекстами.
+Исходы не повторялись, прежний процесс не перезапускался.
+
+Frozen all-assignment analysis: **1224 назначено, 1059 terminal** — 1052
+structurally valid и семь provider failures. Пять протокольных отказов
+сохраняют ранее описанные отклонённые image-generation envelopes; ещё два —
+исчерпание HTTP retries. Оставшиеся **165** назначений не запускались из-за
+правила остановки: 111 real-public и 54 control contexts. Они не исключены из
+знаменателя и не названы успешными. Frozen analyzer сохраняет метку `pending`;
+отдельный `STOPPED-ASSIGNMENTS.json` уточняет `not_started_due_registered_stop`,
+не изменяя исходные записи или план.
+
+Контроли: 330/384 terminal, **329/330 meaning-exact**, 330/330 carrier-exact
+и component-exact. Единственный field mismatch — прежний `K.previous_sha256`
+в `validate-0564`. Строгий all-exact gate **FAILED**, независимо от остановки
+провайдера и 54 незапущенных контролей. Покомпонентная диагностика насчитала
+18 480 контрольных полей: 18 479 meaning-correct, одно неверное;
+18 440 carrier-covered и 40 carrier-not-applicable. Неприменимые значения
+не считаются ни ошибками, ни дополнительными успешными проверками.
+
+Из 420 новых real-public пар 310 имеют два structurally valid ответа и согласны
+по meaning; 98 имеют valid/pending, четыре valid/provider_failure, шесть
+pending/pending, одна failure/failure и одна failure/pending. Отдельно сохранены
+18 переиспользованных пар: 17 согласны, одна различается по `J.proposition`
+(`conflicting` против `known/malformed`). Agreement по-прежнему не correctness.
+Очередь `ADJUDICATION-INPUTS.json` содержит все 438 опубликованных pilot views,
+включая agreeing, disagreeing и unscorable; 42 отсутствующие публикации учтены
+отдельно. Очередь и диагностика не являются независимым semantic gold.
+
+Read-only audit проверил 1059 public-only requests и **1065 transport attempts**.
+Известная reported сумма: **2 606 574 input / 3 326 615 output tokens**.
+У восьми HTTP-error attempts usage неизвестно; эти суммы не являются полной
+оценкой фактических расходов. Стоимость неизвестна. Raw responses содержат
+reported model `gpt-6.1-sol` для 1057 HTTP-успешных попыток; это не независимое
+подтверждение underlying model. Frozen analyzer оставляет `None` для семи отказов.
+
+Артефакты `measurement-015/monitor-016`: `ANALYSIS-001.json`,
+`RAW-REQUEST-USAGE-AUDIT.json`, `PROVIDER-FAILURE-AUDIT.json`,
+`TERMINAL-EVENT.json`, `STOPPED-ASSIGNMENTS.json`, `TERMINAL-DIAGNOSTICS.json`
+и `RAW-SEAL.json`. Зафиксированы 5290 файлов run directory, 77 210 494 bytes;
+SQLite integrity check — `ok`, все attempts terminal, WAL/SHM отсутствуют.
+Повторное чтение подтвердило хеши; 730 frozen files и execution sources неизменны.
+
+Первый запуск дополнительной `terminal_diagnostics.py` завершился exit 1:
+счётчик ошибочно складывал boolean с carrier `null`. Внешний скрипт исправлен
+на раздельные true/false/not-applicable; повтор завершился exit 0. Оба command
+records и исходный скрипт сохранены (`DIAGNOSTICS-ERROR-001.json`); frozen analyzer,
+control labels, model outputs и результаты не изменялись.
+
+Полный E009 не завершён. Следующий этап — offline проверка публичных источников
+и независимого определения meaning, затем обоснованная следующая measurement
+revision. Нельзя исправлять прежние ответы, незаметно продолжать остановленный
+batch или объявлять public BRI валидированным. До валидной метрики остаются
+необоснованными эффект, variance/power/N и scientific preregistration;
+held-out требует отдельного допуска. Отрицательные результаты этого этапа
+сохраняются независимо от будущего дизайна.
