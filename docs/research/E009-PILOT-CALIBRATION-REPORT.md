@@ -3075,3 +3075,93 @@ claim/field inventory с явными unresolved cases и проверкой н�
 Он не должен принимать model agreement, scope claims или этот ограниченный
 challenge set за semantic gold; frozen live run и его negative results сохраняются.
 Полная научная задача, power/N, T2, preregistration и held-out остаются открыты.
+
+## 43. Source-first packet и контракт разметки всех семи полей
+
+2026-10-26 создан новый offline-кандидат, не меняющий текущий frozen paired run.
+Основание — требования наблюдаемого измерительного канала и фактических связей
+из §9–10 исходного ТЗ, а не предположение, что прежние model answers были gold.
+
+### 43.1. Что реально построено
+
+Пакет содержит **18 source-only calibration tasks / 37 document occurrences**.
+Проверено равенство native source objects с существующим каталогом; исходные
+копии, payload text, ordered documents, null stages и origin metadata сохранены.
+Public wrapper не содержит prior arm answers, candidate fields, expected verdicts
+или control gold. Связь с прежними question IDs оставлена в private index.
+Author/model/run metadata внутри самих источников сохранены, поэтому полной
+слепоты или независимости от авторской модели здесь не заявляется.
+
+Новый output contract расширяет неизменный provisional source_review contract:
+полный inventory семи fields, четыре состояния и currentness дополнены exact
+anchor registry, заметкой о каждом документе, support для каждой пары claim/field
+и отдельным обоснованием coverage. Для каждого site требуется изложить ownership,
+temporal scope и literal/compositional reasoning; competing readings сохраняются.
+Неизвестный claim universe и unresolved coverage допускаются явно, без imputation.
+
+Native anchors связаны с payload SHA и JSON pointer; text anchors — с точной
+строкой и codepoint span. Вычисленные UTF-8 offsets учитываются отдельно.
+Каждый старый evidence_item должен совпасть с referenced anchor по документу,
+kind и тексту/native value. Исходный document.sha256 не подменяет canonical
+payload/document hashes. Public wrapper и document bindings проверяются точно;
+изменение файла validator после его загрузки приводит к отказу, а не новому
+заявлению о версии уже загруженного кода.
+
+### 43.2. Проверки и принципиально ограниченные выводы
+
+Выполнены **25 unit tests**, включая матрицу **31 negative mutation**.
+Проверены native true/1/1.0/string/null, absence versus unknown, conflicts,
+Unicode/JSON-pointer escapes, historical scopes, duplicate keys, nonfinite JSON,
+anchor/site/document omissions и несоответствия, private-wrapper leakage.
+
+Для реальных packet payloads проверены **1145 native anchor nodes** и
+**357 text spans**; отклонены **148 negative anchor cases** и
+**72 negative public wrappers**. Пять видов private catalog canaries дали
+**90 неизменных public packet comparisons**. Независимый от builder пересчёт
+подтвердил исходные source objects и все document bindings.
+Anchor tests исполняют сам candidate validator; это не независимый semantic oracle.
+Использованы общий Python JSON decoder и явно закреплённый старый base contract.
+
+Сохранены важные положительные limitation cases: точная цитата может сопровождать
+выдуманное значение 999, неподтверждённого owner, ложное temporal rationale
+или пустой claimed_complete inventory с формально существующей scope citation.
+Такие outputs могут пройти структуру/anchor checks, но все semantic, ownership,
+composition, temporal, claim-completeness и measurement-eligibility flags
+остаются false. Наличие document note не доказывает правильного чтения документа.
+
+18 abstention fixtures в packet check — только offline fixtures.
+Новая semantic annotation источников ещё не выполнена, новых API-вызовов **0**.
+Contract/packet readiness не засчитывается как измеренный public BRI или gold.
+
+### 43.3. Отдельный prospective engineering protocol
+
+Записан план двух отдельных source-first response contexts на источник:
+**36 calls**, без передачи первого ответа во второй. Это описательная повторная
+разметка, не representation contrast, не две T2-линии и не независимый gold.
+Плановый output cap 16 384 даёт allowance 589 824 tokens при одной попытке
+или 1 769 472 при трёх; это не actual usage, стоимость или общий token budget.
+Request artifacts, runner tests и execution freeze ещё не созданы; новый API
+launch не выполнен. Все invalid/incomplete/refused/missing должны сохраняться,
+без content retries или исправления неудобных ответов.
+
+### 43.4. Текущий paired run сохранён
+
+ANALYSIS-016: **61 receipts = 58 parsed + 3 missing**, 70 attempts,
+11 completed attempts с unknown usage и один pending.
+Reported subtotal **129 876 input / 111 158 output** tokens; стоимость неизвестна.
+Natural: 10 parsed reviews и 3 missing, assignment 0062 pending,
+532 assignments unstarted. Три исчерпания attempts за весь run не равны
+трём последовательным исчерпаниям; успешные outcomes между ними сохранены.
+Frozen retry/stop policy не изменена, process 93152 / PID 28724 не перезапущен.
+
+Проверены 58 parsed schemas, 232 negative answer mutations,
+три three-deadline missing patterns с 24 transport mutations и **1053 citations**.
+Прежние три missing control citations сохранены. Control gates остаются FAIL:
+raw 22/24, literal_witness 23/24. Natural accuracy по-прежнему неизвестна.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-005/.
+Следующий этап — воспроизводимые Responses requests и offline-verified runner
+для отдельного source-first calibration protocol, с freeze до любого запуска.
+Независимая semantic adjudication, BRI/opportunities, power/N, T2,
+scientific preregistration, held-out и итоговый requirements audit остаются открыты.
