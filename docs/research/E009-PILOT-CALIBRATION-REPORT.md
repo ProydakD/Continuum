@@ -3997,3 +3997,92 @@ OS identity подтверждена20:14:06Z, current012; observation timeout �
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-015/.
+
+## 54. Проспективный парный опыт: generated references против bound IDs
+
+Новый matched run действительно запущен:exec31822,PID40756,
+OS start2026-10-26T20:32:12.5965131Z. Credential введён через masked getpass
+в память процесса, не через файл/.env/argv. Закрытый reviewer45287 не повторялся;
+его72 outcomes,failed gate и292 sealed files остаются неизменными.
+
+### 54.1. Исправления источников не смешиваются с эффектом references
+
+Созданы новые public controls, не отредактированные старые:
+numerator/JSON теперь явно unit=probability; absence во всех формах явно
+не утверждает существование/несуществование edge; refuted_content/paraphrase
+теперь явно содержит numeric value1. Добавлены count_kind и native_value_unknown:
+счёт не переименовывается в утверждённую вероятность, а смысл положительного
+edge не определяет оригинальную numeric native encoding.
+
+Всего14 authored families×3representations×2candidates = **84 пары/168 запросов**.
+Обе ветви каждой пары получают байт-в-байт одинаковый public review_input,
+но разные интерфейсы references:
+full_anchor генерирует exact pointer/hash/quote/span или JSON anchor;
+bound_ids выбирает ID из вычисленного по публичным source payload каталога.
+Каталог содержит адреса, не expected labels, family names или author rationales.
+Harness разрешает ID обратно в точные публичные anchors. Это не semantic oracle.
+
+Порядок84 пар перемешан до запуска с записанным seed; внутри пар42 full-first
+и42 ID-first, также перемешаны. Одинаковы model,requested8192output и retry policy.
+Intervention включает **catalog плюс output format**: длина prompt и доступная
+гранулярность references не уравнены. Это не чистый syntax-only эффект и не
+old-vs-new causal comparison. Исправленные источники/rubric общие для двух ветвей.
+
+### 54.2. Заранее закреплённые правила и исполняемые проверки
+
+EXECUTION SHA256:
+321b6ffe006cb4dbb2b08cd9f39cbb00fbbf2f3c8ac59df0a78137b2e4732eba.
+FREEZE-MANIFEST:3517 файлов, SHA256
+fded38f6898fb7445e11235784400b60b17a759e8a2f9eb4de8e3c0f7e14d47c.
+MATCHED-PROTOCOL и score_matched заморожены **до первого live call**.
+
+Primary engineering endpoint: разница contract yield bound_ids−full_anchor
+на всех84 назначенных парах; invalid/missing/refused/incomplete дают zero success.
+Отдельно считаются transport failures, authored-label matches, false-support,
+positive recovery,28 inputs/representation и6 pairs/family. Описательная variance
+14 family differences не является power/N полного BRI-исследования.
+Нет naive84-independent p-values, population CI или остановки по успешному результату.
+Arm gate:все84 parsed,0false-support,positive recovery≥0.90 и authored matches≥0.90
+в каждом representation. Даже PASS не даёт semantic gold/measurement eligibility/held-out.
+
+**7 runner/IO tests и5 scorer tests PASS**:168 exact requests/84 equal-input pairs,
+counterbalance, private-label isolation, corrected fixtures, exact catalog resolution,
+unknown/duplicate ID rejection,168 mock receipts, no replay, refusal/model mismatch,
+all168 denominator и always-supported negative guard. Mock outcomes не результаты модели.
+Transport повторно использует неизменённый ResourceProvider:900s,3 availability
+attempts30/90+Retry-After,min1s,circuit3,raw before parse. Concurrency1 на runner,
+без shared global limiter; storage/output cap/backend identity не проверены серверно.
+
+### 54.3. Первые реальные результаты и исправленный независимый audit
+
+MATCHED-ANALYSIS-002: **28 receipts/14 complete pairs**,24parsed4invalid,
+1pending139unstarted. Full-anchor:10parsed4invalid; bound-ID:14parsed.
+Authored-label matches:10 в full-anchor и14 в bound-ID; observed parsed false-support0/0.
+Всего29attempts,1pending/unknown usage;reported35242input/6577output,costunknown.
+Оба gate пока false:full-anchor уже имеет4invalid, bound-ID ещё не полный.
+Это не итог сравнения эффективности; full-anchor gate не станет PASS без запрещённого rescore.
+
+Независимый audit проверил все84 source catalogs и168 request bindings, затем
+28 receipts/37 exact anchors/144 rejected negative canaries. Production validator
+не импортируется; это проверка mechanics, не reference semantic validity.
+**5 auditor tests PASS** после сохранённого первоначального failure:
+wire-binding checker ошибочно хешировал bare canonical JSON, тогда как broker.frame
+добавляет один LF. Исправлена независимая реконструкция точных wire bytes;
+регрессия проверяет все168 хешей и отличает bare JSON. Runner/requests/raw/outcomes
+не менялись; auditor-tests-001 exit1 и исходный checker сохранены.
+IDE read показал функцию, но обрезал критическую строку; bounded shell read
+подтвердил LF, не подменяя семантический рефакторинг.
+
+Основной exec91668 остаётся прежним. Resource013/014 завершились invalid;
+reported5823/17907 и5823/17719 сохраняют output-cap caveat.
+Snapshot019:36=5invalid9parsed1pending21unstarted;16attempts2unknown usage,
+58354input/260263output. Independent audit14receipts146anchors36canaries.
+Оба процесса продолжают работу; никакого replay по timeout не было.
+
+Следующее действие — собирать оставшиеся реальные paired outcomes по frozen plan,
+сохраняя все ошибки и расхождения. Этот опыт не заменяет public seven-field
+reconstruction, transitions,fullBRI/opportunities,power/N,две T2 lines,
+scientific preregistration, отдельно разрешённый held-out и final audit.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-016/.
