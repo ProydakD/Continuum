@@ -2823,3 +2823,76 @@ Evidence:
 Следующее действие — продолжить тот же процесс, сохранить итог обоих control gates
 и natural outcomes с полными denominators, затем выполнить terminal raw audit.
 Ни этот частичный contrast, ни исправленный reader не закрывают полный E-009.
+
+## 40. Prose citation reader и первые natural observations
+
+2026-10-26 natural-этап продолжает работать в той же session 93152 / PID 28724.
+Окончательные finite control gates уже записаны: raw **22/24**, witness **23/24**,
+оба **FAIL**, по 11/12 authored pairs. Это не отменяет заранее зафиксированный
+exploratory natural collection, но не даёт ему semantic eligibility.
+
+### 40.1. Закрыт технический пробел reader, не semantic measurement
+
+Новый post-freeze `citation_reader.py` находит native JSON nodes и JSON literals
+в prose, возвращая codepoint/UTF-8 spans внешнего literal и relative pointers
+внутри него. Root span не выдаётся за точный текстовый span каждого child.
+Text citations проверяются отдельно; native string member не перечитывается
+как самостоятельный JSON document. Frozen runner и его presence policy не менялись.
+
+**26/26 tests** проверили type distinctions, nesting/order/duplicates, 65/66,
+object-subset versus whole node, quoted null/numbers, escaping, Unicode,
+identifier/number boundaries, malformed containers, duplicate keys и nonfinite.
+На **2 400 synthetic lexical cases** и всех **27 unique prose payloads**
+из frozen requests последовательности найденных значений совпали с прежним helper.
+Для этих payloads проверены 913 decoded roots, 2 613 emitted nodes и span round trips.
+Всего в requests 53 unique payloads; 1 248 document occurrences по 594 wires —
+повторения, а не независимые наблюдения.
+
+Это независимая реализация traversal/locations без импорта frozen helper в reader,
+но обе реализации используют Python JSON decoder. Differential agreement
+проверяет соответствие текущему контракту, не независимую semantic truth.
+Отдельный differential test импортирует frozen helper только как comparator.
+
+Сохранены явные limitation witnesses: malformed `[1,2,]` не принимается как array,
+но scanner может находить отдельные scalar tokens 1 и 2 внутри него.
+Аналогично duplicate-key object не принимается целиком, хотя его отдельные
+успешно декодируемые tokens могут быть видимы. Quoted `"null"` не становится null.
+Эта lexical policy не доказывает валидность всего prose/container или принадлежность
+значения claim/field. Она не была ужесточена или ослаблена под полученные ответы.
+
+### 40.2. Проверены реальные snapshots без приписывания natural gold
+
+ANALYSIS-006 содержит 50 parsed receipts, ANALYSIS-007 — **51**:
+48 controls и три natural source reviews. Отдельный auditor повторно прочитал
+все 51 raw Responses и request bodies, проверил SHA, неизменность source/question,
+raw-envelope/answer equality и **654 citations**.
+Прежние три missing citations сохранены; у этих трёх natural answers missing
+citations не обнаружены. Это presence result, не проверенная semantic accuracy.
+Одна полная natural question-arm пара совпала по projection; остальные неполны.
+
+В текущих ответах проверены 460 native JSON, 86 native text и 108 prose text citations;
+prose JSON citations ещё не наблюдались. Поддержка последних проверена на source
+corpus и fixtures, но не объявлена уже наблюдавшимся response result.
+Полная независимая проверка annotation-schema acceptance не заявлена.
+Для будущих invalid/refused/incomplete outcomes auditor сохраняет denominators
+и raw hashes, но пока не переопределяет их classification самостоятельно.
+
+### 40.3. Реальный deadline и повторная попытка
+
+`paired-0051`: первая попытка завершилась `attempt_deadline` через
+**240.015948 s**, без observed response-body bytes. Она могла быть обработана
+сервером; её usage/cost неизвестны. Это не доказательство server outage.
+Вторая попытка с тем же request SHA началась через **30.000464 s**,
+получила HTTP 200 и parsed ответ. Это transport retry, не повтор по содержанию.
+Протокол, caps и requests не менялись; потерянный usage не заменён нулём.
+
+На ANALYSIS-007: **53 attempts**, один pending, один завершённый attempt
+с unknown usage; reported subtotal **106 400 input / 64 577 output** tokens.
+51 receipt completed, natural assignment 0052 pending, 542 assignments unstarted.
+Backend identity/tool isolation/cost по-прежнему не установлены.
+
+Evidence:
+`C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-002/`.
+Продолжение: наблюдать тот же process, расширять immutable raw analysis по фактическим
+outcomes и закрыть оставшиеся independent schema/classification gaps до terminal audit.
+Natural gold/public BRI, power/N, T2, preregistration и held-out всё ещё открыты.
