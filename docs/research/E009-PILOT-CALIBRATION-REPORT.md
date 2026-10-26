@@ -2749,3 +2749,77 @@ snapshots; timeout не разрешает restart. При terminal запеча
 повторить analysis с полными 594 denominators, gate outcomes и natural uncertainty.
 Полный scope E-009 — independent natural measurement, public BRI, T2,
 power/N, scientific preregistration, held-out и final audit — остаётся открытым.
+
+## 39. Парные controls: точность цитаты и правильность вывода расходятся
+
+2026-10-26 наблюдение той же session 93152 / PID 28724 продолжено без restart.
+Immutable ANALYSIS-003 содержит 28 completed controls; ANALYSIS-004 — 36.
+Это частичные снимки, не итоговые показатели 594-request comparison.
+
+### 39.1. Независимый разбор трёх разных failure mechanisms
+
+В ANALYSIS-004 raw arm имеет 16/18 успешных control checks, witness — 17/18.
+Всего 35/36 projections совпали с authored expected projections; обе arms
+имеют по одному ответу с неточной citation. Из 18 полных question-arm пар
+17 совпали по projection, одна различается. Это описательная статистика
+малого текущего набора, не доказательство общего эффекта supplement.
+
+- `paired-0024`, witness, `pair-05-a`: verdict/projection правильны.
+  Citation объединяет `composition` и `selected_block` в новый объект.
+  Оба члена буквально присутствуют в корневом source object, однако объект
+  с ровно этими двумя членами не является отдельным узлом source.
+  Замороженный exact-subtree presence check возвращает false.
+  Это нарушение конкретного citation contract, а не доказанное ложное
+  значение поля или семантическая галлюцинация всех процитированных членов.
+- `paired-0025`, raw, `pair-04-a`: source и candidate содержат массивы
+  длиной **64/65**. Verdict правильный, но две JSON citations содержат
+  **64/66**; rationale при этом утверждает 64/65. Точная цитата испорчена.
+  Соответствующий witness-ответ `paired-0026` прошёл оба условия.
+- `paired-0031`, raw, `pair-04-b`: source содержит **64/66**,
+  candidate — **64/65**. Все citations найдены точно, однако модель
+  объявила value_fidelity и complete_field_state entailed и описала source
+  как 64/65. Следовательно, quote presence не обеспечивает верный вывод.
+  Парный witness-ответ `paired-0032` правильно различил 65 и 66,
+  вернул contradicted для этих двух facets и прошёл citation check.
+
+Первый witness failure ограничивает интерпретацию последнего успешного contrast:
+supplement не устранил все ошибки, а правильные verdicts и точные quotations
+являются разными наблюдаемыми свойствами. Совпадение projections не является
+совпадением citation quality. Исходные ответы, gold, gates и scores не изменены.
+
+### 39.2. Проверка raw-данных и границы независимого reader
+
+Отдельный reader, без импорта runner/classifier/citation helper, заново прочитал
+**36 raw Responses**, 36 request bodies и **348 evidence items**.
+Проверены SHA, source/question identity, literal answer equality с receipts,
+native type distinctions, exact source-node presence и сравнение projections
+с прежними frozen control references. Найдены ровно три отсутствующие
+exact citations в двух ответах; ни одна не заменена реконструированной цитатой.
+
+Первая версия reader прошла 12 unit tests, но реальная проверка 28 ответов
+завершилась exit 1: ошибочно предполагалось, что каждый control payload — object.
+Два F controls содержат prose с text citations. Ошибка и версия сохранены;
+добавлена обработка этих фактических text inputs без исключения сложных cases.
+Исправленные reader versions прошли **14/14 tests** и проверки всех 28,
+затем всех 36 completed controls. JSON citations внутри prose явно не поддержаны
+этим частичным reader; terminal/natural audit должен отдельно закрыть этот пробел.
+Текущая успешная проверка не объявлена универсальным parser или semantic oracle.
+Также сохранён read-only inspection error отсутствующего guessed filename.
+
+### 39.3. Состояние запуска и следующий шаг
+
+ANALYSIS-004 SHA-256:
+`182370c2db805d6d1b0deea8ccefeb4a0256eac946e506a087e5ae5fae8c1952`.
+На его snapshot: 37 attempts, один pending; reported subtotal
+**73 193 input / 39 352 output** tokens. Usage pending attempt неизвестен.
+48 controls назначены полностью; gate fields ещё pending до завершения этапа,
+но уже наблюдаемые failures сохраняются. Все 546 natural calls ещё unstarted.
+Новый frozen protocol допускает их exploratory collection после failed gates,
+не разрешая semantic eligibility, independent gold или public BRI.
+
+Evidence:
+`C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-001/`.
+2 728 frozen files проверены без изменений; live storage не запечатано как terminal.
+Следующее действие — продолжить тот же процесс, сохранить итог обоих control gates
+и natural outcomes с полными denominators, затем выполнить terminal raw audit.
+Ни этот частичный contrast, ни исправленный reader не закрывают полный E-009.
