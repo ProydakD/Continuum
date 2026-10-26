@@ -2038,3 +2038,109 @@ selector либо label; он может сообщать только букв�
 естественную семантику. Исправление quote matcher также требует отдельной версии
 и не должно подменять исторический результат. Этот следующий запуск ещё не выполнен.
 Полный корпус, public BRI, independent natural gold и требования §26 не закрыты.
+
+## 32. Четыре engineering условия: preflight выполнен, реальный запуск начат
+
+2026-10-26 реализованы отдельные versioned contracts и runner для следующего
+этапа §31. Старый запуск 104 requests, его 46/52, пять invalid, ошибка
+`K.version` и secondary 97/99 остаются неизменными. Новое сравнение exploratory:
+используются уже наблюдавшиеся engineering questions, а не новый held-out набор.
+
+### 32.1. Два фактора и точные границы интервенции
+
+Четыре условия: `string_raw`, `string_resolved`, `typed_raw`, `typed_resolved`.
+В каждом — все исходные 104 endpoints, 52 pairs, 26 strata и 12 worlds.
+Всего запланировано 416 независимых Responses requests. `string_raw`
+повторяет SHA-256 каждого из 104 старых request bodies, но ответы будут новыми;
+исторический запуск не подмешивается в contemporaneous control.
+
+В typed contract ответ содержит `verdict`, `evidence_items`, `rationale`.
+Evidence item — либо непустой exact text, либо native JSON value с явным type tag.
+Запрещены unknown/duplicate keys, nonfinite values и coercion: `true`, `1`,
+`1.0`, `"1"` различаются. Object/array/null допустимы без stringify.
+Пустой evidence array, как и в прежнем parser, разрешён и отдельно учитывается.
+Наличие процитированного значения не доказывает его принадлежность или currentness.
+
+Locator читает только public source и неизменный selector. Он возвращает
+буквальный фрагмент/value, syntactic pointer и status, но не owner/currentness,
+expected verdict или причинную истинность. Unicode offsets не подправляются;
+неполный scalar, duplicate keys, malformed JSON и prose не получают угаданный
+pointer. `fragment_only`/`unresolved` не превращаются в semantic contradiction.
+Полный original source остаётся во всех условиях, как и исходный question.
+
+Locator применим только к 36 binding endpoints, то есть 18 pairs.
+Остальные 68 endpoints/34 pairs не меняются при переключении raw/resolved
+и служат явно зарегистрированными repeated-input controls. Поэтому 416 requests
+содержат 280 уникальных request bodies, а не 416 независимых новых вопросов.
+Существующий endpoint order сохранён. Внутри каждого quartet используется
+фиксированный Williams order из четырёх строк: каждое условие встречается
+26 раз на каждой из четырёх позиций. Порядок задан до новых model outcomes.
+
+Typed instructions длиннее и явнее исходных; это combined instruction/schema
+intervention, не чистый эффект сериализации. Старое wording про structured
+string/scalar values неоднозначно относительно parser, требующего string quotes;
+оно сознательно сохранено в replication. Syntax assistance также не равна
+способности unaided judge. Provider-side context sharing/caching не наблюдается.
+
+### 32.2. Реально выполненные проверки и freeze
+
+Новый offline suite прошёл **32/32**, сетевых вызовов в тестах нет.
+Проверены escapes/Unicode, exact native types, malformed/duplicate JSON,
+partial scalar, pointer escaping/indices, prose, record permutations и padding,
+shared/historical/coequal container names без semantic inference.
+Все 36 selected locations совпали с отдельным прежним JSON span walker;
+изменение claim_id/field вопроса не меняет syntax-only resolution.
+
+Все 104 исторические string classifications воспроизведены без изменений;
+104 raw request hashes совпали; source/question неизменны во всех 416 экспортах.
+32 private-field canaries на outer/question уровнях отвергнуты.
+Новая decoded-value quote metric проверена отдельно от frozen raw metric:
+оба прежних escaped F случая найдены, придуманные quotes отвергнуты.
+
+Integration fixtures прошли four-arm dispatch, raw retention, prefix resume,
+orphan/no automatic replay, request tampering, model mismatch, availability circuit,
+minimum gap и продолжение после invalid/wrong answers без content retry.
+Scorer оставляет 52 assigned pairs в каждом условии: synthetic ideal 52/52,
+один invalid в одном условии даёт 51/52 только там. Это проверки scorer,
+не модельные результаты. Неизменённый transport переиспользован вместе
+с ранее выполненными 19 тестами; их прежний PASS не выдан за новый прогон.
+
+До сети заморожены **1 016 файлов**, включая contracts/runner/scorer/tests,
+protocol, 416 requests, исходные private scoring inputs и прежние raw evidence.
+Execution HEAD: `f07de218fc8453eb3ed75a7867e170be8c76cb38`.
+Execution SHA-256: `75abcd64ce3a1f055b0be80c2bbd5d5d84f8b4d5b44342c00e92f068f7255e44`.
+В текущем runner malformed envelope exceptions учитываются как invalid;
+это prospective защита от crash, не пересмотр прежних классификаций.
+
+Primary outcome — оба endpoints пары parsed и соответствуют исходному gold;
+публикуются macro/micro, все assigned denominators и строгий gate 52/52 на условие.
+Заранее определены paired discordance, typing/locating contrasts и interaction,
+отдельно для всех 52, applicable 18 и unchanged-input 34 pairs.
+IID/binomial inference и population efficacy из этих связанных worlds не заявляются.
+
+### 32.3. Исполнение уже началось; итоговые результаты ещё отсутствуют
+
+Реальный process запущен через Responses с `gpt-6.1-sol`, concurrency 1,
+minimum gap 1 секунда, deadline 240 секунд, до трёх availability attempts
+30/90 секунд плюс Retry-After. Максимум 1 248 attempts на 416 requests;
+4096 max output tokens — предел одного ответа, не бюджет исследования.
+Нет retries ради исправления wrong/invalid/incomplete output, efficacy early stop
+или выбора лучшего условия. Availability/fatal/operator stop сохраняет unstarted.
+Credential передан только в память через getpass без echo; новый provider не установлен.
+
+`LIVE-HANDLE-001.json` подтверждает живой Python PID 24580, session 2699.
+Первый read-only `ANALYSIS-001.json` зафиксировал 12 parsed receipts — по три
+на условие, 13 attempts, из которых один ещё pending. Все 12 ответов сообщают
+`gpt-6.1-sol`; это не независимое подтверждение backend identity. Наблюдаются
+tools usage metadata при omitted client tools; server isolation не установлена.
+Этот snapshot **не является окончательной accuracy или прохождением gate**.
+
+Evidence-корень: `C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-020/followup-001/`.
+Сохранены `PROTOCOL.json`, `PREFLIGHT.json`, `EXECUTION.json`,
+`FREEZE-MANIFEST.json`, scripts/test records, `LIVE-HANDLE-001.json`,
+`ANALYSIS-001.json`, immutable request/raw-response receipts и append-only stdout.
+Следующее действие — наблюдать тот же живой run/session до terminal либо
+зарегистрированного stop, затем запечатать raw ledger и выполнить полный
+четырёхусловный анализ с сохранением failures. Timeout наблюдения не разрешает restart.
+Engineering gate даже при успехе не закрывает natural gold/public BRI,
+полный corpus, scientific preregistration и остальные требования §26.
