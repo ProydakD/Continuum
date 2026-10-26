@@ -2896,3 +2896,81 @@ Evidence:
 Продолжение: наблюдать тот же process, расширять immutable raw analysis по фактическим
 outcomes и закрыть оставшиеся independent schema/classification gaps до terminal audit.
 Natural gold/public BRI, power/N, T2, preregistration и held-out всё ещё открыты.
+
+## 41. Независимый schema/status replay и первый исчерпанный natural request
+
+2026-10-26 продолжена та же session 93152 / PID 28724. Frozen protocol,
+requests, annotation contract и оба failed control gates не изменялись.
+
+### 41.1. Структурный validator — не semantic oracle
+
+Создан отдельный `independent_contract.py`, не импортирующий production parser.
+Он проверяет exact keys, native JSON types/finite values, duplicate keys,
+provisional flag, evidence document indices/type tags, четыре facets и conjunction,
+четыре field states/cardinality/unique alternatives, полный inventory семи fields,
+claim IDs, coverage/issues, а также Responses envelope/status ordering.
+
+Выполнены **433 явно заданных случая**: 106 структурно принимаемых,
+327 negative или nonparsed. Включены все 81 комбинации четырёх facet verdicts
+с тремя возможными overall verdicts, cardinality/type mutations, 64/65 boundaries,
+refusal/incomplete/invalid branches, несколько output messages и reasoning items.
+Independent и frozen implementations совпали с ожидаемыми status/reason/answers
+на всей матрице; типы исключений и их тексты не объявлялись одинаковыми.
+
+Для comparator frozen parser импортируется только в отдельном matrix test.
+Обе реализации используют Python JSON decoder; это не независимость parser stack.
+Положительные limitation cases намеренно сохраняют schema-valid invented quote
+и пустой claim inventory при claimed_complete coverage: структура не удостоверяет
+истинность, полноту или присутствие цитаты. Эти cases не превращены в natural gold.
+
+Одна orchestration-команда не запустилась из-за JavaScript syntax error:
+Markdown backticks внутри template string. Ошибка до исполнения сохранена;
+fixture построен через character code, исправленная команда выполнена.
+
+### 41.2. Replay фактических outcomes
+
+На immutable ANALYSIS-010 имеются **53 receipts**: 52 parsed и один missing.
+Независимый reader заново проверил все 52 raw response classifications и
+структурную допустимость annotations, равенство parsed answer с receipt,
+SHA request/source/response и неизменность frozen inputs.
+**208 negative mutations** фактических annotations были отклонены:
+extra private key, integer вместо provisional=true, boolean document index,
+duplicate outer JSON key. Ответы на диске не менялись.
+
+Другой citation auditor сохранил полные 594 denominators и проверил 713 citations.
+Прежние три missing citations в двух controls не исправлены.
+Из пяти natural receipts четыре parsed, один missing; для четырёх parsed
+отсутствующих exact citations не найдено. Это всё ещё не semantic accuracy.
+Две natural question-arm пары имеют terminal receipts в обеих arms,
+но только одна имеет два parsed ответа; её projections совпали.
+Missing partner не исключён, чтобы получить удобный agreement denominator.
+
+### 41.3. Три deadline attempts не становятся нулевым usage
+
+`paired-0052`, witness source review `challenge-219`, завершён как
+`missing / attempt_deadline`: три attempts примерно по 240 секунд,
+наблюдаемые паузы не меньше 30 и 90 секунд, один request-body SHA,
+ноль observed response-body bytes и три unknown-usage attempts.
+Независимо проверены ordinals, request hash, сроки, gaps, receipt resources,
+availability_exhausted и отсутствие raw response. **8 transport mutations**
+(count/order/hash/usage/deadline/gap/exhaustion/response) были отклонены.
+
+Reported input/output subtotal этой строки равен нулю, но фактический usage
+неизвестен: запросы могли быть обработаны сервером. Последний retry_at в журнале
+не доказывает четвёртую попытку; после трёх попыток записан terminal receipt.
+`paired-0053` затем получил parsed ответ, и обработка продолжилась без restart.
+Missing outcome не переклассифицирован в model error, semantic contradiction
+или evidence that provider was wholly unavailable.
+
+На ANALYSIS-010: **57 attempts**, один pending, четыре завершённых attempts
+с unknown usage; reported subtotal **110 975 input / 70 838 output** tokens.
+53 receipts, assignment 0054 pending, 540 assignments unstarted.
+Оба control gates остаются FAIL: raw 22/24, witness 23/24.
+
+Evidence:
+`C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-003/`.
+Новый auditor покрывает наблюдённый all-three-deadline missing pattern;
+другие причины transport missing не объявлены проверенными заранее.
+Следующее действие — продолжать тот же run и оба независимых audits по новым
+snapshots, сохраняя gaps/negative results до terminal seal и полного raw analysis.
+Natural measurement/gold/public BRI, power/N, T2, preregistration и held-out открыты.
