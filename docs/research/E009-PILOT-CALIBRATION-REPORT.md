@@ -4771,3 +4771,97 @@ semantic eligibility и все шесть BRI conjuncts ещё не подтве
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-022/.
+
+## 61. Закрытие full-record и независимый replay-аудитор reference-review
+
+Продолжение от checkpoint183 на том же TARGET. Предыдущие инструкции,
+case pack и зарегистрированные критерии не менялись. Новые программы
+расположены отдельно в monitor-023; freeze191 monitor-022 сохранён.
+
+### 61.1. Full-record: завершённый отрицательный инженерный результат
+
+Исходный exec15736 завершился с exit0. Проверка ОС подтвердила отсутствие
+исходного PID39592/start2026-10-26T21:38:37.6983470Z; TERMINAL сообщает
+all_assignments_terminal, 36/36, PROCESS.lock отсутствует. Эти основания,
+а не истечение времени наблюдения, разрешили закрытие.
+
+Финальный snapshot013: **21 invalid и 15 parsed**, все36 HTTP200 receipts,
+36 attempts, ни pending, ни unknown usage. Провайдер сообщил 440030 input
+и 189467 output tokens; стоимость не известна. Все21 invalid по-прежнему
+связаны с coverage_hides_gaps. Старый all36parsed gate **FAILED**.
+
+Независимый replay подтвердил36 receipts, 17 каталогов, 256 точных anchors
+и74 отрицательных canaries. Зафиксированы73 предложенные claims и12 native
+records среди parsed; coverage7partial/8complete. Пять пар имеют два parsed
+ответа, четыре совпадают по сравниваемому предложению. Это не независимые
+миры и не доказательство семантической правильности.
+
+Замороженный Q19 diagnostic дал280/280 literal named-field matches и33
+дополнительных claims, не adjudicated в его собственной схеме. Более поздние
+Q20/Q21 overlays не подключались для пересчёта этого результата. Все18
+checkpoint units и оба контекста остались в знаменателе.
+
+Исходные148 файлов закрытого job, включая raw responses, requests, receipts,
+SQLite и terminal/event records, повторно прочитаны и запечатаны:
+FULL-RECORD-RAW-SEAL.json SHA256
+958561f8371da439f3f039957dab44de54186cc8be9ef8dbbc4b12349053c65f.
+Финальный snapshot SHA256
+762c4bde9c46293ff37435a10bb2c26bfe52b997acef8d57ba6ec4d31cb0f048.
+Этот job больше не опрашивается и не перезапускается.
+
+### 61.2. Независимая проверка нового review без подмены исследования
+
+analyze_reference_review использует неизменённые production parser/scorer.
+Отдельные independent_review и audit_reference_review их **не импортируют**:
+второй реализацией проверяют source anchors, raw response envelope, точную
+модель, input binding, все7 полей каждой named записи, все proposed units,
+coverage, целевые отрицательные оценки, receipt hashes и transport ledger.
+
+Проверяется literal provider usage; неизвестная стоимость не заменяется
+нулём. Pending попытка учитывается как потенциально отправленная, даже
+если её промежуточная запись ещё не выставила request_may_have_been_sent.
+Сохраняются missing, refused, incomplete, invalid, pending и unstarted.
+Положительный знаменатель36 и отрицательный24 не меняются от доступности.
+Для всех30 пар отдельно сохраняются различия verdict по identity,7fields,
+native encoding, units и coverage; полные обоснования остаются в outputs.
+Совпадение оценок не объявляется истиной.
+
+**21 тест PASS**: duplicate/nonfinite/overflow JSON, неверная модель/envelope,
+identity/field/unit omissions, неизвестные/повторные anchors, Unicode spans,
+unknown-versus-coverage, направленные12 mutations, unknown usage, availability
+и10 подмен snapshot/accounting/score/pair/fixture. Обнаруженный ResourceWarning
+в tests002 сохранён; новые reader connections закрыты contextlib.closing.
+Повтор tests003 с warning-as-error прошёл без этого предупреждения.
+
+Замороженный runner также выполнен с полностью подменённым HTTP: сохранены
+**60 синтетических receipts**, исходные transport journal и envelopes.
+Независимый replay проверил все60,84 использованных anchors,404 canaries;
+36positive/24negative прошли только на этих заранее созданных fixtures.
+Это **ноль сетевых запросов**, не результат модели и не semantic gold.
+
+Auditor candidate содержит260 файлов, SHA256
+340d6b3a9ee96500b1074d78f1e96071502922f4b0da8a21d86094df191357f5.
+Второй алгоритм написан тем же автором и использует тот же стандартный JSON
+decoder. Семантическое следование из anchor не установлено; независимость
+реализации не означает независимость научного суждения.
+
+### 61.3. Следующее действие остаётся реальным экспериментом
+
+Reference-review snapshot002: **60 unstarted**, provider calls0, оба gates
+не достигнуты. Синтетический PASS не переносится на реальный прогон.
+Primary exec91668/PID24864/start2026-10-26T18:18:34.3176714Z подтверждён
+живым; snapshot035:10invalid,24parsed,1pending,1unstarted;36attempts,
+2unknown usage,127990input/582945output. Независимо проверены34receipts,
+577anchors и96canaries. Новые критерии не исправляют старые ответы.
+
+После фактического завершения primary нужно запечатать его raw результаты
+и запустить **существующий** Q22 run_reference_review.py --authorize,
+не пересобирать pack и не менять prompt. До этого launch gate сохраняется.
+Новый Q23 auditor готов для real snapshots; дальнейшие ответы сохраняются
+по исходным all60 stopping/acceptance rules. Нужны эмпирически пригодное
+измерение, все6 BRI conjuncts, revision opportunities, две изолированные T2
+линии, main preregistration, отдельно разрешённый heldout и финальный аудит.
+Полное E009 ещё не завершено.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-023/.
