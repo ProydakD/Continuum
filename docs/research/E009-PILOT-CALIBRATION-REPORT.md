@@ -1909,3 +1909,132 @@ runner и все execution inputs до сети и начать реальную
 Не пересэмплировать когорту по ответам, не заменять запуск очередным status-only audit
 и не смешивать этот bounded engineering этап с окончательной scientific preregistration.
 Полная цель E009 и требования §26 остаются открытыми.
+
+## 31. Реальный engineering judge: 46/52 пары, gate не пройден
+
+### 31.1. Замороженный запуск и transport preflight
+
+2026-10-26 выполнен реальный Responses API запуск на ранее выбранных 52 парах,
+104 уникальных endpoints, 26 strata и 12 мирах из §30. Когорта, порядок,
+gold и инструкции не пересэмплированы по ответам. Это engineering calibration,
+не основной эксперимент, не held-out и не независимая natural semantic validation.
+Execution HEAD: `ae706162abc139216a3497eb0372d05f9c4a19fa`.
+Execution manifest SHA-256:
+`7274cbafffa740752a48a14de252865faf589ec9b9a5a81fa5a8bd6c29cbccce`.
+
+До сети заморожены 269 файлов: runner, transport, parser/scorer, зависимости,
+инструкции, private scoring inputs и 104 request bodies. Judge получает только
+публичные source/question; приватные labels и pair linkage не передаются.
+Запросы независимы: без conversation/previous_response_id, `store=false`,
+`stream=false`, `max_output_tokens=4096`. Reasoning и tools не заданы;
+это решение опирается на ранее завершённый запрос §28, а не на предположение
+о поддержке low-effort. Omission не подтверждает изоляцию server-side tools.
+
+Runner сохраняет сырые ответы до parsing, отдельные попытки/usage/model,
+не переотправляет orphan request и повторно использует только завершённый prefix.
+Concurrency 1; минимум 1 секунда между запросами; до трёх availability attempts
+с паузами 30/90 секунд и Retry-After; local deadline 240 секунд.
+Wrong/invalid/incomplete/refused output не повторяется ради лучшего ответа.
+После трёх exhausted availability assignments срабатывает circuit stop.
+TLS verification включён; redirects и environment proxy выключены.
+Credential использован только в памяти через getpass без echo fallback.
+
+Финальный offline preflight: 19/19 тестов, ноль сетевых вызовов.
+Проверены blinding, raw retention, unknown usage, 429/5xx/deadline/backoff,
+Retry-After, fatal auth/quota, orphan/resume, minimum gap, circuit stop,
+операторский stop, ошибка сохранения, redaction, строгий output contract.
+Первый preflight имел 3/17 failures: fake wait учитывал нулевую паузу как сон.
+Исправлена инструментальная модель ожидания, не production backoff;
+исходные tests, traceback и последующие версии сохранены.
+
+### 31.2. Наблюдаемый исход, без исключения невалидных ответов
+
+Все 104 assignments завершились; 104 HTTP 200, по одной попытке каждый,
+без transport retries, pending, missing или unstarted. Runner и launcher
+завершились exit 0 — это успех выполнения, не прохождение judge gate.
+SQLite integrity: `ok`; минимальный наблюдаемый gap — 1.0002503395 секунды.
+PID 25780 завершён, lock отсутствует. Журнал содержит 104 starts,
+104 terminal receipts и один batch terminal. Сохранены 316 raw/run файлов,
+1 715 239 bytes; все 269 frozen inputs повторно проверены без изменений.
+
+| Зарегистрированный outcome               |                  Наблюдение |
+|------------------------------------------|----------------------------:|
+| Parsed endpoints                         |                      99/104 |
+| Invalid endpoints                        |                       5/104 |
+| Correct verdicts среди parsed            |                       98/99 |
+| Correct endpoints с исходным denominator |                      98/104 |
+| Пары с обоими правильными endpoints      |                   **46/52** |
+| Macro по 26 strata / micro pair accuracy | 0.8846153846 / 0.8846153846 |
+| Строгий sample gate                      |                  **FAILED** |
+
+Пять пар не проходят из-за invalid output, одна — из-за неверного verdict.
+Parsed confusion: 50 contradicted→contradicted, 44 entailed→entailed,
+4 undetermined→undetermined, 1 entailed→contradicted.
+Условные 98/99 нельзя выдавать за результат всей когорты.
+Все 104 классификации воспроизведены из raw responses без расхождений.
+
+### 31.3. Два разных отказа и отдельный дефект дополнительной метрики
+
+В `sample-013`, `028`, `035`, `071`, `074` ответ представляет parseable JSON,
+но `evidence_quotes` содержит native object либо integer вместо строки.
+Контракт требует массив непустых strings, поэтому все пять остаются invalid.
+Их raw verdict совпадает с gold лишь в диагностическом сравнении;
+это не разрешение stringify/repair и не новый зарегистрированный score.
+Все пять случаев относятся к S, но одной выбранной когорты недостаточно
+для вывода о причинном влиянии формата или частоте ошибки в популяции.
+
+`sample-078` проходит parser, но отвечает contradicted на binding вопрос
+о `K.version` в F source. В rationale утверждается, что `[2103,2104)`
+не выбирает version K. Независимый JSON span walker и отдельный literal search
+оба показывают `/current_claims/6/version`, record id `K`, значение `4`;
+буквальный срез исходной строки `[2103:2104]` равен `4`.
+Исходные offsets, source и gold не исправлялись. Точная цитата K присутствует,
+однако не подтверждает корректность рассуждения о координатах.
+Наблюдение согласуется с ошибкой локализации диапазона; внутренний механизм
+ошибки модели непосредственно не наблюдался.
+
+Frozen secondary quote matcher сообщает 97/99 outputs со всеми найденными
+цитатами: 213 quote occurrences, две не найдены. Разбор `sample-084` и `102`
+показал, что обе цитаты точно равны decoded `/conflict_scope` в F payload.
+Matcher трактует вложенный JSON как raw string и не снимает его экранирование.
+Восемь диагностических проверок подтверждают: исходный raw match false,
+escaped literal match true, тот же decoded value в S даёт true,
+а добавленная несуществующая цитата отвергается в обоих представлениях.
+Это representation-sensitive ограничение дополнительного matcher, не
+доказательство выдуманных цитат. Frozen 97/99 и primary 46/52 не заменены.
+
+### 31.4. Ресурсы, неопределённость и воспроизводимость
+
+Provider сообщил 213 134 input и 15 053 output tokens; unknown usage attempts 0.
+Денежная стоимость неизвестна. Во всех 104 ответах указан `gpt-6.1-sol`;
+backend identity независимо не подтверждена. Output содержит 104 message
+и 24 reasoning items, без наблюдаемых tool-call items.
+При этом каждый usage содержит tools input attribution 296 tokens
+(суммарно 30 784) и tools output 0, несмотря на отсутствие client tools.
+Это metadata anomaly/непрозрачность, не доказательство выполнения инструмента
+и не подтверждение server-side isolation.
+
+Evidence-корень: `C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-020/`.
+Сохранены `EXECUTION.json`, `FREEZE-MANIFEST.json`, `ANALYSIS-002.json`,
+`TERMINAL-FAILURE-DIAGNOSTIC.json`, `QUOTE-REPRESENTATION-DIAGNOSTIC.json`,
+`TERMINAL-SEAL-CHECK.json`, `RAW-SEAL.json` и `run-001/stdout.jsonl`.
+Команды preflight/freeze/analysis/diagnostic/quote check имеют отдельные records
+с literal stdout/stderr и exit status. У реального PTY-запуска потоки объединены;
+отдельного полного stderr transcript нет, application stdout сохранён нативно.
+Первый sealing script ошибочно ожидал 104 записи с id вместо 208 start/terminal;
+его exit 1 и исходник сохранены. Версия v2 проверяет типы и порядок всех 209 events,
+завершилась exit 0 и не меняла raw run. Оба instrumentation failures не скрыты.
+
+Следующая проверяемая гипотеза: ограничения строкового evidence contract
+и ручной локализации offsets нужно отделить от семантического verdict.
+Следующий исполняемый этап — versioned public-only locator и typed-citation
+контракт с локальными adversarial проверками, затем prospectively frozen 2×2
+engineering comparison на той же полной когорте, а не только на шести failures.
+Факторы: original/typed evidence и raw/deterministically resolved selection.
+Locator не должен решать currentness/ownership, читать gold или менять source,
+selector либо label; он может сообщать только буквально разрешённый фрагмент
+и синтаксический адрес. Старый raw baseline и все неудачи остаются отдельными.
+Сравнение может проверить engineering representation burden, но не валидировать
+естественную семантику. Исправление quote matcher также требует отдельной версии
+и не должно подменять исторический результат. Этот следующий запуск ещё не выполнен.
+Полный корпус, public BRI, independent natural gold и требования §26 не закрыты.
