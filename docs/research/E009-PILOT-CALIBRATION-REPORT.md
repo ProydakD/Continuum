@@ -2652,3 +2652,100 @@ unvalidated/ineligible. Это exploratory сбор, не отмена стар�
 Сами requests, supplement builder, runner tests и freeze ещё **не созданы**.
 Следующее действие — построить и проверить все 594 requests перед любой сетью.
 Full E-009, power/N, T2, scientific preregistration и held-out остаются открыты.
+
+## 38. Парный raw/witness comparison подготовлен, проверен и запущен
+
+2026-10-26 создан новый engineering run на **594 requests**:
+для каждого из 24 authored controls и 273 unlabelled questions две arms —
+`raw` и `literal_witness`. Прежний run 7526 остаётся terminal с failed gate
+и 273 unstarted; он не возобновлён и его ответы не переоценены.
+
+### 38.1. Что именно различается между arms
+
+Все 297 source/question inputs сохранены без изменений. Только witness arm
+получает вычисленные из public source/request diagnostics: точные hashes,
+native types, длины массивов/строк, вложенные positions и literal equality.
+Для primitive array elements показываются type counts и hash полного значения,
+а не дублируется весь массив; исходный payload остаётся в запросе полностью.
+Object construction, interpretation proposal, wrong ownership/currentness,
+unknown/absence и complete field state по-прежнему не верифицированы.
+
+Обе arms получают одинаковое дополнение к mode instructions, объясняющее эти
+границы и запрещающее цитировать supplement вместо original payload.
+Поэтому raw arm нового сравнения **не byte-identical** запросам старого запуска.
+Сравнение относится к наличию supplement при общих новых instructions,
+не к прямому сравнению прежних и новых aggregate scores.
+
+Порядок заранее воспроизводим и стратифицирован по stage/mode:
+control AB/BA **12/12**, natural **137/136**; обе arms одного question соседние.
+Сначала 48 control calls, затем 36 candidate-free natural reviews и
+510 natural interpretations. Seed/order, 594 requests и 297 supplements
+сохранены в `paired-requests-001/` — 895 файлов плюс manifest.
+Manifest SHA-256:
+`dbdced9f820db6ad956f4b7e2e4429484cc2c39706f0d77f83694f886f72557d`.
+
+### 38.2. Проверки до сети и реально обнаруженный файловый сбой
+
+Отдельный reader без импорта builder/renderer/candidate повторно вывел
+все 297 supplements из sources, проверил все 594 request bodies и pair identities,
+counterbalancing, caps и отсутствие дополнительных private labels.
+Обнаружены 1 782 проверочные мутации hashes/status/semantic flags/root keys.
+Это проверка finite transformation boundary, не semantic oracle.
+
+**17/17 witness tests** прошли, включая stale diagnostic/source,
+tampered count/type/hash, Unicode, nested arrays, private wrapper canaries,
+wrong-owner/history, object/interpret abstention и candidate-null reviews.
+Renderer v1 и исходный pack сохранены; v2 симметрично проверяет raw/witness
+public wrappers. Все 594 готовых запроса воспроизведены v2 без изменения тела.
+
+Первый runner suite завершился exit 1: в полном 594-assignment fixture возник
+`PermissionError [WinError 5]` при `RUNNING.next → RUNNING.json`.
+Причина отказа доступа на уровне ОС не установлена. Исходный helper/trace и
+частично выполненный fixture сохранены; проблема не скрыта уменьшением batch.
+Новая локальная атомарная запись допускает максимум пять replace attempts
+только для Windows errors 5/32/33, с паузами 0.01/0.03/0.1/0.3 секунды.
+Каждый отказ журналируется; исчерпание или иной error остаётся ошибкой.
+Разрешения не меняются, HTTP request не отправляется повторно из-за file retry.
+
+Исправленный suite прошёл **18/18**, включая полный 594-case fixture:
+одна raw control failure сохранила gate FAIL, но все 546 synthetic natural
+outcomes были получены как unvalidated. Проверены raw/receipt/gate tampering,
+prefix resume, orphan rejection, malformed modes/pairs, fatal model mismatch,
+availability circuit и **синтетические** 502/503 retries с паузами 30/90 секунд.
+Это не утверждение о таких HTTP failures в live run.
+
+### 38.3. Prospective protocol, freeze и наблюдаемый старт
+
+В каждой arm finite gate остаётся **24/24 exact projections + all citations**.
+Но этот отдельный prospective comparison собирает natural outputs независимо
+от gate, только как exploratory/unvalidated/ineligible data. FAIL не становится
+PASS; ни agreement, ни quote presence не дают natural gold или public BRI.
+Это не scientific preregistration и не held-out/main study.
+
+До сети заморожены **2 728 файлов**.
+Execution HEAD: `12a90512bce2f6f742f120cd4e8bc6d6b89c9a52`.
+Execution SHA-256:
+`24e0f8aaa2a3a75ae44dc169b4bcfcd9bd5e133aca6391b66d2fc48a81fc5b8c`.
+Canonical bodies: 6 307–26 913 bytes, всего **7 902 396**
+(raw 3 364 875 / witness 4 537 521).
+Requested output allowance — 3 072 000 за одну попытку каждого задания,
+9 216 000 с тремя; максимум 1 782 attempts. Это не фактический usage или стоимость.
+
+Авторизованный Responses process реально запущен: session **93152**,
+Python PID **28724**, start UTC `2026-10-26T14:30:52.8817726Z`.
+Credential передан через hidden getpass только в память process.
+Первый immutable `ANALYSIS-001.json`: пять parsed controls
+(raw два, witness три), все пять пока прошли свой control check.
+Обе gate оценки ещё pending; две полные question-arm пары имеют одинаковые
+projections. Это промежуточные наблюдения, **не** эффект вмешательства.
+Шесть attempts, один pending; reported subtotal **9 097 input / 3 223 output**
+tokens, usage pending attempt неизвестен. Все 546 natural calls ещё unstarted.
+Пять responses сообщают `gpt-6.1-sol`; backend/tool isolation и cost не проверены.
+
+Evidence root:
+`C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/`.
+Следующее действие — наблюдать **ту же** session/PID и создавать новые immutable
+snapshots; timeout не разрешает restart. При terminal запечатать raw и независимо
+повторить analysis с полными 594 denominators, gate outcomes и natural uncertainty.
+Полный scope E-009 — independent natural measurement, public BRI, T2,
+power/N, scientific preregistration, held-out и final audit — остаётся открытым.
