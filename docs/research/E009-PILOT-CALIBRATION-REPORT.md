@@ -3532,3 +3532,82 @@ variance/power/N, две T2 development lines, scientific preregistration,
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-009/.
+
+## 48. Первые полные ответы: ошибки цитирования и отдельная проверка композиции
+
+Тот же exec91668 продолжает frozen resource900 run; новый процесс не запускался.
+Snapshot004 сохраняет все 36 назначений: **2 invalid, 1 parsed, 1 pending,
+32 unstarted**, четыре попытки, одна с неизвестным usage. Reported totals:
+11744 input / 48868 output, стоимость неизвестна. Независимый audit проверил
+три actual receipts; у одного parsed ответа — 17 exact anchors и четыре
+отклонённых negative annotation canaries. Это первая механически принятая
+аннотация этого run, не доказательство общей semantic validity.
+
+### 48.1. Два ответа source-001: значения совпали, доказательная связь нарушена
+
+Назначения 001/002 завершились HTTP 200/completed с первой попытки за
+514.3227057 / 515.2056992 секунды. Оба отклонены production checker как
+`evidence_without_exact_anchor`; independent checker — `contract:evidence_anchor_link`.
+Они не исправлялись, не переоценивались и не повторялись как content retry.
+Два контекста были назначены заранее; это один источник, не два независимых мира.
+
+Reported output 16891 / 17008 превышает requested max_output_tokens=16384.
+Сохраняются реальные значения usage; номинальные allowances нельзя считать
+проверенным server-side пределом. Backend identity, интерпретация этого лимита
+провайдером и наличие tools metadata без client tools остаются непроверенными.
+
+Отдельная post-outcome диагностика читает только raw responses и публичный
+source-001. По явно указанной таблице текущих утверждений каждое из 56 значений
+полей обоих ответов совпадает с соответствующим публичным утверждением:
+**56/56 и 56/56**, не accuracy/BRI и не истинность этих утверждений о мире.
+Все 16 / 12 объявленных anchors прошли точную проверку до ошибки linking.
+Однако среди 72 / 80 evidence items у каждого ответа есть три несовпадения;
+эти шесть буквальных цитат отсутствуют в указанном document. Совпадение
+значений не исправляет несуществующие цитаты и не отменяет исходный invalid.
+Первый ответ заявляет claimed_complete, второй — undetermined: эти различия
+сохранены, completeness не выводится из совпавших значений.
+
+Диагностический parser ограничен наблюдённым форматом source-001. Первоначально
+он ошибочно принял строку заголовков за строку данных и завершился с
+JSONDecodeError/exit 1; исходный код и stderr сохранены. Исправлено начало
+разбора после явного заголовка, а не фильтрация неудобных outcomes.
+**6 tests PASS**: оба actual invalid ответа, семь value-mutation canaries,
+header regression, malformed/duplicate/missing rows, неверный anchor и duplicate JSON key.
+Неверный первоначальный lookup source.documents также сохранён как read-only
+inspection error; корректный путь — source.request.documents.
+
+### 48.2. Первый parsed source-002: проверка владения полями и перехода C → D
+
+Назначение 003 вернуло шесть утверждений A1–A6, target stage D; output 14969.
+После независимой проверки полного контракта выполнена отдельная source-only
+реконструкция: JSON-records стадии C дают propositions, а явные фразы D задают
+наследование, version/origin/status, группы bases/reasons и именные previous hashes.
+Private index, скрытые ответы мира и дополнительные model calls не использовались.
+
+Проверены **42/42 field values, 48/48 identity/temporal/composition support sites,
+6/6 currentness assertions** в пределах данного публичного источника.
+Proposition anchor должен лежать внутри C-record именно того claim; ссылка на
+произвольное совпавшее значение недостаточна. Group assignment различает A1–A4
+и A5–A6; hash anchor связывается с именем и заголовком previous_sha256 в D.
+Все **6/6 declared previous hashes** совпали с SHA256 canonical JSON-records C.
+Это локальная проверка цепочки байтов, не доказательство достоверности автора.
+
+**6 composition tests PASS**: восемь value/revoked-basis canaries, неверный owner
+при правильном общем значении, исторический anchor вместо текущего, изменённая
+предыдущая запись, пересекающиеся/неполные группы и другой target stage.
+Диагностика явно предполагает inclusive identity ranges и интерпретацию печатных
+скобок как упорядоченных строковых массивов; assumptions сохранены вместе с
+source spans. Это post-outcome, не blinded adjudication, не общий semantic gold.
+Rationales модели, causal/world truth, полнота всех возможных утверждений и
+полный BRI не установлены. Measurement eligibility не повышена.
+
+Следующий шаг — продолжать тот же frozen batch и независимо разбирать новые
+receipts, сохраняя invalid/missing и неизвестный usage. Диагностика source-001
+указывает на возможную хрупкость повторного копирования длинных evidence strings,
+но это гипотеза для будущего prospective протокола, не разрешение менять текущий.
+Публичный BRI/opportunities, variance/power/N, две T2 development lines,
+scientific preregistration, отдельно разрешённый held-out, robustness и итоговый
+requirements audit остаются незавершёнными.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-010/.
