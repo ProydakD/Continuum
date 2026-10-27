@@ -6071,3 +6071,69 @@ Evidence:
 - `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-036\NEXT-BATCH-STATE.json`
 - `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-036\batch-002\PUBLIC-MATERIALIZATION-CANDIDATE-002.json`
 - `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-036\EXECUTION-NOTES.json`
+
+## 75. Next eight original traces: correct terminal answers coexist with integrity failures (2026-10-27)
+
+The pending monitor036 checkpoint was released as revision211 before new work.
+Monitor037 then evaluated the already locked original assignments010–017 without
+new model/API calls, participant replay, hidden measurement observations, or
+changes to E003–E008. Original per-run manifests retain model/execution identity.
+The same project copy and four transaction roles remain authoritative.
+
+- The named assay covered all230 records:198 literal objects and32 explicitly
+  shared-field table objects. The independent raw/forward audit reopened76 tool
+  exchanges and checked230 statuses:225 correct,4 incorrect,1 malformed census
+  proposition left unknown rather than silently repaired. All8 terminal answers
+  and their declared prediction bases passed the existing bounded candidate.
+- Complete public scope was retained:68 auxiliary units and527 atomic checks
+  under explicit authored interpretations.49 units were supported conditionally,
+  12 contradicted,7 punctuation/non-world. Full-equation assertions were checked
+  across729 partial surgical interventions, not only observational agreement.
+  This is not independent general prose gold or a registered BRI estimate.
+- Four source-scoped diagnostic failures remain:010 changes J's census object
+  at D while claiming independent preservation;014 shifts EA/J cells at C/D and
+  has2 observable predecessor-digest contradictions;016 copies wrong EA cells
+  at every stage and claims authentication that does not bind those altered
+  records;017 repeatedly asserts wrong candidate indices/model438 and h/bQ,
+  incorrectly refutes H under EA alone at A/C, and gives insufficient EA grounds
+  for H's otherwise correct refutation at B/D. Correct final answers do not
+  erase these contradictory public assertions.
+- 012 passes the complete candidate conditionally on its explicit shared-field
+  table interpretation;32 native encoding hashes remain unobserved, not invented.
+  011/013/015 have no observed prior claim-dependency opportunities: dependent
+  revision remains unknown, not a vacuous PASS. Across the batch,170 native
+  predecessor links match,2 conflict,32 are unavailable.
+- Authentication provenance contains43 attempts:40 successful and3 rejected
+  malformed/nonmatching requests (011A EA length65;013B EC length73;014A EA
+  length64 but wrong cells). Later exact receipts are preserved separately.
+  Authentication of the issued record never authenticates a corrupted copy.
+- 14 focused tests pass. Independent named/source audits reject6 and7 corruption
+  canaries respectively. The latter separately recomputes147 source/model/status
+  checks, reopens all68 scope units and actual authentication receipts, and
+  verifies aggregation; it does not independently interpret all prose/527 checks.
+- All120 assignments,12 worlds and11 technical failures remain in the roster.
+  Formal partial sum bounds are[4,104]/120, typed-ground bounds[5,105]/120, and
+  the retained interpretation envelope[4,105]/120. These are bounds, not scores
+  or condition effects.005's prior conflicting readings remain unchanged.
+  Natural-source corruption is observed; population semantic dispersion and
+  registered BRI validity are still not established.
+
+The first aggregation command failed on tuple-versus-JSON-array witness equality;
+complete canonical JSON comparison corrected that execution error. The initial
+auxiliary candidate is preserved: an unordered family-set comparison was repaired,
+punctuation classification clarified, authentication made record-specific, and an
+explicit preservation check added. None of these repairs rewrites participant data.
+
+Evidence: external monitor037/{BATCH-ASSESSMENT-INPUTS.json,
+BATCH-COMPONENT-OBSERVATIONS-001.json,AUXILIARY-INTERPRETATIONS-002.json,
+AUXILIARY-SEMANTIC-OBSERVATIONS-002.json,BATCH-SCOPE-OBSERVATIONS.json,
+INDEPENDENT-BATCH-CHECK.json,INDEPENDENT-SCOPE-CHECK.json,
+PILOT-COHORT-OBSERVATIONS.json,EXECUTION-NOTES.json}.
+
+94 technically completed original assignments remain unassessed. The next8 are
+locked before semantic inspection:019,021,022,023,025,026,027,028. Next execute
+source extraction/materialization and the full named-plus-auxiliary assay on that
+lock, retaining unsupported representations and all assigned outcomes. Full E009
+still requires full-cohort calibration, two isolated T2 lines, formula/sample/power
+and resource preregistration, separately authorized held-out evaluation, robustness
+handoffs/repeated retractions/crash recovery, and independent final audit.
