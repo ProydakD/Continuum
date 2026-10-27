@@ -5566,3 +5566,112 @@ opportunities/dispersion,две isolated T2 линии,main preregistration,от
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-030/.
+
+
+## 69. Фактический контекст участника и prospective observation domains
+
+### 69.1. Что действительно передано, а не только видно evaluator
+
+Продолжен checkpoint199 на прежнем TARGET. Новых model/API calls нет.
+Проверены исходные worker-wire, public.json, terminal и provider requests для
+pilot-018, pilot-020 и pilot-058, всех стадий A–E. Correlation использует реальные
+call_id, последовательность call/reply, точные JSON values, байтовые длины и хеши.
+Все 58 provider request histories совпадают с worker requests; previous_response_id
+не используется. 15 read_memory replies присутствуют в 43 последующих requests;
+39 непубликационных capability calls/replies также найдены в запросах модели.
+Не предполагается, что факт доставки доказывает использование или истинность.
+
+| Trace | A получил | B получил | C получил | D получил | E получил |
+|---|---|---|---|---|---|
+| pilot-018 | seed | seed,A | seed,A,B | seed,A,B,C | seed,A,B,C,D |
+| pilot-020 | seed | A | B | C | D |
+| pilot-058 | seed | A | B | C | D |
+
+Это отдельные memory envelopes. Отсутствие старого envelope НЕ доказывает
+отсутствие его фактов в более позднем сжатом payload. Полный historical packet
+оценщика также НЕ доказывает, что участник прочитал все исторические документы.
+На E исходный evaluator packet содержал семь документов: seed,A–D,question,
+prediction. Последние два traces реально получили через read_memory только D.
+FULL-JOURNAL имеет иной наблюдаемый контекст; это не универсальное свойство F/S.
+
+В public input каждой стадии есть evidence_update, переданный модели и не
+выделенный отдельным документом в старом observer packet. У FULL-JOURNAL update
+содержит также source_archive. Поэтому memory-only receipt не исчерпывает весь
+контекст участника; новый кандидат сохраняет и этот фактический public input.
+
+### 69.2. Один механизм: раздельные области наблюдения
+
+Создан отдельный prospective observation_domain.py и domain-pack-001:15 пакетов
+A–E, без правки старых source inputs, review instructions, labels или scores.
+В каждом пакете исходный source_input сохранён полностью; дополнительно выделены:
+
+- emitted_assertion_event — конкретная новая публикация либо E prediction;
+- received_memory — только реально полученные envelopes и их source documents;
+- evaluator_history — вся прежняя история, с отметкой отдельно недоставленных;
+- participant_stage_context — stage/question/evidence_update из public input;
+- participant_capability_observations — реальные read/hash/verify exchanges;
+- query_prediction_binding — конкретный вопрос, ответ, basis и их literal hashes;
+- live_state_reconstruction — отдельно, пока unadjudicated, без automatic carry-forward.
+
+Эти области не являются автоматическими PASS и не вводят E-only исключение.
+Полнота emitted assertions, состояние знаний и смысл зависимостей остаются разными
+вопросами. Все шесть BRI требований сохранены. Old prediction labels не заменены
+новыми ответами; условие, world_id, track и private measurement не скопированы в
+participant_stage_context. Publish measurement arguments не экспортируются.
+Кандидат существует только на стороне evaluator и не передан участникам F0/F1.
+
+### 69.3. Проверки конструктора и независимого чтения исходников
+
+14 boundary tests PASS. Независимый код, не импортирующий producer/reviewer,
+перечитал все15 пакетов,15 raw reads,43 доставки и39 capability exchanges.
+17 негативных canaries отклонены: ложная доставка истории, подмена query/digest,
+переутверждение прочитанного, автоматический carry-forward, omission update,
+утечка condition/private measurement, подмена receipt, answer-only BRI и другие.
+Положительные checks не доказывают универсальную семантическую корректность;
+независимость реализации не означает независимость автора.
+
+Первый запуск verifier завершился exit1 до создания результата: terminal.api_calls
+имеет null, а не число. Исправлена проверка на фактические request/wire counts и
+terminal.responses; null сохранён как unknown. Старый код и stderr сохранены.
+Повторный запуск exit0; модельные запросы не повторялись. Ошибка IDE read_file
+с offset0 исправлена на offset1; read-only MCP доступен, это не сбой сервера.
+
+### 69.4. Реальная query→declared-basis проверка, отдельно от полного BRI
+
+На исходных наблюдаемых E answers и public evidence выполнен finite-class assay.
+Forward simulator и независимый constraint oracle согласились на всём наборе
+совместимых моделей и возможных ответов. Полный каталог содержит576 моделей.
+
+| Trace | Заявленный basis | Совместимые модели basis | Ответ |
+|---|---|---|---|
+| pilot-018 | EA,ED | 455 | 4 |
+| pilot-020 | ED | 451,455 | 4 |
+| pilot-058 | EA,ED,EE | 90,91 | 0 |
+
+Все3 ответа корректны в зарегистрированном finite class; все3 заявленных набора
+допустимы и достаточны для соответствующего вопроса. ED alone не идентифицирует
+один мир, но идентифицирует нужный ответ: запрещено считать его недостаточным
+лишь за отсутствие EA/EE. Empty-basis control допускает ответы0,4,8 и не достаточен;
+неверный ответ отвергается. Revoked EB/EC сохранены как отдельный диагностический
+контроль; вычислимая совместимость не делает отозванный source допустимым.
+
+Это post-hoc диагностика финального компонента. Она не доказывает causal use
+источников моделью, не устанавливает revision dependencies и не даёт full BRI.
+Собранная evaluator история не приписана participant memory. Старые результаты
+37/44 и31/32 не пересчитаны. Claim/source fidelity не подменён oracle truth.
+
+### 69.5. Следующая проверка полного измерения
+
+Нужен наблюдаемый longitudinal mapping между source-bound assertion events A–D,
+их идентичностью/статусом/основаниями/зависимостями и финальным прогнозом; неизвестные
+carry-forward и semantic links нельзя автоматически заполнять. Новый domain
+candidate делает доступные свидетельства явными, но ещё не реализует это измерение.
+Следующая операция должна проверить observability всех6 BRI conjuncts на этих
+фиксированных traces и существующих public assertion matrices, с конкретными
+наблюдаемыми witnesses и missingness, а не запускать ещё один общий76-call review.
+Не требовать универсального доказательства семантики и не принимать ответ за BRI.
+Остаются эмпирические revision opportunities/dispersion, две isolated T2 линии,
+main preregistration, отдельно разрешённый heldout, robustness и итоговый аудит.
+
+Evidence directory:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-031/.
