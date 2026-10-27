@@ -5866,3 +5866,115 @@ review FAIL сохранён. Локальный report commit, без push; т�
 
 Evidence directory:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-033/.
+
+
+## 72. Исполняемый six-component contract и полный знаменатель пилота
+
+### 72.1. От отдельных проверок к явной формуле
+
+На checkpoint205 создан и выполнен MEASUREMENT-CONTRACT-002: кандидат
+шестикомпонентного измерения по требованиям §6E/9/10 исходного задания.
+Это post-hoc diagnostic на прежних raw данных, не main preregistration и
+не изменение зарегистрированных старых scores. Новых model/API calls не было.
+
+Для каждого reading r проверяется T AND A_r AND C1 AND ... AND C6:
+T — наблюдаемое техническое завершение; A_r — согласованность полного
+наблюдаемого assertion scope при явно заданной трактовке; C1..C6 — root revision,
+dependent revision, independent support, no false retraction, traceability,
+new prediction. A_r не заменяет ни один из шести компонентов. Нижняя граница1
+только когда все проверки True; верхняя0 при любом False. Unknown сохраняет
+интервал, пустой обязательный компонент не получает vacuous PASS. Между
+конкурирующими трактовками выводится оболочка min(lower),max(upper).
+
+Controlled identities берутся из регистрации; natural роли — из предыдущих
+публичных propositions/edges. Знаменатель не выбирается новым ответом.
+Для preservation нужны supported/correct ДО обновления и корректность ПОСЛЕ.
+Surviving independent basis не ограничен прямой evidence ссылкой: допускаются
+и логически достаточные альтернативные основания. Каждый заявленный active basis
+должен быть корректным; хороший вариант не легализует revoked/cyclic другой.
+
+### 72.2. Пересчёт из наблюдений, а не агрегирование старых PASS
+
+Первый001 prototype явно помечал technical confirmation pending. Финальный004
+заново вычисляет статусы, grounds, identity, lineage и prediction по source-derived
+значениям, проверяя совпадение current rows с исходной public materialization.
+Не используются private episode claims как наблюдаемое содержание. Перечни
+ролей/предыдущих состояний зафиксированы отдельно до применения evaluator.
+Source hashes включают final contract и исполняемую реализацию.
+
+Из15 исходных terminal records подтверждены status=completed/exit0, по5 различных
+instance IDs на каждую цепочку. A–D имеют committed=true; E committed=false
+ожидаемо: successor отвечает, а не публикует новую память. E final bytes/values
+согласуются с ранее source-bound prediction. Правильный ответ проверяется вместе
+с достаточностью admissible basis; уникальная идентификация мира не требуется.
+Техническое завершение не выводится из одного существования итогового ответа.
+
+| Trace | Шесть named-scenario компонентов | Scope-sensitive diagnostic bounds |
+|---|---|---|
+| pilot-018 | все True | [1,1] |
+| pilot-020 | все True | [1,1] |
+| pilot-058 | все True | [0,1] |
+
+Natural interval отражает ровно сохранённое Y→Q path/direct-edge reading из §71:
+contextual path даёт1, literal edge даёт0. Нельзя молча выбрать благоприятный вариант.
+Все127 дополнительные units остаются в scope;20 metadata/policy не засчитываются
+как empirical causal successes.106 authored interpretations остаются условными,
+не независимым semantic gold. Правильность internal causal use не заявляется.
+
+60 native predecessor hashes совпали,0 расходятся,16 controlled-seed encodings
+не наблюдаемы. Известный неправильный hash проваливает lineage; неизвестные bytes
+не угадываются. Семантическая преемственность проверяется по observable identity,
+proposition,origin,предыдущему состоянию и source-linked change reasons, поэтому
+отсутствие recoverable seed encoding само по себе не превращается в ложный отзыв.
+
+### 72.3. Отказы, пропуски и отрицательные контроли
+
+24 tests PASS. Внесённые в копии наблюдений неверный root status, stale dependent,
+ложный отзыв independent claim, неверные origin/change grounds/hash, неправильный
+новый ответ, revoked/duplicate/malformed final basis, цикл и laundering alternative
+обнаружены. Correct final answer не спасает stale dependency. Отсутствующий field
+или answer отличается от известного False и явно заявленного null. Пустая область
+dependent opportunities остаётся unknown. Technical failure даёт assigned zero;
+пропавшее назначение на явно объявленном final analysis cutoff не удаляется.
+Эти искусственные controls не являются ошибками реального участника и не доказывают
+естественный ненулевой разброс BRI.
+
+Отдельная реализация проверила conjunction,denominators,bounds,15terminals,
+12checkpoints,80 assertion checks и hashes;8 tamper canaries отклонены. Это
+same-author независимость реализации aggregation/source audit, не независимое
+повторение всей natural-language semantics. До настоящей полной валидации ещё
+нельзя объявлять измеритель универсально пригодным для произвольной памяти.
+
+### 72.4. Проверен весь исходный список назначений, не только удобные traces
+
+Исполняемый coverage check перечитал исходный PLAN и manifests/terminals всех
+120 назначений на12 мирах, по24 для F0,F1,S0,S1,FULL-JOURNAL.109 завершены
+технически,11 имеют явный status=failed и зависимые upstream_missing стадии.
+У части failed процессов exit_status=0: системный exit0 не равен успешной
+публикации. Эти11 не исключаются из population denominator и не перезапускаются.
+
+Candidate assigned-bound integration сохраняет все120 строк:11 observed technical
+failures имеют [0,0],3 разобранные traces — границы выше,106 технически завершённых
+но ещё не оценённых новым contract — [0,1]. Суммарные descriptive bounds [2,109]
+из120 НЕ являются точечной оценкой успеха, сравнением условий или main BRI.
+Четыре cohort canaries отклоняют удаление назначения, сокрытие technical failure,
+автоматический PASS за completion и схлопывание natural ambiguity.
+
+Следующая операция: распространить source-bound measurement на106 remaining
+technical-complete assignments в исходном locked order, начиная с pilot-005,
+pilot-006,pilot-007,pilot-009; не выбирать их по качеству ответа. Сохранять11 zeros
+и все120 outcomes, обрабатывать свободные/типизированные форматы без скрытой
+памяти и не переносить oracle claims в наблюдения. Использовать существующие raw
+до новых model runs. Если расширение выявляет конкретный measurement gap —
+исправить и проверить его, не запускать заново старые76 reviewer cases.
+
+Все реальные named-scenario компоненты на трёх выбранных traces положительны:
+синтетическая чувствительность не заменяет calibration без потолка. После
+валидации на всём назначенном pilot остаются difficulty calibration,две isolated
+T2 линии,main formula/sample/power/resources freeze, отдельно разрешённый heldout,
+robustness и независимый итоговый audit. Registered BRI scores emitted0;
+старые37/44positive31/32negative review FAIL не изменены. Локальный commit без push;
+TARGET и четыре native role artifacts те же.
+
+Evidence directory:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-034/.
