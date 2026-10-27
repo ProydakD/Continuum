@@ -5978,3 +5978,47 @@ TARGET и четыре native role artifacts те же.
 
 Evidence directory:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-034/.
+
+
+## 73. Locked-order public extraction and named assay: pilot-005/006/007/009
+
+This continuation resumed checkpoint207/claim208 after a status/ETA-only interruption. The batch was locked before semantic inspection, in the original pilot order. No participant replay, new model request, main score, or held-out run occurred. All four assignments use world321: F1-controlled, S1-natural, F0-natural, and FULL-JOURNAL-controlled respectively. The prior three diagnostic traces and all frozen review failures remain unchanged.
+
+### Actual public handoffs, not failed publication attempts
+
+The executable extractor reopens manifest-pinned raw worker wires, public inputs and terminals. Of19 publish attempts,16 were saved and3 FULL-JOURNAL-format attempts were rejected. Rejected attempts are retained but never substituted for published state. All16 A→B→C→D→E handoffs match the actually delivered next read_memory payload and receipt digest. All20 stage terminals completed/exit0 with five distinct instances per scenario; E is answer-only and does not publish. Private measurement claims are excluded from observations; controlled registration supplies role lists only.
+
+### Named observations and actual gaps
+
+Public source material yields16 seed field records and116 current named records.84 current records are literal public JSON;32 FULL-JOURNAL records require explicit, source-bound carry-forward interpretations. No missing seed reason list or native hash is invented. Source witnesses retain text spans/pointers, publication call and read receipt. The remaining27 auxiliary text/object units are preserved and are not yet fully adjudicated.
+
+| Run | Named six-component result | Candidate interval | Important limitation |
+|---|---|---|---|
+| pilot-005 | root/dependent/traceability fail under the literal active-basis contract; preservation and final prediction pass | [0,0] formal; [0,1] across unresolved memory readings | Ten A/C records explicitly have bases=[] although statuses are correct; surrounding EA/revocation prose may supply grounds for uncertainty. |
+| pilot-006 | all eligible named checks pass; dependent_revision unknown | [0,1] | No claim-reference dependency edges in the prior public states; empty opportunity panel is not PASS. |
+| pilot-007 | all eligible named checks pass; dependent_revision unknown | [0,1] | Same zero-dependency opportunity limitation; all individual statuses and final answer correct. |
+| pilot-009 | six named components pass conditionally | [0,1] | Whole-memory auxiliary scope and shorthand semantics remain to be independently assessed. |
+
+The independent forward simulator agrees with the constraint oracle on all116 observed claim statuses and all4 final answers (numerator4, basis e:ED). There are63 matching native predecessor hashes,0 mismatches,40 unavailable native hashes (8 seed and32 shorthand-predecessor records). Unavailable native serialization is not silently reconstructed into a verified digest.
+
+The pilot-005 formal failure is NOT yet evidence of causal reasoning failure or robust natural BRI dispersion. Original specification9 permits arbitrary memory formats; specification10 requires observable change grounds, not a particular populated JSON array. Two hypotheses are retained: literal active-basis semantics versus whole-public-memory grounds for justified uncertainty. Neither repairs the observed bases=[] field. Independent adjudication must resolve the measurement interpretation before a substantive conclusion.
+
+### Checks, errors and full denominator
+
+17 boundary/regression tests passed. A separate raw-binding/forward-status implementation checked39 tool exchanges,84 literal records,32 conditional source-bound shorthand records,116 statuses and4 answers; it rejected6 corruption canaries. This is not independent general semantic gold. A separate cohort-overlay verification rejected4 denominator/interpretation canaries.
+
+Three execution errors remain in the ledger: the initial broad JSON scanner stopped at bare-symbol do=[[X,1]] before a later explicit claim block; the bounded adapter now extracts that separately framed block and retains symbolic prose as unresolved scope. The independent audit also required a missing-bracket correction and explicit rejection of a failed-publish canary instead of a KeyError. All corrected commands returned0; no participant outcome was changed.
+
+All120 assigned scenarios,12 worlds,24 per condition and11 technical failures remain in the full roster. Three prior source diagnostics are retained; four additional scenarios now have named assessments with auxiliary gaps;102 technically completed scenarios have not yet received the new named assay. Formal contract sum bounds are[2,108]/120, but the interpretation-robust envelope remains[2,109]/120. These are partial descriptive bounds, not a point estimate, effect contrast or registered BRI score. Registered BRI scores emitted remain0.
+
+Next: execute source-bound checks over the27 retained auxiliary units and adjudicate both pilot-005 uncertainty-ground readings without changing observed arrays or choosing a favorable reading. Then continue the original locked order (pilot-010,011,012,013,...) using existing raw participants. Full E009 still requires full-cohort measurement/calibration, isolated T2 lines, main sample/power/resource preregistration, separately authorized held-out work, robustness scenarios and independent final audit.
+
+Artifacts (same stable TARGET and four-role transaction):
+- `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-035\BATCH-LOCK.json`
+- `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-035\PUBLIC-SOURCE-EXTRACTION-001.json`
+- `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-035\PUBLIC-NAMED-OBSERVATIONS-001.json`
+- `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-035\BATCH-COMPONENT-OBSERVATIONS-001.json`
+- `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-035\SCOPE-AND-INTERPRETATION-GAPS.json`
+- `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-035\INDEPENDENT-BATCH-CHECK.json`
+- `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-035\PILOT-COHORT-OBSERVATIONS.json`
+- `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-035\EXECUTION-NOTES.json`
