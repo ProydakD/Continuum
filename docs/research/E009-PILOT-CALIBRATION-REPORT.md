@@ -6272,3 +6272,66 @@ auxiliary units, preserving all named outcomes and uncertainty. Do not re-extrac
 this batch or skip ahead to new originals. Full-cohort calibration, isolated T2,
 main formula/sample/power/resource preregistration, authorized held-out evaluation,
 robustness and final independent audit remain unfinished.
+
+## 78. Whole-scope auxiliary assay and a capability-denied exact source (2026-10-27)
+
+Monitor040 resumed checkpoint217, claimed218 and completed the pending71-unit
+auxiliary assay for the same original029,030,031,032,034,035,036,037 assignments.
+The232 named records, their candidate008 materialization, uncertainty-aware
+component results and raw participant recordings from monitor039 are reused. No
+participant replay, new model/API call, private measurement observation or old
+result replacement occurred.
+
+- All71 units have source-bound authored readings and599 executed checks:
+  64 conditionally supported,6 contradicted and1 interpretation-dependent. Five
+  atomic results remain unknown; malformed-parent support is not silently made
+  false or true. The six contradicted units are035A–D and036C–D.035A additionally
+  claims Z numerator0 under do(X=0) for the confounded family; the finite forward
+  model gives4. Later correct wording is retained without erasing that error.
+- All29 structured literal source-record copies match their issued records. This
+  does not rescue the malformed65-bin named C1/J copies, their dependency/identity
+  failures, or035D's contradicted native predecessor digest. Full equations in the
+  relevant prose are checked over all729 partial surgical interventions, not only
+  observational predictions. All8 terminal answers remain correct.
+- Raw receipts contain30 source-authentication attempts:24 valid:true,5 valid:false
+  and1 error:capability_rejected. In030D, two ED transcriptions differ from the issued
+  record and return valid:false; a later request contains the exact issued64-bin ED
+  record but receives capability_rejected, with no validity result. The first
+  evaluator attempt crashed on the absent result field. Its error/source are
+  retained; new candidates preserve this distinct outcome without coercion.
+- The030D prose about failed transcriptions has two retained readings. As a summary
+  of the two invalid transcriptions it is supported; as an exhaustive description
+  of all attempts it omits/mischaracterizes the later exact capability-denied
+  request. We do not select the favorable reading. Neither the failed copies nor
+  the denied tool call revokes public source admissibility or demonstrates a
+  provider outage. An accepted authentication receipt is not invented.
+- Independent audit rebinds all71 units and actual receipts, separately recomputes
+  564 checks, verifies all599 tri-state flags/scenario aggregation and rejects10
+  canaries.22 focused tests pass, including all559 prior Q38 check results unchanged.
+  These are source/finite-model and uncertainty checks, not independent general
+  prose gold or a validated main-experiment BRI measurement.
+
+Whole-public-scope candidate bounds for this eight-run batch are[4,6]:029/031/032/037
+are conditionally complete under both retained readings;030 is interpretation-
+dependent,034 has no observed dependency opportunity, and035/036 retain integrity
+counterexamples. Unknown dependency validity in035 is not the zero-opportunity
+condition in034. None of these statements converts diagnostic bounds to an effect
+estimate or a registered score.
+
+All120 assignments/12 worlds/11 technical failures and the other112 cohort rows are
+retained. Formal bounds are[12,99]/120, typed-ground bounds[13,100]/120, and the
+combined interpretation envelope[12,100]/120. The previous005 ambiguity and all
+negative evidence remain.78 technically completed originals still await whole-
+scope assessment; next038–045 are locked before payload inspection.
+
+Evidence: external monitor040/{AUXILIARY-INTERPRETATIONS-001.json,
+AUXILIARY-SEMANTIC-OBSERVATIONS-001.json,AUXILIARY-SOURCE-PREFLIGHT-001.json,
+INDEPENDENT-SCOPE-CHECK.json,BATCH-SCOPE-OBSERVATIONS.json,
+PILOT-COHORT-OBSERVATIONS.json,NEXT-BATCH-LOCK.json,EXECUTION-NOTES.json},
+with unchanged monitor039 named-component evidence.
+
+Next: extract/materialize the locked original038–045, then assess their full public
+scope without replaying participants or filtering unfavorable outcomes. Full-cohort
+calibration/natural dispersion, isolated T2, main formula/sample/power/resource
+preregistration, authorized held-out evaluation, robustness and independent final
+audit remain unfinished.
