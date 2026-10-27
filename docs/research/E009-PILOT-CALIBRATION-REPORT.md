@@ -5079,3 +5079,107 @@ revision opportunities, две изолированные T2 линии, main pr
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-025/.
+
+## 64. Завершён весь reference review: controls обнаружены, positive gate не пройден
+
+Продолжение от checkpoint189 сохранило существующий процесс до завершения
+всех60 назначений. Промежуточные snapshots010–014 и18 наблюдений exec
+сохранены. Прогон не перезапускался, inputs/key/prompt/model не менялись,
+отрицательные исходы не исправлялись повторной генерацией.
+
+### 64.1. Фактическое завершение и независимый final replay
+
+**exec26111 завершился с exit0**; ОС подтвердила отсутствие исходного
+PID25764/start2026-10-26T23:29:48.3718646Z. TERMINAL содержит
+all_assignments_terminal,60 completed/60 assigned,unstarted=[];
+PROCESS.lock отсутствует. Запечатаны244 файла исходного job, включая
+receipts, transport/raw responses, ledger и terminal/stdout records.
+REFERENCE-REVIEW-RAW-SEAL.json SHA256:
+eddc7fb706126a0e1520db079ef1a27410b9803f9c17a728c04d2d98f5eaa4c3.
+
+Final snapshot015: **60 parsed,0 pending,0 unstarted**,60 transport attempts,
+0 unknown usage; reported1623938input/239661output tokens, cost неизвестен.
+Независимый audit подтвердил60 receipts/raw bodies,1559 exact anchors,
+404 negative canaries, все60 request и30 catalog файлов. Он не импортирует
+production validator, но имеет того же автора и общий стандартный JSON
+decoder; это не независимый semantic oracle. Snapshot SHA256:
+ee07363d6d5cfe63e1909af890f10a1b954707019733149694e09e990a516aaa.
+
+Итог зарегистрированных критериев: engineering_gate=true;
+**positive_pass32/36, negative_pass24/24, bounded_review_gate=false**.
+Все назначения включены в исходные знаменатели. Никакого пересчёта
+positive gate с исключением неудобной компоненты не выполнено.
+
+### 64.2. Четыре positive rejection относятся к native record/hash package
+
+Сохранены review002-1/2 (trace2/D): по8 native_encoding=contradicted;
+review022-2 (trace1/C) и029-2 (trace1/A): по8 native_encoding=underdetermined.
+В двух последних контекстах reviewer подтверждает explicitly composed
+record object, но считает current SHA-256 не установленным без объявленной
+byte serialization/canonicalization или опубликованного current digest.
+Парные022-1/029-1 эти же packages поддержали. Следовательно, наличие
+explicit composition само по себе не обеспечивает стабильного verdict.
+
+На всех36 real-reference assignments наблюдены supported для192 identities,
+1344 семипольных assessments и260 additional/shared units; coverage complete
+во всех36. Из192 native_encoding assessments160 supported,16 contradicted,
+16 underdetermined. Это разложение наблюдаемых суждений, а не новый score,
+доказательство истинности всех полей или разрешение удалить native вопросы.
+
+Описательные real группы: no-named8/8 pass; literal-current-object14/14;
+no-native-proposal4/4; nonliteral-native6/10. Stage/world/content смешаны
+с представлением; causal format effect и доверительный интервал не оценены.
+Произвольная форма памяти участника остаётся допустимой. Нельзя заставлять
+его писать JSON для устранения неоднозначности измерительного контракта.
+
+### 64.3. Все12 семейств контролируемых искажений обнаружены
+
+По два зарегистрированных targeted passes получены для invented_predecessor,
+admissibility_status, epoch_version, quantity_probability,
+justification_refutation, evidence_scope, model_alternative, basis_operator,
+independent_support, temporal_scope, analysis_omission и invented_origin.
+В частности, reviewer отделил числитель1 при знаменателе8 от probability1, отсутствие
+обоснования от опровержения, EA-only модели от combined evidence, две
+альтернативные достаточные bases от одной конъюнкции и historical H basis
+от сохранённого independent EA support. Удалённый analysis обнаружен как
+partial coverage, несмотря на правильные оставшиеся named records.
+
+Invented predecessor/origin дали underdetermined в обоих контекстах:
+неизвестное значение не объявляется доказанно ложным. Admissibility/status
+получил underdetermined в одном и contradicted в другом. Оба исхода заранее
+допускались для этого targeted control; расхождение не скрыто за pass.
+
+Все30 пары parsed. В парах9,11,22,29 имеются25 различий assessment verdict:
+одно admissibility/status и24 native_encoding. В паре19 coverage state
+различается partial/complete, хотя оба контекста отвергли подменённый basis
+operator. В парах11,12,17,19,27 различаются missing descriptions/anchors;
+это не автоматически пять semantic disagreements. Exact output equality
+нет ни в одной паре. Agreement не равен truth, два контекста не два мира.
+Корпус всё ещё содержит только2 выбранных независимых мира;24 authored
+контроля не дают универсальной проверки значения или validation на heldout.
+
+FINAL-REVIEW-OBSERVATIONS.json SHA256:
+397d681719b12b89bfa3d7ba14a08843ad61c9b749766181b8d45d96bb3e7baf.
+
+### 64.4. Следующее исправление должно быть проспективным
+
+Теперь зарегистрированный run закрыт, а не оставлен ради более удобного
+исследования. Наблюдения мотивируют разделение трёх сущностей: asserted
+field meaning, source-native carrier/serialization и evaluator-computed
+canonical digest. Последний не должен превращаться в утверждение участника
+о публикации этих байтов. Неизвестные source hashes остаются unknown;
+явный previous_sha256 остаётся утверждением источника и проверяется отдельно.
+
+Следующая операция — отдельный versioned candidate измерительного контракта
+с этим разделением и проверками всех сохранённых типов ошибок, без изменений
+замороженных inputs, private expectations, receipts или scores завершённого
+run. До новых model calls нужны фиксированные acceptance/stop rules и
+проверка, что revision, dependency repair, independent support, false
+retraction, traceability и новая prediction не сведены к format compliance.
+Закрытый review не означает готовность полного E009: пригодность измерения
+всех6 BRI conjuncts, revision opportunities/nonzero dispersion, две isolated
+T2 линии, main preregistration, отдельно разрешённый heldout, robustness
+и итоговый requirements audit ещё не подтверждены.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-026/.
