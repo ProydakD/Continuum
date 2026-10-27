@@ -6692,3 +6692,110 @@ Next: execute source extraction and named/full auxiliary assessment of prelocked
 formula/sample/power/resource preregistration, authorized held-out evaluation,
 robustness/handoffs/retractions/crash recovery and independent final audit remain
 unfinished. Full E009 scientific completion remains false.
+
+## 83. Original 064–071: public carry-forward, literal fields and a wrong exclusion explanation
+
+**Scope.** Resume the existing checkpoint227/claim228 and first unfinished batch,
+not a new participant experiment. Originals064–070 use world118;071 uses world218.
+The preinspection lock fixes conditions and order.32committed publications,
+5rejected publication attempts and32actual-read handoffs are retained. No model
+API calls, participant replays, external push or new infrastructure were used.
+The intervening ETA answer was a status response, not experimental progress.
+
+**Public materialization.** The original bounded adapters left10representations
+unresolved. Their outputs are retained. A separately saved source-only adapter
+v3 produces candidate004:223named records,145native and78conditionally assembled.
+The new forms are064's explicit registered-public-history journal(32objects),
+065D/071's labelled propositions and shared fields(40objects), and067D's explicit
+carry-forward from the actually read stage-C public memory(6objects). No private
+measurement fields or oracle answers fill a public gap. Initial absent predecessor
+fields remain absent; assembled records never acquire fabricated native hashes.
+
+An independent implementation recomposes78objects/624fields directly from public
+spans and actual read receipts, with8negative canaries. It is not independent
+unrestricted prose adjudication. All223named statuses and8final answers match the
+finite forward computation;77raw exchanges and6named-audit canaries pass.
+Predecessor diagnostics:127native-hash matches,0conflicts,80unknown. These counts
+include uncertainty inherited from non-native registered seeds; they do not imply
+that every assembled predecessor has a native digest.
+
+**Entire additional scope.** All54auxiliary units were read and checked, including
+structured evidence flags, textual authentication aliases, source arrays, causal
+explanations and declared object fields.556base predicates plus8alternative-reading
+predicates give564checks:51units conditionally supported,2interpretation-dependent,
+1contradicted. Source-authored interpretations remain conditional, not general
+semantic gold. Sparse declarations are separately parsed in the tests; dense
+arrays are bound to the actual declarations rather than substituted from an oracle.
+All729partial interventions are checked where a complete mechanism is asserted.
+
+**Negative result,071B.** The publication states:
+`EB eliminates 366 and 506 (under do X=0 these do not keep Y=1 always).`
+The explicit plural explanation is false for common-source model506. Both finite
+implementations give the following numerators(out of8) under `do(X=0)`:
+
+| Record/model | Y=1 | Z=1 |
+| --- | ---: | ---: |
+| Issued EB census | 8 | 0 |
+| Confounded366 | 4 | 4 |
+| Common-source506 | 8 | 4 |
+
+Model506 is indeed excluded by EB, but not for the published Y reason: its Z
+census differs while its Y marginal agrees. The evaluator does not rewrite the
+participant's explanation to use Z, and a correct final answer does not erase the
+false auxiliary assertion. The071whole-scope diagnostic upper bound is therefore0.
+
+An initial authored predicate represented “not always” as “balanced”. That was too
+strong: a constant opposite value also satisfies “not always”. The original
+specification/observations001 are retained. Separately saved enginev7 and spec002
+use literal noncertainty; test `test_not_always_is_not_balanced` checks the
+constant-opposite case. The corrected predicate still finds the same506negative.
+This is a documented semantic refinement, not a command failure or repaired result.
+
+**Retained ambiguities.** In068B, “EC eliminates fork(and common-source)” is true
+relative to EA alone, but only fork is newly excluded after EB. Both independent
+and sequential readings remain. In071C, “exactly these nine keys” immediately
+lists eight fields. Numeric-literal and enumerated-field readings are both kept;
+no missing ninth field is invented. The latter ambiguity does not rescue071from
+its separate071Bnegative. Four joint reading scenarios propagate these choices.
+
+**Receipts and regressions.** Independent scope audit checks54source units and all
+564pass flags, separately recomputes530checks and catches12negative canaries.
+43authentication receipts:39true,4false,0capability errors. All four failed copies
+are066: A/EA65bins, B/EC64bins with changed values, C/EA64bins with changed values,
+D/EE65bins; each later has an exact valid-issued-record request. Invalid submitted
+copies are not revocation or rejection of the distinct issued evidence.
+26risk-based tests pass, including sparse/dense literal binding, source-only carry,
+noncertainty semantics, both ambiguities, correct-answer-not-full-success,
+no-opportunity handling, an OR-to-XOR mechanism mutation and unchanged cohort rows.
+
+**Batch and cohort.** Conditional whole-scope diagnostic envelope is4..7/8:
+064,065,069,070conditionally complete;066,067,068have no observed dependency
+opportunities, so dependent revision remains unknown;068also retains scope
+ambiguity.071has a verified false auxiliary explanation. All8final answers are
+correct. Absence of a dependency opportunity is not scored as a successful repair.
+All120assignments/12worlds and11technical failures remain in the denominator;
+112rows outside this batch are unchanged. Cohort formal bounds26..94,
+contextual27..95, interpretation envelope26..95(out of120). These are post-hoc
+candidate bounds, not preregistered BRI values or a population-effect estimate.
+46technically completed originals still lack complete whole-scope assessment.
+Next072–079are locked before semantic inspection, without success-based selection.
+
+**Reproducibility.** Source revision before this report is
+`d0493f4f383f4d775fed3ae87252bbb0b3c30771`. Only this report is changed in the research
+checkout; the original workspace, participant traces and frozen experiment inputs
+are unchanged. Evidence is under
+`C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-045/`:
+`PUBLIC-MATERIALIZATION-CANDIDATE-004.json`, `INDEPENDENT-ASSEMBLY-CHECK.json`,
+`BATCH-COMPONENT-OBSERVATIONS-001.json`, `INDEPENDENT-BATCH-CHECK.json`,
+`AUXILIARY-INTERPRETATIONS-002.json`, `AUXILIARY-SEMANTIC-OBSERVATIONS-002.json`,
+`SEMANTIC-REFINEMENT.json`, `CAUSAL-COUNTEREXAMPLE.json`,
+`BATCH-SCOPE-OBSERVATIONS.json`, `INDEPENDENT-SCOPE-CHECK.json`,
+`PILOT-COHORT-OBSERVATIONS.json`, `NEXT-BATCH-LOCK.json`,
+`FORM-AND-SCOPE-DIAGNOSTICS.json`, `tests-command-001.json`, `EXECUTION-NOTES.json`.
+Earlier candidates and observations remain intact.
+
+Next: source extraction and named/full auxiliary assessment of072–079. Full-cohort
+calibration/natural dispersion, two isolated T2 runs, main formula/sample/power/
+resource preregistration, authorized held-out evaluation, robustness/handoffs/
+retractions/crash recovery and independent final audit remain unfinished. Full
+E009 scientific completion remains false.
