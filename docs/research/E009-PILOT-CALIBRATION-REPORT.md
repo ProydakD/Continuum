@@ -6335,3 +6335,86 @@ scope without replaying participants or filtering unfavorable outcomes. Full-coh
 calibration/natural dispersion, isolated T2, main formula/sample/power/resource
 preregistration, authorized held-out evaluation, robustness and independent final
 audit remain unfinished.
+
+## 79. Locked original038–045: source assembly, two named counterexamples and transcription rejection (2026-10-27)
+
+Continued from checkpoint219 / commit714728a on the same project copy. The eight
+assignments were fixed in monitor040/NEXT-BATCH-LOCK.json before payload inspection.
+No participant replay, model API call, changed world or changed original recording
+was used. Original038–040 are world481; original041–045 are world131. Technical
+execution was already terminal; this section concerns measurement of public output.
+
+Raw extraction retained all32 committed publications, three rejected publication
+attempts and32 verified actual-read handoffs. The first bounded materializer read
+195 native claim objects but left four prose publications unresolved. A new
+source-only adapter assembles32 explicitly listed objects in original041 A–D from
+labelled JSON propositions and scoped version/origin/status/basis/reason fields.
+It neither supplies values from causal truth nor invents native digests. A separate
+field reader checks all32 assemblies,195 unchanged native records and rejects eight
+mutation canaries. All79 residual public units remain present.
+
+An explicit ambiguity is retained: original041 A/B say “nine fields” although the
+listed shared plus individual fields total eight. No ninth field was invented.
+The assembly uses the enumerated fields conditionally; this arithmetic/protocol
+wording remains part of the pending full auxiliary assessment, not a proved PASS.
+
+The independent raw/forward audit checked75 tool exchanges,227 named statuses and
+all eight final answers; six mutation canaries were rejected. There are226 correct
+named statuses and one determinate incorrect status, with no malformed census
+propositions in the current named inventory. Native predecessor diagnostics are
+161 matches, one contradiction and40 unknowns; reconstructed objects do not convert
+unknown native digests into successful comparisons.
+
+Two named counterexamples are preserved:
+
+- original039 D / D2 cites a different previous_sha256 from the actual native D2
+  object published at C. All its substantive status checks pass, but the observed
+  lineage contradiction remains a failure, not a repaired typo.
+- original045 D / C3 retains status undetermined for edge Y→Z. Publicly admissible
+  EA+ED+EE leave models130/131, both supporting that edge. The literal submitted EE
+  authentication record has65 bins; the issued source has64. verify_source returned
+  valid:false for that altered submission. The exact issued EE was not submitted,
+  so its authentication outcome is unknown, not false. Public metadata still marks
+  EE admissible; a failed transcription does not revoke that source. Published
+  prose explicitly excludes EE. Recomputing EA+ED alone yields130/131/274/275 and
+  an undetermined edge, agreeing with the published rationale. This is a supported
+  explanation of the observed output, not direct observation of internal reasoning.
+
+Across the batch, all39 authentication attempts were rebound to request/reply wire:
+36 valid:true, three valid:false, no capability/process errors. The bad EE copies
+in original040 and041 were followed by exact valid submissions; original045 was
+not. This differs from the earlier030 capability-rejected exact request. The32
+literal structured source copies and their declared metadata/authentication flags
+were checked with no false or unknown checks. These checks are reusable evidence,
+not completion of the remaining narrative/auxiliary semantics.
+
+All eight final answers are correct, yet039 and045 have named integrity bounds0..0.
+Original040 has no observed dependency-repair opportunity, so that component is
+unknown rather than a vacuous success. The other traces are not full successes:
+all79 auxiliary units still require full scoped semantic assessment.
+
+The all-assigned cohort retains120 assignments across12 worlds, including all11
+technical failures; the112 rows outside this batch are exactly unchanged. Current
+candidate bounds are formal[12,97], contextual[13,98], envelope[12,98] over120.
+They are not a point BRI score, population effect or validated main metric. There
+are70 other completed originals without named assessment and78 without whole-scope
+assessment, including the current eight. No main test was started or preregistered.
+
+Regression tests:24 PASS. The first test harness failed before running tests because
+a class attribute named run shadowed unittest.TestCase.run (exit1). Its exact source
+and stderr were retained; a separately named v2 source fixes only that collision.
+No participant input, negative result or acceptance criterion was altered.
+
+Evidence: external monitor041/{PUBLIC-SOURCE-EXTRACTION-001.json,
+PUBLIC-MATERIALIZATION-CANDIDATE-002.json,BATCH-ASSESSMENT-INPUTS.json,
+BATCH-COMPONENT-OBSERVATIONS-001.json,INDEPENDENT-BATCH-CHECK.json,
+INDEPENDENT-ASSEMBLY-CHECK.json,FAILURE-MECHANISM-OBSERVATIONS.json,
+PILOT-COHORT-OBSERVATIONS.json,PARTIAL-COHORT-CHECK.json,CURRENT-BATCH-STATE.json,
+tests-command-001.json,tests-command-002.json,EXECUTION-NOTES.json}.
+
+Next unfinished operation: assess all79 auxiliary units of these same eight
+originals, reusing the completed source/authentication checks and named evidence.
+Retain the eight-versus-nine field ambiguity and the two negative traces. Do not
+replay participants or skip to the other70. Full-cohort calibration, natural
+variation, isolated T2, main formula/sample/power/resource preregistration,
+authorized held-out runs, robustness and independent final audit remain unfinished.
