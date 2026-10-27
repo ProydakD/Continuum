@@ -6590,3 +6590,105 @@ full auxiliary assay, reusing this completed batch. Full-cohort calibration and
 natural dispersion, two isolated T2 runs, main formula/sample/power/resource
 preregistration, authorized held-out evaluation, robustness and independent final
 audit remain open. Full E009 scientific completion remains false.
+
+
+## 82. Next original eight: source-framed objects and scope-sensitive explanations
+
+Continued from checkpoint225/claim226 on the same research copy. The prelocked
+originals054,055,056,057,060,061,062,063 yielded32 committed publications,
+2 rejected attempts and32 verified actual memory reads. Worlds are90 for the
+first five assignments and118 for the last three. No participant replay or model
+API request was made; all previous outcomes and original source bytes are retained.
+
+The initial bounded materializer recognized140 named objects and left13 publication
+forms unresolved. The completed candidate003 contains236 objects:164 native and
+72 conditional assemblies. Four observed forms are distinguished:
+- 054D: labelled JSON queries with separately declared values/statuses/hashes and
+  shared identity/bases/reasons;
+- 055: partial JSON rows merged only with explicitly scoped shared fields;
+- 056: unchanged propositions bound to the registered PUBLIC seed actually read
+  in each of four journals, not to private registration or an invented predecessor;
+- 063: complete newline-delimited JSON objects; an absent initial predecessor
+  field stays absent, rather than becoming an invented null or hash.
+
+The intermediate candidate002 and its three gaps remain unchanged. A second
+adapter version fixes two recognition errors: origin must not match the beginning
+of original, and the conjunction and must not become a claim identity. Candidate003
+has no representation gaps. The independent field reconstruction checks all72
+conditional objects and four actual-read journals, rejecting8 mutation canaries.
+Unusual literal differences are preserved:056B uses EA+EB for D3 but EB alone for
+D4;055C J/K/I have reasons EA while056C gives them EA/EB/EC. No native object
+digest is manufactured for these assembled representations.
+
+The separate named audit checks74 raw tool exchanges,236 statuses and8 final
+answers, with6 negative canaries. All named statuses and final answers are correct.
+Known predecessor checks yield137 matches and0 mismatches;72 native hashes remain
+unknown. These observations do not establish a general parser or scientific success.
+
+All64 auxiliary units are examined:587 base plus16 alternative checks,603 total.
+60 units are supported under authored readings and4 remain interpretation-dependent:
+- 054B and061B say EC removes fork/common-source; that is correct relative to EA
+  alone, but only fork is newly removed after EB has already removed common-source.
+- 055D similarly names fork/common-source for EE; the independent and sequential
+  elimination readings differ. Its ED-confounded statement is treated as a
+  nonexhaustive elimination claim, not an assertion that no other family is removed.
+- 060D attaches Y would vary to confounded/common-source. This is correct for
+  confounded, but common-source in world90 has Y=1-X, so do(X=1) fixes Y=0. Both a
+  local-to-confounded reading and a distributive reading are retained.
+The four independent/sequential and local/distributive scenario combinations
+remain explicit. No interpretation is selected because it produces a better score.
+
+Dense census arrays are parsed literally from the public declarations, not replaced
+by a known world's expected census. Sparse arrays retain the explicit omitted-zero
+rule. Every textual authentication alias, active/revoked flag and stated stage is
+checked.41 authentication receipts comprise39 true and2 false, without capability
+errors. The failed061A68-bin and063A65-bin copies are followed by exact valid EA
+requests; a failed copy is not a revoked source.
+
+057A explicitly claims that its complete public objects match private measurement.
+That equality is checked only after public objects were independently materialized;
+private values do not supply missing fields, truths or handoff history. Its actual
+verify_references reply has no notices, which is a form-only result. At057B the
+actual hash_claims request contains all9 exact predecessor objects, and the returned
+hashes match both their canonical digests and the published successor references.
+These receipts are verified, not inferred from a correct final answer.
+
+Complete mechanism/agreement claims are checked over729 partial interventions;
+060D Q fairness is checked over243 assignments not fixing Q. World90 retains its
+bQ ambiguity, while world118's joint evidence uniquely identifies118 with Q=V OR U2.
+The independent scope audit rebinds64 units, checks603 flags and scenarios, separately
+recomputes576 source/forward/receipt or prior-named checks, and rejects12 mutation
+canaries including fabricated private-equality and hash-tool observations. This is
+independent implementation evidence, not independent general prose gold.
+
+The first30-test run has one recorded failure: the test expected common-source
+Y=1 under do(X=1), although world90 has bY=1 and therefore Y=0. Both assay and
+independent audit already had the correct Y=0 observation. Only that test expectation
+is corrected in a separately saved v2; all30 tests then PASS. The original source,
+stdout/stderr and exit1 record remain available. No assay result was altered to pass
+that test.
+
+Whole-scope batch bounds are3..8/8 under retained interpretations:056,057,062 are
+conditionally complete;054,055,061 are scope-sensitive;060 has zero dependency
+opportunity plus scope sensitivity;063 has zero dependency opportunity. Natural
+runs057 and061 do contain observed dependency-repair opportunities; this is not yet
+a full-cohort dispersion or population-effect conclusion. All120 assignments in12
+worlds, all11 technical failures and all112 outside-batch rows are retained exactly.
+Candidate bounds are formal[22,95], contextual[23,96], envelope[22,96] over120,
+not registered BRI scores.54 technically completed originals remain to assess.
+Original064–071 are locked next in original order, before semantic inspection.
+
+Evidence: external monitor044/{PUBLIC-SOURCE-EXTRACTION-001.json,
+PUBLIC-MATERIALIZATION-CANDIDATE-003.json,BATCH-COMPONENT-OBSERVATIONS-001.json,
+INDEPENDENT-BATCH-CHECK.json,INDEPENDENT-ASSEMBLY-CHECK.json,
+AUXILIARY-INTERPRETATIONS-001.json,AUXILIARY-SEMANTIC-OBSERVATIONS-001.json,
+BATCH-SCOPE-OBSERVATIONS.json,INDEPENDENT-SCOPE-CHECK.json,
+PILOT-COHORT-OBSERVATIONS.json,NEXT-BATCH-LOCK.json,
+FORM-AND-SCOPE-DIAGNOSTICS.json,tests-command-001.json,tests-command-002.json,
+EXECUTION-NOTES.json}. All earlier evidence remains unchanged.
+
+Next: execute source extraction and named/full auxiliary assessment of prelocked
+064–071. Full-cohort calibration/natural dispersion, two isolated T2 runs, main
+formula/sample/power/resource preregistration, authorized held-out evaluation,
+robustness/handoffs/retractions/crash recovery and independent final audit remain
+unfinished. Full E009 scientific completion remains false.
