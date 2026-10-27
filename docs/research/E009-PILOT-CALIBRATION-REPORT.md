@@ -7240,3 +7240,105 @@ Full-cohort calibration/natural dispersion, two isolated T2 runs, main formula /
 sample / power / resource preregistration, authorized held-out evaluation,
 robustness / handoffs / retractions / crash recovery and independent final audit
 remain unfinished. Full scientific E009 completion remains false.
+
+
+## 87. Original 098–105: literal records, repaired J contents without repaired history, and requested pause boundary
+
+The prelocked next eight originals were examined from released checkpoint 235,
+claim 236. The user explicitly requested a pause after this next step; its boundary
+is this whole batch's named and auxiliary assay, local commit, verified report
+transaction and released checkpoint, not the start of another batch. No new model
+request, participant replay, external push or held-out run was performed.
+
+### Representation and named observations
+
+Assignments are 098 S0-natural, 099 F0-natural, 100 S1-controlled in world 450;
+101 S0-controlled, 102 S1-controlled, 103 S1-natural, 104 F1-natural and 105
+FULL-JOURNAL-natural in world 456. All 32 committed publications and 32 actual-read
+handoffs were retained, along with 2 rejected publication attempts. All 224 named
+records are native literal objects: no reconstructed table fields and no new
+representation adapter were needed. Independent raw/source checking covered 74
+tool exchanges, 224 forward status checks and 6 negative canaries. There are 223
+correct statuses, 1 malformed census proposition whose status is unknown, and no
+otherwise incorrect status. All 8 final answers are correct. Native predecessor
+hash checking records 191 matches, 1 mismatch and 0 unknown digests.
+
+In 100, literal J census lengths are 64 at A/B, 65 at C and 64 at D. The C proposition
+therefore changes identity and is malformed; D restores correct contents but
+changes the preceding proposition again. D also declares previous_sha256
+`64edf34ef123478d47e2880e8e97ba7363817f742f2df30f224dae063ff49aae`,
+whereas the native C J object hashes to
+`d91373a4276a7fb0f2418d7f3ff3997f3d86854cc777e9bf376240f9d5879b75`.
+The resulting independent-support, no-false-retraction and traceability
+components fail under the retained longitudinal contract. Correct current D
+status/basis and final prediction do not erase this negative history. The correct
+literal EA source is not substituted for the malformed J proposition. The C
+prose assertion of independent J support remains unknown, not passed.
+
+Natural 104 has no claim-dependency opportunity, so dependent_revision remains
+null rather than passing vacuously. Natural 098, 099, 103 and 105 do have dependency
+opportunities; their observed dependent-revision components pass. These are
+conditional diagnostics, not population effect estimates.
+
+### Whole auxiliary scope and independent audit
+
+All 73 auxiliary units were explicitly interpreted against literal source spans
+or JSON pointers. The final 005 assay runs 649 atomic checks:72 units are supported
+under authored interpretations and 1 is unresolved (100 C's malformed J support).
+No new reading-envelope ambiguity was identified in this batch; previous batches'
+ambiguities and negatives remain frozen. The finite equations, actual source
+records, authority state, source authentication receipts, causal elimination
+arguments, numeric model identities and named dependencies were checked. World 456
+EA alternatives are 28, 168, 316, 456, not the world 450 list 18, 162, 306, 450.
+
+In 104 B, the statement that EB alone leaves bZ unresolved is correct:
+EB permits 456/460, while EA+EB identifies 456. EC alone fixes bZ=0. These separately
+scoped statements must not be conflated. In 105 B, the literal public
+`evidence_update.source_archive` exactly contains all introduced records; no
+private measurement was used to fill this archive or any publication field.
+
+Five source-epoch predicates in initial 004 had looked for an absent
+`source_metadata.epoch` field and therefore returned unknown. Final 005 explicitly
+checks the source's first introduction in public updates: EA at epoch 1, EB/EC at
+2. Both 004 and its six-unknown result remain retained. This is a correction of the
+evaluator's evidence location, not an alteration of participant claims. Source
+introduction is not confused with the current stage's epoch.
+
+There are 41 source-authentication calls:39 valid and 2 invalid, with no capability
+errors. Both failures are 103 A: a 64-bin EA copy with wrong contents, then an
+object containing only authority metadata (no counts field). No successful EA
+authentication was obtained there. The participant says so and relies on public
+admissibility; these failed submissions do not make the issued EA invalid or
+revoked. ED/EE are authenticated at D. The independent auditor's initial
+`KeyError: counts` exposed an assumption that every submitted object has counts;
+v2 records missing counts as null, not zero. The failed command and correction
+are retained. A separate interactive PowerShell diagnostic parse error was also
+retained; its numeric status was not captured, so none is invented.
+
+The independent full-scope audit validates 649 result flags, independently
+recomputes 628 finite/source checks, retains the one unknown atomic result, and
+rejects 12 adversarial mutations. It also preserves all 120 assignments and the
+112 unaffected cohort rows. All 25 targeted regression tests pass. Authored prose
+interpretation is still not independent general semantic gold.
+
+### Cohort, limits and stopping point
+
+Batch conditional bounds are 6..7/8:100 is negative;104 lacks a dependency
+opportunity. The 120-assignment /12-world cohort retains all 11 technical failures.
+Formal bounds are 45..90, context-ground 46..91, and the retained envelope 45..91,
+all over 120. These bounds are not registered BRI scores, treatment effects or
+proof of adequate natural dispersion. Fourteen technically complete originals
+still lack whole-public-scope assessment. Originals 106–113 are locked by the
+existing order only; they were not inspected or started.
+
+Evidence is in the existing external monitor 049 directory, including the exact
+candidate 001, named observations, auxiliary specifications/results 004 and 005,
+SEMANTIC-REFINEMENT, NEGATIVE-EVIDENCE, AUTHENTICATION-AUDIT,
+INDEPENDENT-BATCH-CHECK, INDEPENDENT-SCOPE-CHECK, tests-command-001 and
+EXECUTION-ERRORS. This section is the sole repository-file change. The same
+four-role report transaction and released Continuum checkpoint close this step;
+the user-requested goal pause follows that acceptance event. Further research
+requires explicit resume. Full-cohort calibration/natural dispersion, two
+isolated T2 runs, main formula/sample/power/resource preregistration, authorized
+held-out evaluation, robustness/handoffs/retractions/crash recovery and an
+independent final audit remain unfinished. Scientific completion remains false.
