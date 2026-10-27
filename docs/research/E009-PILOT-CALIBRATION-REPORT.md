@@ -6137,3 +6137,74 @@ lock, retaining unsupported representations and all assigned outcomes. Full E009
 still requires full-cohort calibration, two isolated T2 lines, formula/sample/power
 and resource preregistration, separately authorized held-out evaluation, robustness
 handoffs/repeated retractions/crash recovery, and independent final audit.
+
+## 76. New memory forms and an unrepaired natural dependency chain (2026-10-27)
+
+From checkpoint213, monitor038 claimed214 and processed the prelocked original
+019,021,022,023,025,026,027,028 assignments (worlds455/537). No model/API calls,
+participant replays, private measurement observations or E003–E008 edits occurred.
+Original per-run manifests retain the participant model and execution provenance.
+
+- Raw extraction verified32 committed publications,2 rejected publication attempts,
+  32 actual-read handoffs and all terminal identities. Initial bounded extraction
+  left12 publications unresolved. Successive immutable candidates retain131,181,
+  187 and finally219 records; the final candidate004 has no representation gaps.
+  New adapters handle explicitly framed JSON-lines, complete common/group fields,
+  and explicit predecessor proposition carry-forward. Source-authority version1
+  is not a claim version. No unobserved fields or native hashes are invented.
+- The final219 records comprise155 literal objects and64 assembled prose objects
+  (40 direct field assemblies,24 explicit carry-forwards). All20 publications
+  already recognized literally are unchanged. A separate value/span audit checked
+  all64 assembled records and rejected5 mutations. Native predecessor digests:
+  123 matches,0 contradictions,72 unknown (64 assembled predecessors plus8 seed
+  encodings), not reconstructed native hashes.
+- Independent raw/forward audit reopened74 tool exchanges and checked all219
+  statuses:217 correct and2 incorrect, both019 A1 at C/D. A2's proposition remains
+  true but its actual c:A1 justification is invalid at C/D after the inherited
+  census was changed. The declared dependency was not repaired. This is an
+  observed natural-track dependency-integrity failure, not merely a wrong answer.
+- All62 auxiliary units were evaluated under explicit authored meanings with559
+  checks:57 conditionally supported,5 contradicted. Three traces fail the scoped
+  candidate:019 corrupts EA/A1 at C/D and retains unsound A2 support;025D claims
+  all EA-compatible models have bZ0 and that Y varies under do(X=1), both false;
+  028A gives wrong model indices and a wrong Q gate, explicitly corrected at B.
+  Later correction is retained without erasing the earlier contradiction.
+- 021/022/023/027 pass conditionally under the stated source-bound meanings.
+  026 has no observed prior claim-dependency opportunities, so that component is
+  unknown, not a vacuous PASS. All8 terminal predictions and their declared bases
+  pass. Final-answer accuracy alone again fails to identify integrity failures.
+- Authentication records contain36 attempts:32 successful and4 rejected. In025A,
+  the raw-shaped request has65 bins and the metadata-merged request63; neither
+  equals the issued64-bin EA record. The sparse census in public memory is still
+  correct and authority metadata still admissible. A failed transcription is not
+  evidence of exact-source rejection, provider malfunction or source revocation.
+  The raw-shaped/"raw source" wording is kept as a bounded interpretive caveat.
+- The initial auxiliary candidate wrongly read a non-exhaustive elimination claim
+  as equality to the full eliminated-family set. Candidate002 checks inclusion;
+  this removes an evaluator-only false contradiction, not the two actual025D
+  errors. Both candidates and their implementations remain preserved.
+- 20 focused tests pass. Independent named, scope and field-binding audits reject
+  6,7 and5 canaries. The scope audit reopens all62 units/36 authentication receipts
+  and separately recomputes137 source/model/status checks. Equations are checked
+  over729 partial interventions. These are bounded posthoc checks, not independent
+  general prose gold or validated registered BRI measurement.
+
+All120 assignments/12 worlds/11 technical failures remain. Formal partial bounds
+are[8,101]/120, typed-ground bounds[9,102]/120, retained envelope[8,102]/120.
+Previous005 competing readings and previous negative traces remain unchanged.
+These bounds are neither point scores nor condition effects; natural dependency
+failure is observed, but population dispersion/floor calibration remains open.
+
+Evidence: external monitor038/{PUBLIC-SOURCE-EXTRACTION-001.json,
+PUBLIC-MATERIALIZATION-CANDIDATE-004.json,BATCH-ASSESSMENT-INPUTS.json,
+BATCH-COMPONENT-OBSERVATIONS-001.json,AUXILIARY-INTERPRETATIONS-002.json,
+AUXILIARY-SEMANTIC-OBSERVATIONS-002.json,BATCH-SCOPE-OBSERVATIONS.json,
+INDEPENDENT-BATCH-CHECK.json,INDEPENDENT-MATERIALIZATION-CHECK.json,
+INDEPENDENT-SCOPE-CHECK.json,PILOT-COHORT-OBSERVATIONS.json,EXECUTION-NOTES.json}.
+
+86 technically completed original assignments remain unassessed. The next8 are
+locked before payload inspection:029,030,031,032,034,035,036,037. Execute their
+public extraction/materialization and whole-scope assay next; do not redo old
+batches instead. Full-cohort calibration, two isolated T2 lines, formula/sample/
+power/resource preregistration, separately authorized held-out evaluation,
+robustness handoffs/retractions/crash recovery and independent final audit remain.
