@@ -6418,3 +6418,78 @@ Retain the eight-versus-nine field ambiguity and the two negative traces. Do not
 replay participants or skip to the other70. Full-cohort calibration, natural
 variation, isolated T2, main formula/sample/power/resource preregistration,
 authorized held-out runs, robustness and independent final audit remain unfinished.
+
+## 80. All79 auxiliary units of original038–045: two count contracts and source-exclusion counterexample (2026-10-27)
+
+Continued from checkpoint221 / commitbd09e1e without participant replay or model API
+calls. Reused monitor041 raw extraction,227 named observations, independent assembly
+and status checks,39 authentication receipts and32 literal source-copy checks.
+No original recording, world, assigned outcome or named claim was repaired.
+
+All79 residual public units now have explicit source-bound readings and executed
+checks:547 base predicates plus six alternative-contract predicates,553 total.
+The unit summary is75 conditionally supported, two interpretation-dependent, one
+contradicted and one punctuation-only non-world unit. These are authored post-hoc
+readings, not independent general prose gold or registered BRI scores.
+
+Original041 A/B contain an actual counting inconsistency: eight enumerated claim
+keys are called nine fields; B additionally calls four shared fields five. Both
+readings remain recorded. Under the literal-count contract those two units fail;
+under the enumerated-field contract their represented claims are consistent. No
+ninth key or native object digest is invented. The factual arithmetic discrepancy
+is retained even when the enumeration is used as the operational representation.
+The trace remains bounded0..1 rather than choosing the favorable reading.
+
+Original045 D is a determinate auxiliary counterexample. Its reports that the ED
+request returned true and the EE request returned false match the wire. However,
+the rejected EE submission is the65-bin transcription, not the issued64-bin source.
+Public metadata still admits EE. The asserted active set EA+ED, compatible set
+130/131/274/275 and undetermined C3 status contradict the complete admissible input:
+EA+ED+EE leaves130/131 and supports Y→Z. Separately computing EA+ED reproduces its
+stated ambiguity; that explanatory calculation never replaces the reference input.
+The exact issued EE authentication remains unobserved, not false or revoked.
+
+The period-only final unit is explicitly checked as punctuation, not promoted by
+an empty conjunction. Four `verified` flags in original044 source records are also
+checked against exact-record receipts, extending the earlier source-copy checks.
+The source-archive assertion in original045 B is checked against the actual public
+archive containing the exact EA/EB/EC records. Model equations are evaluated over
+all729 partial surgical interventions wherever asserted; Q fairness over all243
+interventions not fixing Q is checked for041/044. Both bQ choices in130/131 remain
+interventionally indistinguishable; no unsupported exact-model identification is
+inferred from family identification.
+
+A separate audit rebinds all79 units to raw publications, checks every553 predicate
+result and both contract scenarios, and separately recomputes528 source/forward/
+field/receipt or prior-named consistency checks. The remaining predicates are
+re-executed by aggregation and supported by existing named evidence; this is not
+an independent semantic interpretation of all prose. Ten negative canaries reject
+changed sources, dropped units, laundered source exclusion, altered expected values,
+invented ninth fields, erased ambiguity, vacuous dependency passes, dropped technical
+failures and promoted full success.25 targeted regression tests PASS; no new command
+or test failure occurred in this continuation.
+
+Whole-scope batch bounds are4..6 of8 under the retained readings. Original038,042,
+043,044 are conditionally complete;039 remains a native predecessor-hash failure,
+045 remains a status/source-selection failure,040 has no dependency-repair
+opportunity, and041 depends on its count-contract reading. All eight final answers
+are correct, which does not remove any of these integrity limitations.
+
+The cohort still contains120 assignments in12 worlds and all11 technical failures.
+The112 rows outside this batch are exactly unchanged. Candidate bounds are
+formal[16,97], contextual[17,98], envelope[16,98] over120, not a point BRI score or
+population effect. The current79 units are scoped with uncertainty retained, not
+left unassessed merely because two readings differ.70 technically completed original
+runs still need whole-scope measurement. Original046–053 were locked next in original
+order without semantic screening; their payloads have not been inspected here.
+
+Evidence: external monitor042/{FIELD-COUNT-OBSERVATIONS-001.json,
+AUXILIARY-INTERPRETATIONS-001.json,AUXILIARY-SEMANTIC-OBSERVATIONS-001.json,
+BATCH-SCOPE-OBSERVATIONS.json,INDEPENDENT-SCOPE-CHECK.json,
+PILOT-COHORT-OBSERVATIONS.json,NEXT-BATCH-LOCK.json,tests-command-001.json,
+EXECUTION-NOTES.json}, plus unchanged monitor041 evidence.
+
+Next: extract/materialize original046–053, then assess their named and full auxiliary
+scope while retaining unfamiliar forms and uncertainty. Full-cohort calibration and
+natural dispersion, isolated T2, main formula/sample/power/resource preregistration,
+authorized held-out evaluation, robustness and independent final audit remain open.
