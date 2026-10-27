@@ -5468,3 +5468,101 @@ PYTHONPATH; исправленный saved command выполнен с явны�
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-029/.
+
+
+## 68. Provenance review завершён: полный знаменатель и ограничение witness policy (2026-10-27)
+
+### 68.1. Terminal, независимая проверка и immutable raw
+
+Существующий exec30194 / PID45472 / start2026-10-27T02:32:30.0257258Z
+дошёл до all_assignments_terminal:76/76, exit0. Последний реальный exec poll —
+monitor030/exec-poll-017.json; исходный OS process отсутствует, PROCESS.lock снят.
+Повторного запуска, content retry, смены модели или ввода credential не было.
+Теперь этот handle закрыт и не должен повторно опрашиваться/запускаться.
+
+Raw seal включает308 файлов: все requests,76 raw responses, RESULT/RECEIPT,
+закрытый ledger и terminal/event records. Повторное чтение подтвердило хеши.
+Seal SHA: 8cfe9bf8f7e9a18ffa530c88aa30e3fcb6641c6312b20ceda041f7ecad74548a.
+Final snapshot006 SHA: 67dd3af438070928ff814152e97c5957c2d71976d752540dab065d0c49c2a5ae.
+Final observations SHA: 32725fd0f3b9aeedfdcc842cb902084f58a14b5fce5bd48f0440dea42f7f0cec.
+Независимый auditor:76receipts/76raw/76requests/38catalogs,1856 exact anchors,
+484 negative canaries, без producer validator imports. Отдельная реализация
+пересчитала компонентные итоги и повторно открыла308 sealed files. Это
+implementation diversity того же автора, не независимый semantic gold.
+
+### 68.2. Все зарегистрированные исходы
+
+| Stratum | Полный denominator | Registered pass |
+| --- | ---: | ---: |
+| Inherited real | 36 | 29 |
+| Inherited mutations | 24 | 24 |
+| Added provenance positive | 8 | 8 |
+| Added provenance negative | 8 | 7 |
+
+76/76 parsed:engineering gate PASS. Positive37/44, negative31/32:
+**registered bounded review gate FAIL**. Ни одна метка или оценка не изменена.
+76 transport attempts,0pending,0unknown usage; reported input1698880 tokens,
+output270494 tokens. Цена неизвестна. Added fixtures не новые causal worlds:
+по-прежнему2 selected worlds/3traces, а не38 независимых единиц.
+
+Все192 inherited named identities,1344 field assessments,192 representations,
+192 source_current_digest assessments и260 additional units получили supported
+как model judgments (2180 assessments суммарно). Это не доказательство
+истинности beliefs или полноты набора. Семь real failures остались только в
+coverage:все6E reviews и trace1B context2; соответствующие scope hypotheses
+из §67 сохраняются. Coverage real:29complete/7partial.
+
+Все8 positive provenance reviews поддержали все80 обязательных assessments
+и complete coverage. Наблюдались faithful known digest для noncanonical bytes,
+дословно переданный криптографически неверный digest, known-null и conditional
+projection с явным predecessor. Это ограниченная эмпирическая проверка новых
+веток, а не универсальная гарантия разделения происхождения.
+
+### 68.3. Отрицательный FAIL — не пропущенная моделью подмена
+
+Все32 negative outputs отвергли заранее заданный target с допустимым verdict.
+Но provenance-037-2, evaluator_digest_promoted_to_source, не прошёл отдельный
+address-related-witness gate. Source публикует current_digest.value как64 нуля;
+proposal подставляет вычисленный evaluator digest460ead16…a19d673.
+Модель ставит source_current_digest=contradicted, дословно указывает оба значения
+и объясняет, что evaluator computation не заменяет source assertion.
+
+Она цитирует точный JSON object по /current_digest. Зарегистрированный reference
+указывает /current_digest/value. Frozen related() допускает равный address или
+потомка reference, но не предка. Поэтому targeted_rejection=true,
+address_related_witness=false, bounded_control_pass=false. В paired context1
+свидетель принят. Literal parent object и его /value механически сверены с source.
+Таким образом, здесь наблюдается ограничение заранее выбранной witness policy,
+а не поддержка моделью ложного source digest. **31/32 остаётся31/32**;
+описательные32 targeted rejections не подменяют зарегистрированный gate.
+
+Нельзя исправлять это blanket-acceptance любого root/ancestor container:
+он может скрывать соседний claim, неоднозначную identity или другой scope.
+Prospective rule потребует точной typed projection с проверкой пути, значения,
+identity/scope и отдельными broad-container/sibling/ambiguity/escaped-pointer
+контролями. Frozen v2 parser/scorer и все реальные outputs не редактировались.
+Подробные literal witnesses:ANCESTOR-WITNESS-DIAGNOSTIC.json.
+
+### 68.4. Согласие контекстов и дальнейшая исследовательская работа
+
+38 fresh-context pairs:0 assessment-verdict differences,0 exact-output-equal pairs.
+Coverage state различается в units7 и36; missing descriptions/anchors различаются
+в units3,5,7,11,12,14,17,19,25,27,34,36,37.
+Такие различия не автоматически semantic disagreement, а согласие не равно истине.
+Прежний v1 итог32/36positive24/24negative FAIL также остаётся неизменным.
+
+Следующий шаг — источник-ориентированное уточнение измерения:отделить наблюдаемый
+publication/prediction event от выводимого live-state и явно проверить связи
+query→prediction→grounds/dependencies для всех6 BRI conjuncts. Не выбирать
+E-only исключение или answer-only метрику ради PASS. Разобрать witness projection
+как самостоятельное ограничение scoring, не переписывая старые исходы. Все новые
+механизмы должны быть prospective и проверять adversarial случаи, а не только
+уже обнаруженный пример. Не начинать ещё один модельный batch без такой задачи.
+
+Полное E009 остаётся незавершённым:пригодное измерение и реальные revision
+opportunities/dispersion,две isolated T2 линии,main preregistration,отдельно
+разрешённый heldout,robustness и итоговый requirements audit ещё нужны.
+Сохранены прежние четыре role artifacts,тот же TARGET и original bytes.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-030/.
