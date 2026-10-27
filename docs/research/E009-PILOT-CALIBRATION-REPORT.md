@@ -6493,3 +6493,100 @@ Next: extract/materialize original046–053, then assess their named and full au
 scope while retaining unfamiliar forms and uncertainty. Full-cohort calibration and
 natural dispersion, isolated T2, main formula/sample/power/resource preregistration,
 authorized held-out evaluation, robustness and independent final audit remain open.
+
+
+## 81. Next original eight: public registered journal, two initial hash conflicts, and retained elimination scope
+
+Continued from checkpoint223/claim224 on the same research copy and four-role
+transaction. Original046–053 were selected by the prior lock, not by observed
+success. Their32 committed publications,2 rejected attempts and32 actual memory
+reads were extracted. No participant replay or model API request was made.
+World/condition bindings come from that lock:046–050 use world131;051–053 use
+world90, not world901. Original source bytes and all earlier frozen results remain
+unchanged.
+
+There are220 current named records:188 native objects and32 conditional objects
+from FULL-JOURNAL original049. Its explicit instruction to retain registered
+propositions refers to the PUBLIC seed actually present in each current read,
+not private registration or merely the immediately preceding publication. The
+source-only adapter binds all four journals, retains their declared statuses,
+bases, reasons, versions, origins and literal predecessor hashes, and leaves
+native hashes unknown. An independently implemented field reconstruction checks
+all32 objects and rejects8 source/field/native-hash canaries. Redundant compact
+proposition aliases are checked against all eight source-bound propositions in
+each stage. This is a bounded interpretation, not a general semantic parser.
+
+The independent raw/forward named audit checks74 tool exchanges, all220 statuses
+and all8 final answers; six mutation canaries are rejected. All statuses and final
+answers are correct. Nevertheless, two native predecessor contradictions occur
+at stageA on claimJ:
+- original046 cites864c48e1ca0c3d639c4e35e0f02267ea80167a9c11e11440e4b6f8425757d92d,
+  while the actually read native predecessor hashes to
+  1f5c6df76cd18ca20f5935f1833bd8d360f1e2770fdcb3a89fb05fbaa613f737;
+- original052 citesa6271c9ecff5d104570b5e8963aa73a7d1612bf3df47797f613910a19eb97efc,
+  while the native predecessor hashes to
+  242e8e14c2c2e7709310a6e07e80516346805933abb5ba5ad5d9c378922b6949.
+Neither literal is repaired. Across eligible known transitions the digest
+observations are163 matches,2 mismatches and40 unknown native hashes.
+
+All58 auxiliary units are now scoped:483 base checks plus2 alternative checks,
+485 total.56 units are supported under their authored readings, one has an
+unresolved causal-description clause, and one depends on its interpretation.
+The first auxiliary result001 is retained rather than overwritten: result002
+corrects the first reading's overbroad substitution of general transcription
+error for the participant's specific claim of an omission.
+
+At046B the rejected EC submission has64 bins and total8, but places a count at
+33 instead of37. The later exact EC request succeeds. A boolean invalid reply
+and these differing arrays do not independently identify the editing cause as
+an omission rather than another transcription error; that clause stays unknown.
+At046C the failed EA submission has exactly the issued counts but additionally
+includes admissible/authenticated/record_type; the exact source-only retry
+succeeds. Across this batch34 authentication receipts comprise30 true and4 false,
+no errors. Every false request is followed at that stage by an exact valid retry.
+A rejected copy is never promoted to revocation of the issued source.
+
+At050B the assertion that EC eliminates fork and common-source is correct when
+EC is compared independently with EA, but only fork is newly eliminated after
+EB has already excluded common-source. Both independent and sequential readings
+remain in the candidate; no preferred reading is selected by success. All729
+partial interventions are enumerated for asserted complete mechanisms/agreement,
+and243 assignments not fixing Q for the explicit all-intervention fairness claim.
+Both bQ values remain observationally/interventionally indistinguishable.
+
+The separate scope audit rebinds58 units to raw publications, verifies485 flags
+and retained scenarios, and separately recomputes458 source/finite-forward/receipt
+or prior-named checks. One atomic result remains unknown. The other predicates
+are re-executed by aggregation and linked to named evidence; this does not create
+independent general prose gold. Ten negative canaries reject source substitution,
+unit loss, altered expected values, manufactured eliminations, erased uncertainty,
+zero-opportunity passes, dropped technical failures and inflated success.
+All25 targeted regression tests PASS. No new command/test failure occurred.
+
+Whole-scope batch bounds are3..6/8:048,049,053 are conditionally complete;046,052
+remain integrity failures;047,050,051 have no observed dependency-repair
+opportunity, and050 additionally depends on elimination scope. Correct final
+answers do not resolve these limitations. All120 assignments in12 worlds and
+all11 technical failures are retained; the112 rows outside this batch are exactly
+unchanged. Candidate bounds are formal[19,95], contextual[20,96], envelope[19,96]
+over120, not registered BRI scores or a population-effect estimate.
+
+There are62 technically completed originals still awaiting whole-scope assessment.
+The next eight are054,055,056,057,060,061,062,063, selected in original order and
+locked before semantic inspection;058 was assessed earlier and059 is a retained
+technical failure, not a silently skipped successful run. Current whole-scope
+examination preserves unknowns; it does not assert that every statement is true.
+
+Evidence: external monitor043/{PUBLIC-SOURCE-EXTRACTION-001.json,
+PUBLIC-MATERIALIZATION-CANDIDATE-002.json,BATCH-COMPONENT-OBSERVATIONS-001.json,
+INDEPENDENT-BATCH-CHECK.json,INDEPENDENT-ASSEMBLY-CHECK.json,
+FAILURE-MECHANISM-OBSERVATIONS.json,AUXILIARY-INTERPRETATIONS-002.json,
+AUXILIARY-SEMANTIC-OBSERVATIONS-002.json,BATCH-SCOPE-OBSERVATIONS.json,
+INDEPENDENT-SCOPE-CHECK.json,PILOT-COHORT-OBSERVATIONS.json,NEXT-BATCH-LOCK.json,
+tests-command-001.json,EXECUTION-NOTES.json}, with all earlier evidence retained.
+
+Next: extract/materialize the prelocked next eight and execute their named and
+full auxiliary assay, reusing this completed batch. Full-cohort calibration and
+natural dispersion, two isolated T2 runs, main formula/sample/power/resource
+preregistration, authorized held-out evaluation, robustness and independent final
+audit remain open. Full E009 scientific completion remains false.
