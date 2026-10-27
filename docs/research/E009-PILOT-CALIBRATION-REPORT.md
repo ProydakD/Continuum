@@ -5183,3 +5183,97 @@ T2 линии, main preregistration, отдельно разрешённый hel
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-026/.
+
+## 65. Проспективное разделение source meaning и evaluator digest
+
+Продолжение от checkpoint191 реализовало versioned candidate, а не ещё один
+пересказ закрытого review. Добавлен экспериментальный модуль
+research/e009_measurement/reference_review_v2.py; существующие frozen v1
+pipelines его не импортируют. Ни один закрытый ответ не пересчитан.
+
+### 65.1. Изменён общий механизм происхождения представления и хеша
+
+В v1 один native_encoding assessment смешивал восстановленное значение
+объекта, утверждение о native carrier и вычисленный canonical SHA-256.
+В v2 named record сохраняет identity, семь state/value fields и source_refs,
+но representation, source_current_digest и evaluator_digest разделены.
+
+representation.kind различает literal_object_value, declared_composition,
+conditional_field_projection и unrecovered_object. Первый означает JSON
+VALUE в источнике, а не единственные опубликованные байты. Conditional
+projection не объявляется source-native объектом или уникальной serialization.
+Representation остаётся обязательным самостоятельным source assessment:
+её нельзя удалить ради прохождения positive gate.
+
+source_current_digest имеет собственные state/value/source_refs. Неизвестный
+current digest не подменяется ни вычисленным хешем, ни explicit previous_sha256.
+Последний остаётся отдельным source field. known null, unknown, absent и
+conflicting различаются. Для всех унаследованных real records current digest
+остаётся unknown — это важное ограничение будущего model validation.
+
+evaluator_digest явно имеет provenance=evaluator, algorithm=sha256 и
+canonicalization=e009-json-sort-keys-utf8-v1. Это выбранный оценщиком JSON
+serializer (sorted keys, ensure_ascii=False, compact separators, finite values),
+UTF-8 без BOM/завершающего LF, не заявление о byte encoding источника.
+Несовпадающий computed digest и попытка переименовать его provenance в source
+отвергаются механически до request. Совпавший hash не доказывает faithfulness.
+
+### 65.2. Сохранены весь источник и все контролируемые искажения
+
+Новый pack-001 содержит те же30 cases/60 fresh-context assignments в прежнем
+порядке:18 real checkpoints и12 mutation families. Source_input, все seven
+field states/values, source_refs и additional/shared assertion units сохранены
+точно. Контрольные искажения не ремонтируются при конвертации; private target
+и допустимые rejection verdicts сохранены. Input IDs/hash/schema новые,
+поэтому старые output receipts не являются ответами на новый контракт.
+
+Повторный source recipe build сохранил18 checkpoints,17 unique inputs,
+96 named occurrences,672 fields (636 known/36 unknown),130 дополнительных
+units. Представления:40 literal values,24 declared compositions,16 conditional
+projections,16 unrecovered objects. Никакого требования писать JSON участнику
+не добавлено. Имеющиеся60 сравнений computed predecessor hash с asserted
+previous_sha256 теперь явно conditional;16 links unknown,4 new named claims.
+Это не доказательство source serialization, authenticity или полного BRI.
+
+### 65.3. Локальная проверка и ограничения
+
+**34 offline tests PASS**:26 contract regressions и8 canaries отдельного
+структурного auditor, не импортирующего producer modules. Проверены полное
+сохранение корпуса, source changes/omissions, typed equality, четыре состояния,
+неподстановка null в отсутствующее свойство, hash/provenance tampering,
+обязательные representation/source-digest assessments, все12 targeted mutation
+concepts, source-related witnesses, coverage и отказ legacy v1 output.
+Синтетический all-supported ответ прямо не считается semantic evidence;
+он не проходит targeted negative scoring. Новых model calls: **0**.
+
+Новый module побайтово равен проверенному external review_io_v2.py. Две копии
+исходников реконструированы из CANDIDATE-DIFF.json и сверены с кандидатами;
+старые исходники не изменены. SHA256 module:
+0377de22a6329af63b61628d5eeaaec72d43546718067777bcf9faf4da8dd68b.
+141-file PROVENANCE-CANDIDATE SHA256:
+b01125b80d0887c83346c90b5826495afa32332dedb388956cbb95a9a283a49c.
+
+IDE apply_patch при удалении лишних semicolons завершился timeout300s;
+последующая IDE inspection timedOut=true не считается успешной диагностикой.
+Фактический файл прочитан, оставшиеся точечные правки выполнены через CLI,
+затем повторены все34 проверки. Ошибка и неполный IDE result сохранены.
+Это ограничение конкретных операций, не заявление о недоступности всего MCP.
+
+### 65.4. Следующая проверяемая операция
+
+Кандидат ещё **не зарегистрирован для модельного запуска**. Необходимо
+добавить отдельные prospective positive reported-current-digest и adversarial
+provenance cases: все существующие real current-digest proposals неизвестны,
+так что один этот корпус не проверяет новую ветку known source digest.
+Сохранить inherited60 и12 families, различить source-asserted (в том числе
+ошибочный) digest и evaluator computation, проверить false native/declared
+claims и связать новые cases с фиксированными acceptance/stop/resource rules
+до отправки запросов. Дополнительные fixtures не становятся независимыми мирами.
+
+Завершённый v1 gate остаётся32/36 positive,24/24 negative,FAIL. Новый локальный
+PASS его не заменяет. Нужны эмпирическая пригодность измерения всех6 BRI
+conjuncts, revision opportunities/nonzero dispersion, две isolated T2 линии,
+main preregistration, отдельно разрешённый heldout, robustness и итоговый аудит.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-027/.
