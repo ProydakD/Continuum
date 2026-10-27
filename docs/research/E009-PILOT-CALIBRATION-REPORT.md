@@ -5377,3 +5377,94 @@ IDE report read оказался stale: EOF5186 против5279 actual filesyst
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-028/.
+
+
+## 67. Продолжение provenance review: область покрытия и перенос между стадиями (2026-10-27)
+
+### 67.1. Реальное исполнение, без нового запуска
+
+Продолжен тот же exec30194 / PID45472 / start2026-10-27T02:32:30.0257258Z.
+Семь сохранённых ожиданий относятся к этому же handle; batch не перезапускался,
+ключ повторно не вводился. Все 76 назначений и 391 frozen files неизменны.
+Snapshot004: {"parsed": 28, "pending_or_unreceipted": 1, "unstarted": 47}.
+В полном зарегистрированном знаменателе strata остаются 36/24/8/8.
+На наблюдённом префиксе: 16 real reviews, из них 9 supported и 7 partial coverage;
+все 12 наблюдённых negative reviews обнаружили заранее заданную подмену.
+Дополнительные 16 provenance-control assignments ещё не достигнуты.
+Это не итоговый PASS; после семи positive failures строгий combined gate
+уже не может пройти без недопустимого пересчёта. Stopping rule требует завершить
+весь batch, поэтому semantic failure не останавливает остальные наблюдения.
+
+Независимый auditor повторно проверил 28 receipts и raw envelopes, 38 catalogs,
+779 exact anchors и 180 negative canaries. Все 76 исходных requests проверены.
+Resources: {"fixture": false, "transport_attempts": 29, "submitted_or_uncertain": 29, "unknown_usage_attempts": 1, "reported_input_tokens": 776614, "reported_output_tokens": 105133, "cost_usd": null}.
+Один pending attempt входит в unknown usage; стоимость неизвестна.
+Snapshot SHA: 4fe2235b0c85aa79214e0fb4b227513acc40a26bd369a1e523351a058ea8d27c.
+Independent audit SHA: 87d878b7220d5efd42ef6bf83327c3ed1addf2c4b0b95c6e396a4652571cd43e.
+
+### 67.2. Все три E-контрольные точки: одинаковые данные, разные judgments
+
+Во всех шести E contexts (три traces) v2 reviewer возвращает partial coverage.
+При этом assessment единственного prediction unit supported, как и во v1.
+Reviewer считает отсутствующими carried-forward D claims/evidence/analysis;
+в большинстве ответов также упоминается query subject. Прежние v1 E результаты
+complete сохраняются. Новая запись не пересчитывает ни одну из двух серий.
+
+Проверено по exact inputs: во всех трёх E cases source_input и assertion_units
+между v1/v2 неизменны; named_records пусты в обоих вариантах. Следовательно,
+новые representation/source_current_digest fields в сами E proposals не добавлены.
+В source есть отдельные question и prediction documents. Unit дословно передаёт
+answer/basis, но evidence_or_subject_scope равен только E; сам query остаётся
+доступным во внешнем public input, а не явно внутри этого unit.
+
+Фраза инструкции «Earlier material is historical unless explicitly carried forward.»
+не изменилась. Нет отдельного coverage-domain поля, определяющего E как новый
+наблюдаемый event либо полный snapshot живых знаний. Различие результатов не
+является рандомизированным доказательством эффекта одного изменения prompt:
+sampling, другие instruction/schema/ID differences остаются альтернативами.
+
+### 67.3. Противоречие шире E
+
+Седьмой positive failure — provenance-007-2 (trace1 B). Все named/unit assessments
+supported; context1 coverage complete, context2 partial. Модель считает неполно
+представленными сохраняющиеся admissibility и EA-only/model-conditional assertions.
+Literal descriptions и source anchors сохранены, но их entailment не объявлен
+доказанным. Поэтому E-specific исключение было бы недостаточно обоснованным.
+
+Сохраняются три конкурирующие интерпретации:
+
+1. **Live state:** ранние независимые утверждения остаются актуальными, и reference
+   действительно неполон. Но persistence сама по себе не доказывает повторное
+   утверждение каждого старого поля новым участником.
+2. **Checkpoint event:** annotation описывает новую публикацию/ответ, а прежние
+   состояния измерены отдельно. Но такой контракт обязан связывать зависимости
+   и основания с новыми последствиями, а не подменять BRI точностью ответа.
+3. **Query binding:** необходимо явно восстанавливать связь вопроса и prediction;
+   вопрос при этом может быть контекстом, а не отдельным утверждением о мире.
+   Его отсутствие внутри unit не доказывает semantic omission, когда он есть
+   в public input; необходима проверка всей связи.
+
+Sanitized specification §6 E требует использования актуальных знаний и новых
+следствий; §9 — old/new state, зависимости, основания и последствия независимо
+от внутреннего формата; §10 — конъюнкцию всех шести BRI условий. Это запрещает
+выбрать «event-only» лишь для зелёного теста или требовать искусственный единый
+формат памяти. Корректная область измерения ещё не adjudicated.
+
+### 67.4. Следующий наблюдаемый результат
+
+Продолжить существующий frozen process до зарегистрированного terminal; затем
+закрыть/запечатать raw, провести полный audit четырёх strata и 38 paired cases.
+Никаких правок labels, source proposals, IO, scoring или инструкций во время run.
+После terminal сопоставить конкурирующие scope interpretations с source evidence
+и всей шестикомпонентной BRI задачей, прежде чем регистрировать следующую правку.
+Full E009 не завершён: пригодное измерение, revision opportunities/dispersion,
+две isolated T2 линии, main preregistration, отдельно разрешённый heldout,
+robustness и итоговый requirements audit остаются необходимыми.
+
+Новый диагностический код не делал provider calls и не исполнял model text.
+Первый локальный setup command завершился ModuleNotFoundError из-за отсутствия
+PYTHONPATH; исправленный saved command выполнен с явным project PYTHONPATH.
+Исходный репозиторий и frozen экспериментальные файлы не изменялись.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-029/.
