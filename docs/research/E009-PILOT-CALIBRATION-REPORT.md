@@ -7068,3 +7068,175 @@ Full-cohort calibration/natural dispersion, two isolated T2 runs, main formula /
 sample / power / resource preregistration, authorized held-out evaluation,
 robustness / handoffs / retractions / crash recovery and independent final audit
 remain unfinished. Full E009 scientific completion remains false.
+
+## 86. Original 089–093 and 095–097: malformed histories, numeric model errors and later correction
+
+Continue the prelocked pilot after released checkpoint233, with claim234 and the
+same research checkout. Prior completion of monitor047 is verified progress, not
+a reason to restart it. This batch reuses original assignments089–093,095–097;
+failed094 remains in the assigned denominator without replay. No model API call,
+external push or new infrastructure was used. Frozen participant model/run,
+instructions, tool, source-code and experimental-condition records are unchanged.
+
+### Source-bound inventory and independent assembly
+
+Assignments:089 S0/natural/world237;090 F1/controlled/world237;091 FULL-JOURNAL /
+controlled/world450;092 F0/controlled/world450;093 S0/controlled/world450;
+095 F1/controlled/world450;096 F1/natural/world450;097 S1/natural/world450.
+The extraction has32 committed publications, four rejected attempts and32 verified
+actual-read handoffs. Rejected attempts remain historical, not current state.
+
+Initial candidate001 retained15 unresolved publications. The existing JSON-lines
+adapter recovered096A–D; an existing labelled adapter recovered095D; v7 then
+recovered the remaining10 publications. Candidate008 has244 named records:
+156 native and88 conditional assemblies across11 publications. Earlier candidates
+and all unresolved-form diagnostics remain intact. No private measurement or
+oracle truth supplied missing public fields or repaired participant content.
+
+The source forms matter:
+
+- 091 explicitly retains initial-public-journal propositions and declares compact
+  status/hash rows. All eight B bases are joint EA/EB/EC, including J/K/I. All C
+  bases are EA with EA/EB/EC reasons. D distinguishes causal-claim and J/K/I bases.
+- 092B has a literal default proposition value1, except K7, I6 and D4=0. C/D give
+  each row's value explicitly. These are full-object assembly rules, not native
+  JSON objects whose digest can be assumed from a row.
+- 095B gives D4 an EB-only basis and reason, unlike the other causal claims.
+  This special case is preserved rather than normalized to the joint basis.
+
+A separate source recomposition checked88 objects/704 fields and caught12
+mutation canaries, including default-value exceptions, special D4 support and
+joint invariant bases. The raw/forward audit checked76 exchanges and244 statuses:
+241 correct, one incorrect and two unassessable malformed census propositions.
+All eight final answers were correct. Native predecessor diagnostics are126
+matches, one conflict and96 unknowns; conditional objects have no invented native
+digest. Correct final answers do not establish whole-trajectory integrity.
+
+### Definite negative results:093 and096
+
+**093: malformed J and a predecessor conflict.** The literal J census has65 bins
+at A and B, then64 at C/D. A changes the inherited proposition's identity; C
+repairs the census but changes it relative to the malformed predecessor. The
+cumulative diagnostic retains both transitions rather than erasing the earlier
+malformation. The separate published EA source record in B also has65 bins;
+A's source record is correct, so source-record and claim-object errors are not
+conflated. The B prose assertion of independent J support remains unknown for
+that malformed literal proposition, not a pass.
+
+C's declared J predecessor hash is
+`d72d9d0ff43a8eddb5720cc94cc7f749e917a564a3da4c362f1c146c62b4bd03`;
+the actual native B J object's hash is
+`4eeccba274698c9f6e479a0c7c7992c35096bac587cd9c11fc40b807fd4f22de`.
+The conflict is observed. Its internal editing cause is not inferred.
+
+**096: wrong indices followed by an explicit correction.** A reports compatible
+indices2,146,290,434 while also describing h=or. Those numeric indices actually
+encode h=and. The issued EA census admits18,162,306,450, with h=or. A's literal C1
+proposition is model index2; it is already refuted by EA, not undetermined as
+published. B continues to name434 as the unique compatible model while describing
+the correct common-source/or equations. These are contradictory public claims,
+not alternative names for the same model.
+
+C explicitly identifies and corrects this indexing error. Crucially, it does not
+rewrite C1 to a different model: the literal proposition remains index2, now
+correctly refuted. The mechanism-specific counterexample is independently
+observed: model2 has Q probability1/2 conditional on V=1; issued EA has probability1
+under that condition. C/D corrections and correct final answers are retained as
+successful later behavior, but cannot make the earlier A/B claims correct.
+
+### Two scoped readings retained, not silently resolved
+
+089D says all observed/interventional Q marginals are fair. Under the contextual
+reading, interventions do not fix Q; all243 such partial interventions satisfy the
+claim. Under the literal all-observed-interventions reading, do(Q=0) and do(Q=1)
+give numerators0 and8, not4. Both readings are retained. 090D, by contrast,
+explicitly excludes interventions fixing Q and is checked with that restriction.
+
+095C says the listed `previous_sha256` values belong to current version4 objects.
+As a field-membership statement this is consistent with the reconstructed objects;
+as a claim that the values hash those current objects, it is false. The values
+agree with the predecessor objects. D explicitly distinguishes stored predecessor
+hashes from hashes of the current version5 objects. This later clarification is
+retained without retroactively choosing one interpretation of C.
+
+Current contextual/literal scenario labels carry these two independent scope
+questions. They are an interpretation envelope, not an estimate of treatment
+effect or a claim about hidden intent.
+
+### Authentication and source admissibility
+
+The trace contains49 authentication attempts:42 true, six false and one exact
+issued EA request rejected by capability in096B. That result is `valid=None`, not
+`valid=False`, and does not revoke EA. An earlier successful EA receipt remains
+historical evidence; no new successful B-stage authentication is invented.
+
+Observed failed submitted copies are089D/EE64 bins,092B/EC64 bins,
+093C/EA65 bins,096B/EC65 bins,096D/EE65 bins and097D/ED63 bins. Except096D/EE,
+they are followed by exact valid submissions. 096B's EC shape is compatible with
+one inserted zero, shifting a suffix by one position; this is not proof of a
+unique editing history or accidental intent.
+
+096D explicitly declines to use the failed EE copy, while using sufficient EA+ED
+support to identify450. The issued EE remains admissible according to authority
+metadata. Its failed submitted copy is not converted into an invalid/revoked
+issued source, and unused admissible evidence is not confused with missing
+measurement. Natural dependencies are present in all three natural traces:
+089C5 uses C3/C4,096C6 has direct and dependency-containing alternatives,097A3 uses
+A1/A2. There is no zero-opportunity natural panel in this batch.
+
+### Full auxiliary assay, audits and error provenance
+
+All61 auxiliary units were examined with642 base and four alternative checks:
+646 total. Results:55 supported under authored interpretation, two
+interpretation-dependent, three contradicted and one unresolved. The contradicted
+units are093B's malformed source and096A/B's numeric identities. The unresolved
+unit is093B's independent-support claim about malformed J. It stays unknown.
+All previously recorded negatives and ambiguities remain in the cohort.
+
+Independent source/receipt/forward auditing verified646 flags, separately
+recomputed612 checks, and caught12 mutation canaries. One atomic result remains
+unknown; it was not forced to a boolean. Thirty focused tests passed, including
+literal index preservation through correction, malformed-array non-repair,
+predecessor mismatch, conditional-Q counterexamples, partial zero-insertion shape,
+capability-versus-validity distinction, unused-but-admissible EE, scope propagation
+and unchanged outside-batch rows.
+
+Evaluator errors are retained with their sources and exit statuses, not hidden:
+
+- The first batch-audit canary assumed a zero-dependency trace and raised
+  StopIteration. v2 instead verifies actual nonzero opportunity; no trace was
+  deleted or fabricated to fit the canary.
+- An inline diagnostic accessed a nonexistent `source_path` key after printing
+  the authentication observations. The corrected read uses the named result file.
+- The first author script contained `else450`; v2 fixes its syntax without changing
+  any participant record. The failed original source and exit1 remain preserved.
+- The first independent-assembly assertion had an extra bracket in an expected
+  reasons literal. v2 checks the actual phrase; no claim fields were altered.
+
+### Cohort and next step
+
+The current batch's conditional interval is4..6/8. 090,091,092,097 are
+conditionally complete;089/095 are scope-sensitive;093/096 are negative despite
+correct final answers. No registered BRI score or population effect is emitted.
+All120 assignments,12 worlds and11 technical failures remain;112 outside-batch
+rows are unchanged. Formal bounds39..91, context bounds40..92 and interpretation
+envelope39..92 are over the full120 assigned denominator, not completed-only.
+Twenty-two technically complete originals still need whole-scope assessment.
+Next prelocked batch, before payload inspection:098–105, in original order.
+
+Parent revision: `959010f27cd1dd337268c0cbc2377661b1158037`. Only this report changes
+in the research checkout. External evidence directory:
+`C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-048/`.
+Current records include `PUBLIC-MATERIALIZATION-CANDIDATE-008.json`,
+`INDEPENDENT-ASSEMBLY-CHECK.json`, `BATCH-COMPONENT-OBSERVATIONS-001.json`,
+`INDEPENDENT-BATCH-CHECK.json`, `AUXILIARY-INTERPRETATIONS-004.json`,
+`AUXILIARY-SEMANTIC-OBSERVATIONS-004.json`, `NEGATIVE-EVIDENCE.json`,
+`SCOPE-INTERPRETATIONS.json`, `BATCH-SCOPE-OBSERVATIONS-002.json`,
+`INDEPENDENT-SCOPE-CHECK.json`, `PILOT-COHORT-OBSERVATIONS-002.json`,
+`NEXT-BATCH-LOCK-002.json`, `tests-command-001.json`, `EXECUTION-ERRORS.json` and
+`EXECUTION-NOTES.json`. Source identities and frozen prior outcomes are retained.
+
+Full-cohort calibration/natural dispersion, two isolated T2 runs, main formula /
+sample / power / resource preregistration, authorized held-out evaluation,
+robustness / handoffs / retractions / crash recovery and independent final audit
+remain unfinished. Full scientific E009 completion remains false.
