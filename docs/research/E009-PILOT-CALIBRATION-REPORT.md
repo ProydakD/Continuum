@@ -6919,3 +6919,152 @@ Full-cohort calibration/natural dispersion, two isolated T2 runs, main formula /
 sample / power / resource preregistration, authorized held-out evaluation,
 robustness / handoffs / retractions / crash recovery and an independent final audit
 remain unfinished. Full E009 scientific completion remains false.
+
+## 85. Original 080 and 082–088: public archive assembly, missing predecessor fields and full auxiliary scope
+
+This is a continuation of the prelocked original pilot, not a new participant run
+or a replacement for an unsuccessful assignment. The prior released checkpoint
+was 231; the existing monitor047 lease is revision 232. The ETA-only intervening
+reply did not advance the experiment. The same research checkout remains TARGET.
+No participant replay, new model API call, external push or new infrastructure was
+used. Original 081 remains a technical failure in the assigned denominator.
+
+### Assignment and observed public materialization
+
+The eight assignments remain in their original order: 080 F0/natural/world218;
+082 F1/natural/world237; 083 S1/controlled/world237; 084 S0/controlled/world237;
+085 S1/natural/world237; 086 F0/controlled/world237; 087 F0/natural/world237;
+088 FULL-JOURNAL/controlled/world237. Extraction retained 32 committed and two
+rejected publications, with 32 verified actual-read handoffs. Rejected attempts
+were not treated as current state. Participant identities, instructions, tools,
+model/run metadata and experimental source revisions remain in the frozen
+original run manifests and wire records.
+
+The initial source-only candidate retained nine unresolved publication forms.
+Candidate006 resolved two labelled publications; candidate007 resolved the
+remaining seven without private measurement or oracle field fill. The final
+inventory is 224 named records: 154 native objects and 70 conditional assemblies
+across nine publications. All preceding candidates and their gaps are retained.
+The new bounded adapters handle colonless labelled propositions, tuple rows with
+shared fields, explicit public-archive retention, and six natural-language claims.
+They are not a general semantic parser or representation-independent gold.
+
+Important distinctions:
+
+- 082D explicitly gives seven fields for each A1–A6, but no `previous_sha256`.
+  All six predecessor fields remain absent and marked unobserved. No hash from
+  C, a private measurement object or a reconstructed surrogate was substituted.
+- 086 has literal proposition JSON with shared/grouped fields; invariant J/K/I
+  bases remain EA-only as explicitly declared.
+- 088A has `[id, proposition, status, previous_sha256]` rows. B explicitly retains
+  propositions from its actually read A archive; C/D refer to the initial public
+  journal. In B and D **all eight** declared bases are joint, including J/K/I.
+  Their semantic independent EA support does not license rewriting their stored
+  basis fields. C also retains EA/EB/EC reasons for J/K/I.
+- Independent source recomposition checked all 70 assemblies and 554 fields, with
+  12 mutation canaries including fabricated missing hashes and incorrectly
+  reduced invariant bases. Reconstructed objects do not receive native digests.
+
+The raw-wire/forward audit checked 74 tool exchanges, all 224 current statuses
+and eight final answers; all statuses and answers were correct. It also caught
+six corruption canaries. Native predecessor diagnostics are 130 matches, zero
+conflicts and 70 unknowns. Separately, conditional recomposition agrees with all
+24 explicit predecessor hashes in 088B–D; 088C's claimed `hash_claims` call was
+checked against its actual request and response. This does not convert those
+conditional objects into observed native objects.
+
+### Whole public auxiliary scope and retained interpretation uncertainty
+
+All 62 auxiliary units were examined. Current spec004/engine v12 produced 647
+base checks and two alternative-reading checks: 649 in total. Results are 59
+supported under authored interpretation, two non-world fragments, and one
+interpretation-dependent fragment. There is no new definite contradiction in
+this batch. Prior contradictions and all previous uncertain results remain.
+
+084D says ED removes confounded and common-source, followed by the explanation
+that do(X=1) has Y=0 always. The colon can introduce a local explanation for the
+confounded family or a distributive Y-based explanation for both. Both readings
+are retained. Observed ED has Y numerator0 and Z numerator0. Under do(X=1):
+
+| Candidate family/models | Y numerator | Z numerator |
+| --- | ---: | ---: |
+| confounded 376/377 | 4 | 4 |
+| common-source 524/525 | 0 | 4 |
+
+Thus Y alone does not exclude the common-source candidates; Z does. Correct final
+answers and correct joint model exclusion do not resolve this wording ambiguity.
+080's different wording about *respective latent responses* was checked as Y for
+confounded and Z for common-source, not silently expanded into a blanket Y claim.
+Joint Y/Z observations in 085 and 088 were also kept distinct from Y-only claims.
+
+The assay includes source arrays, admissibility/revocation, nested authority
+metadata, family-dependent parameters, conditional fairness, observational joint
+relations, structural edges, model-specific effects, and named independent
+support. Universal intervention-distribution assertions were enumerated over
+all 729 partial binary interventions; Q-fairness without fixing Q used all 243
+applicable interventions. Source-correlation checks are not reduced to marginal
+checks. All authored interpretations remain conditional rather than independent
+prose gold.
+
+### Authentication, dependencies and evaluator corrections
+
+There were 32 authentication attempts: 30 true and two false, no capability error.
+083B first submitted EB with 66 bins: the actual request appends two zero bins to
+the exact 64-bin census. It subsequently authenticated the exact issued source.
+087D's first EE request had 64 bins but incorrect counts, followed by an exact
+valid request. Invalid copies do not revoke or authenticate a different issued
+record. 086 made no authentication calls and did not claim a verification receipt.
+The observable edit shape is verified; accidental intent is not inferred.
+
+Natural dependency opportunities are real in 080 (C6 uses C4), 085 (C2 and C5 use
+C1), and 087 (A4 has a mixed EA/C:A3 basis). Conversely, 082 has no claim-reference
+dependency opportunity despite calling A4 a descendant in ordinary graph prose.
+Its dependency component remains null, not a vacuous pass.
+
+An initial evaluator run failed with `KeyError: U2`: an observed-cell relation
+checker had been given an expression using an exogenous variable. The error,
+command exit1 and spec002 remain preserved. Spec003 separates observable Y/Z/V
+relations from the latent Q mechanism, which is already constrained by checked
+model parameters and joint intervention equations. Spec004 adds a literal
+presence check for a normative fragment so an empty check list is not treated as
+unknown world truth. The preliminary spec003 assay and cohort remain archived;
+current authoritative outputs use auxiliary004 and batch/cohort/next-lock002.
+A preceding PowerShell status selection also emitted duplicate-property warnings
+(exit0); execution notes retain the error and the corrected exact-key reading.
+
+### Independent checks, cohort and next action
+
+Independent auditing rebound all 62 source units and authentication receipts,
+recomputed 619 checks using separate forward/source logic, verified all 649
+result flags and scenario aggregation, and caught 12 mutation canaries. No atomic
+check has an unknown result. Twenty-eight focused tests passed, including missing
+hash non-fill, joint invariant bases, natural dependencies, latent-Q intervention
+coverage, causal ambiguity, trailing-zero versus prefix corruption, source
+correlation versus equal marginals, and retention of the original failed runs.
+
+Six of eight current traces are conditionally complete under this diagnostic;
+084 is interpretation-sensitive and 082 has zero dependency opportunity. The
+batch interval is 6..8/8. This is not registered BRI or a treatment-effect estimate.
+All 120 assignments, 12 worlds and 11 technical failures remain in the cohort;
+112 rows outside this batch are unchanged. Formal bounds are 35..93, context
+bounds36..94 and the interpretation envelope35..94, all over120 assignments.
+Thirty technically complete originals still lack whole-scope assessment.
+The next batch was selected by original order before inspecting its payloads:
+089,090,091,092,093,095,096,097. Failed094 is retained without replay.
+
+Parent code/report revision: `b9b5da00c9b586b778fc7dfc7fdc38162b278cdb`.
+Only this report changes in the research checkout. Evidence directory:
+`C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-047/`.
+Key current records: `PUBLIC-MATERIALIZATION-CANDIDATE-007.json`,
+`INDEPENDENT-ASSEMBLY-CHECK.json`, `BATCH-COMPONENT-OBSERVATIONS-001.json`,
+`INDEPENDENT-BATCH-CHECK.json`, `AUXILIARY-INTERPRETATIONS-004.json`,
+`AUXILIARY-SEMANTIC-OBSERVATIONS-004.json`, `SEMANTIC-REFINEMENT.json`,
+`CAUSAL-SCOPE-EVIDENCE.json`, `BATCH-SCOPE-OBSERVATIONS-002.json`,
+`INDEPENDENT-SCOPE-CHECK.json`, `PILOT-COHORT-OBSERVATIONS-002.json`,
+`NEXT-BATCH-LOCK-002.json`, `FORM-AND-SCOPE-DIAGNOSTICS.json`,
+`tests-command-001.json` and `EXECUTION-NOTES.json`.
+
+Full-cohort calibration/natural dispersion, two isolated T2 runs, main formula /
+sample / power / resource preregistration, authorized held-out evaluation,
+robustness / handoffs / retractions / crash recovery and independent final audit
+remain unfinished. Full E009 scientific completion remains false.
