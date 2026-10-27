@@ -5675,3 +5675,100 @@ main preregistration, отдельно разрешённый heldout, robustnes
 
 Evidence directory:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-031/.
+
+
+## 70. Выполненное longitudinal измерение именованных утверждений
+
+### 70.1. Объём и разделение источника от истины
+
+На checkpoint201 продолжена проверка трёх прежних traces, без новых model/API calls.
+Для всех12 публикаций A–D выполнен локальный six-component diagnostic. Значения
+берутся из public source-bound assertion matrix, не из private measurement sidecars.
+Private episode использован только для зарегистрированных controlled role labels;
+его claims не подставляются вместо наблюдаемого содержания. Проверены303 exact
+source references; source-факты отделены от результатов finite-world вычисления.
+
+Независимая реализация без импорта producer/lineage parser заново материализовала
+96 именованных записей:16 seed и80 новых A–D. Использованы literal JSON values,
+явные декларации общих полей и explicit unchanged-proposition references. Это
+ограниченная проверка реально встреченных форм, не запрет иных форм памяти.
+На D восстановление shared fields не превращено в заявление о literal JSON object.
+
+### 70.2. Наблюдаемые пересмотры, основания и сохранение
+
+Все80 текущих именованных статусов согласуются с зарегистрированным finite class;
+все80 наборов заявленных оснований логически корректны. Status calculations
+согласуются между constraint oracle и forward simulator. Проверяется каждый
+заявленный альтернативный basis: хороший вариант не легализует устаревший.
+
+| Trace | Необходимые изменения статуса | Выполнено | Старых basis стало некорректно | Preservation slots |
+|---|---:|---:|---:|---:|
+| pilot-018 | 20 | 20 | 11 | 12 |
+| pilot-020 | 20 | 20 | 11 | 12 |
+| pilot-058 | 6 | 6 | 2 | 6 |
+| Всего | 46 | 46 | 24 | 30 |
+
+Preservation denominator фиксируется по прежнему утверждению: оно уже было
+supported, было корректным до обновления и остаётся supported после обновления.
+Вновь подтверждённые утверждения сюда не включаются. Все30 таких слотов сохранены.
+Это описательные повторные наблюдения на двух выбранных мирах, не46 независимых
+экспериментальных единиц и не оценка эффекта условий.
+
+В controlled traces на A убраны исходные ссылки D1→H,D2→D1,D3→D2,
+D4→D1,D4→J,K→H; текущие claims получили прямые evidence grounds. J,K,I не отозваны.
+На B/C/D снова наблюдаются изменения статусов, без восстановления invalid parents.
+
+В natural trace зависимость существует: на B A3 получает альтернативы [[c:A1],
+[e:EA,e:EB,e:EC]]. На C A1 переходит supported→undetermined, EB/EC отозваны;
+A3 тоже переходит в undetermined, обе старые alternatives заменены [[e:EA]].
+На D A3 вновь supported с EA/ED/EE. Это реальный наблюдаемый случай dependency
+repair. Раннее сообщение этого этапа об отсутствии natural dependency было
+ошибочным; оно исправлено после просмотра полного графа B→C.
+
+### 70.3. Шесть компонентов без преждевременного full BRI
+
+Выведены root_revision, dependent_revision, independent_support,
+no_false_retraction, traceability и отдельный new_prediction для каждой трассы.
+Пустая область проверок имеет eligible=false/pass=null, а не vacuous PASS.
+Controlled roles взяты из регистрации; natural roles выводятся из предыдущих
+публичных claims и связей. Ни отсутствие изменившихся descendants, ни точный
+финальный ответ сами по себе не дают полный положительный исход.
+
+Для76 inherited rows прослеживаются identity/proposition, origin, version+1 и
+source-linked reasons. 60 predecessor digests совпадают,0 расходятся,16 unknown
+относятся к неполной native encoding controlled seed. Unknown digest не объявлен
+ни несовпадением, ни автоматически потерянной семантической преемственностью.
+Результаты §69 для трёх E answers/bases переиспользованы без нового вызова модели.
+
+Дополнительные127 assertion units seed/A–D сохранены в результате; ещё3 E units
+уже связаны с вопросом/ответом в §69. Их полная семантика не заменена именованной
+панелью. Поэтому BRI=null для всех трёх traces, measurement_eligible=false;
+зарегистрированные оценки не пересчитаны. Next step — выполнить source-bound
+проверку оставшегося observational/causal содержания, а не считать эти units шумом.
+
+### 70.4. Проверки и исправления самого diagnostic
+
+Независимый audit воспроизвёл96 source materializations,80 current rows,
+46 revision opportunities,24 invalid-old-basis cases,30 preservation slots и
+единственное текущее c:-ребро A3→A1 на B.10 tamper canaries отклонены.
+14 boundary tests PASS: inactive/cyclic/missing parents, revoked evidence,
+duplicate/empty bases, ложный отзыв, неверный статус, пропущенные свойства,
+preservation denominator и запрет продвижения частичного результата в full BRI.
+Same-author independence не представляется независимым исследовательским подтверждением.
+
+Сохранены ошибки и старые результаты: iteration по строке seedABCD исправлена
+на явный набор стадий; Windows case-insensitive collision result/log исправлена
+разными basename. Первая descriptive version ошибочно включала вновь supported
+claims в preservation denominator;002 это исправляет. Негативный тест выявил,
+что duplicate evidence доходил до oracle и вызывал exception: ранняя rejection
+добавлена.003 и002 на реальных данных byte-identical; все14 tests теперь проходят.
+Ни одна ошибка не вызвала повторного model request или изменения frozen trials.
+
+Новая проверка дала ненулевые реальные revision/dependency opportunities, но
+полная пригодность измерения и BRI dispersion ещё не установлены. После закрытия
+оставшегося scope нужны две isolated T2 линии,main preregistration, отдельно
+разрешённый heldout,robustness и итоговый audit. Старые37/44positive31/32negative
+review FAIL сохраняются. TARGET и четыре native role artifacts не заменены.
+
+Evidence directory:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-032/.
