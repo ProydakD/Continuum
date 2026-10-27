@@ -6022,3 +6022,52 @@ Artifacts (same stable TARGET and four-role transaction):
 - `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-035\INDEPENDENT-BATCH-CHECK.json`
 - `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-035\PILOT-COHORT-OBSERVATIONS.json`
 - `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-035\EXECUTION-NOTES.json`
+
+
+## 74. Whole-public-memory grounds, auxiliary scope, and the next locked batch
+
+Checkpoint209/claim210 continued the first unfinished auxiliary assay, then advanced the original locked cohort. No model requests or participant replays occurred. The full E009 objective remains active; these are post-hoc pilot diagnostics, not main scores or independent semantic gold.
+
+### Actual auxiliary execution and authentication provenance
+
+All 27 retained public scope units from pilot-005/006/007/009 received 260 atomic checks under explicit authored interpretations. They agree with the reference calculations. Checks cover exact evidence tables, admissibility, source verification receipts, candidate sets, parameters, graph and probability statements, named-status/preservation claims, and public carry-forward rules. Normative statements about not using historical claims are not evidence of actual causal use inside a model.
+
+Universal claims were tested at their stated scope: 243 partial interventions not fixing Q for the universal fairness statement, and 729 partial interventions for all-census agreement and full equation checks. This is not a single-intervention test presented as a universal result.
+
+The raw receipts expose one rejected malformed EA verification in pilot-006 A (74 counts instead of 64), followed by a successful verification of the exact issued record. Across the four runs there are 16 authentication attempts: 15 successful and one rejected. Both receipts remain visible; the malformed attempt was not repaired or treated as authentication. Published evidence in that scenario uses the correct issued record.
+
+### Distinguish evidence roles without modifying observed fields
+
+The literal contract requires active bases and nonempty reasons for every retained assertion. The first context-ground experiment allowed explicitly grounded uncertainty and passed 10 empty-basis cases, but still failed traceability for nine unchanged J/K/I records at B/C/D with reasons=[]. This intermediate negative result is retained.
+
+A second, separately declared candidate distinguishes positive support, grounds for uncertainty, and explicit preservation of unchanged justified assertions. It allows no field rewriting: bases=[] and reasons=[] remain exactly as published. Eligibility requires scoped current public witnesses, active evidence, a genuinely mixed compatible model set for uncertainty, or unchanged identity/proposition/status/bases with sound surviving support and an explicit preservation statement. Missing fields, changed epistemic states, invalid nonempty bases, wrong witnesses and hash contradictions do not receive exemptions.
+
+The hardened comparison executed 19 ground checks (10 uncertainty, nine preservation). On pilot-005 the strict reading remains [0,0], the uncertainty-only intermediate reading remains [0,0], and the full typed-ground reading is [1,1] conditional on its explicit source interpretation. The reported envelope remains [0,1]; no favorable reading is silently selected. This sensitivity is evidence about the measurement convention, not proof of a causal-model failure or demonstrated natural BRI dispersion.
+
+For pilot-006 and pilot-007, dependent-revision opportunities remain absent and the corresponding component remains unknown, never a vacuous PASS. Pilot-009 has six named components and the auxiliary scope supported under the authored interpretation, yielding a conditional diagnostic [1,1]. Its prose reconstruction is still not an independently validated general semantic parser.
+
+22 focused semantic/ground-boundary tests passed. An independent source/receipt/ground/aggregation implementation verified all 27 source units, 19 ground records and authentication receipts, and rejected five canaries. Its scope is not independent interpretation of every prose clause or a second implementation of all 260 mathematical checks.
+
+All 120 assignments, 12 worlds, 24 per condition and 11 technical failures are retained. Partial formal bounds are [3,108]/120; choosing the typed reading would give [4,109]/120; the retained interpretation envelope is [3,109]/120. These are conditional descriptive bounds, not effect estimates or registered BRI. Registered BRI scores emitted remain zero.
+
+### Progress beyond the completed four-run scope
+
+Before semantic inspection, the next eight assignments were locked in original order: pilot-010 through pilot-017. Their manifest-pinned raw records yield 32 saved publications, four rejected publication attempts, and 32 exact successor-read handoffs. They cover world321 and world455 and include all five conditions across the relevant tracks.
+
+The initial bounded materializer extracted 198 literal records from 28 publications and retained four pilot-012 publications as unresolved, rather than silently treating them as empty. Those publications use shared-field, pipe-delimited tables. A source-bound table adapter subsequently assembled their 32 records without private measurement or default fields. The latest candidate therefore contains 230 records across all 32 publications, plus 68 retained auxiliary units. The earlier unresolved candidate remains available. Native record hashes are not invented for table assembly.
+
+Eight table/empty-journal boundary tests passed. A separate source audit verified the initial 198 literal records and all 32 handoffs, rejecting three canaries. An additional literal line/common-identity audit checked the 32 table rows; group scopes are covered by focused tests, not claimed independent prose gold. No causal status or six-component assay has yet been completed for this new eight-run batch. There remain 102 technically completed scenarios without that assay, including these eight already materialized cases.
+
+Recorded execution errors were corrected and preserved: wrong initial working directory was blocked by exclusive records; authentication handling initially rejected a real failed attempt instead of retaining it; a local check-list variable was shadowed; a test imported an older same-named author script and its exclusive writer blocked alteration; an empty natural journal required an explicit seed case. No old artifact or participant output was overwritten.
+
+Next executable operation: apply the source-bound named/auxiliary/six-component assay to the already materialized pilot-010..017 batch, using its actual sources and worlds. Preserve the typed-ground alternatives and zero-opportunity policy. Do not replay participants or substitute another review of the old three traces. Full-cohort calibration, isolated T2, main formula/sample/power/resource freeze, separately authorized held-out work, robustness scenarios and final independent audit remain required.
+
+Evidence:
+- `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-036\AUXILIARY-SEMANTIC-OBSERVATIONS-001.json`
+- `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-036\CONTEXT-GROUND-CONTRACT-002.json`
+- `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-036\TYPED-GROUND-OBSERVATIONS-003.json`
+- `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-036\INDEPENDENT-SCOPE-GROUND-CHECK.json`
+- `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-036\PILOT-COHORT-OBSERVATIONS.json`
+- `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-036\NEXT-BATCH-STATE.json`
+- `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-036\batch-002\PUBLIC-MATERIALIZATION-CANDIDATE-002.json`
+- `C:\Users\User\Documents\ChatGPT\ContinuumResearch\artifacts\e009-001\measurement-021\followup-001\followup-001\followup-001\monitor-036\EXECUTION-NOTES.json`
