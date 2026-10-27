@@ -4979,3 +4979,103 @@ Full E009, пригодность измерения всех6 BRI conjuncts, T2
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-024/.
+
+## 63. Принятая declared composition и полный знаменатель review
+
+Продолжение от checkpoint187 на прежнем TARGET. Существующий exec26111
+продолжен без перезапуска, повторной передачи credential или изменения
+зарегистрированных60 назначений. Старые primary/full-record job закрыты.
+
+### 63.1. Следующие реальные ответы
+
+Snapshot009: **16 parsed,1 pending-or-unreceipted,43 unstarted**;17 attempts,
+1 pending и1 unknown usage. Reported348806input/50368output; стоимость
+неизвестна, pending usage не принимается за нулевой расход. Независимый
+replay подтвердил16 receipts,337 exact anchors,100 negative canaries,
+все60 request и30 catalog файлов. SHA256 snapshot:
+d8695b36bf84ec32f78c7ce5cfd9aabb98d0ecd7c57321718ac687a7ac53204e.
+
+Зарегистрированные positive_pass=12 при полном знаменателе36,
+negative_pass=2 при знаменателе24. Это промежуточные counts, не итоговые
+частоты успеха. Из positive assignments14 parsed, два отказа native_encoding
+в trace2/D сохранены. All-positive/combined критерии уже FAILED (§62),
+но remaining assignments продолжаются по прежнему stopping rule.
+
+### 63.2. Контраст, не сводимый к отсутствию literal JSON
+
+review-007-1 и007-2 относятся к trace1/B. **Оба поддержали** все8 identity,
+56 field,8 native_encoding и8 additional-unit assessments, complete coverage.
+В текущем source нет буквальных полных JSON-объектов этих8 записей.
+Однако он явно объявляет точный набор8 ключей, общие version3/origin,
+конструкцию proposition={query:QUERY,value:VALUE}, bases/reasons для двух
+групп и таблицу id/query/value/status/previous_sha256.
+
+Отдельный source-bound parser составил8 объектов непосредственно из этой
+декларации и строк таблицы, без извлечения полей из reviewer output.
+Все56 field state/value pairs, объекты и вычисленные canonical digests
+совпали с proposal. Это проверка объявленной композиции; она не утверждает
+публикацию JSON-байтов или наличие current digest строки в исходной прозе.
+
+В обоих контекстах reviewer прямо сослался на complete declared composition,
+а не literal JSON carrier. Из80 assessments нет verdict disagreements,
+один anchor-set disagreement и57 различий rationale. Это согласие двух
+контекстов одного случая, не80 независимых наблюдений и не semantic gold.
+
+Напротив, trace2/D (§62) получил два отказа при совпадении56 полей, но
+условном наследовании схемы из истории. Наблюдаемый контраст опровергает
+описание «reviewer отвергает любую нелитеральную композицию». Он совместим
+с различением explicit complete schema и implicit inheritance, но не
+доказывает причинного эффекта: stage, trace, source content и контексты
+не рандомизированы для этого сравнения. Неоднозначность annotation labels,
+избыточное native/hash утверждение и вариативность reviewer остаются
+конкурирующими объяснениями. Прежние scores не пересчитаны.
+
+DECLARED-COMPOSITION-CONTRAST.json SHA256:
+36a3028d4fc94b997893cf8edfaa03484b5de5ca2cbcde83dcb029dd26f04ac2.
+
+### 63.3. Описательный профиль без отбора удобных случаев
+
+Новый posthoc profiler сохраняет все60 assignments,30 context pairs,
+исходные scores и статусы. Для real references выделены непересекающиеся
+группы по текущим source values; mutation families остаются отдельными:
+
+| Группа real reference                                           | Назначено | Parsed в009 | Registered pass |
+| --------------------------------------------------------------- | --------: | ----------: | --------------: |
+| Нет named records                                               |         8 |           6 |               6 |
+| Предложенный native object не найден как current JSON value     |        10 |           4 |               2 |
+| Все предложенные native objects найдены как current JSON values |        14 |           4 |               4 |
+| Native object не предложен                                      |         4 |           0 |               0 |
+
+Mutation invented_predecessor:2 parsed/2 registered passes (§62); остальные
+22 mutation assignments ещё pending/unstarted в009. Принятый predecessor
+verdict underdetermined не превращается в доказанное ложное значение.
+
+Profiler различает JSON number и boolean, отбрасывает duplicate/nonfinite
+JSON, не продвигает historical объект в current, учитывает JSON-lines
+и сохраняет различие no native proposal / proposed but not literal.
+**7 unit tests PASS**; all60 denominator и неизменность scores проверены.
+Literal object value equality не является byte equality; отсутствие
+literal object не исключает declared composition. Группы описательные,
+не randomized format arms; нет causal estimate, CI или нового gate.
+Selected independent worlds по-прежнему2, а не60.
+
+REVIEW-EVIDENCE-PROFILE-009.json SHA256:
+5a4b27bf745f7ca1a296aa02f4e6b7967bed6962b7cbb5f790a9e1a5539e89f0.
+Все новые scripts/results закреплены PROFILE-CANDIDATE.json; Q22 execution,
+inputs, private key, prompts, Q23 independent auditor и старые raw seals
+не изменены. Это same-author диагностика, не независимая semantic разметка.
+
+### 63.4. Продолжение без замены полного E009
+
+Дождаться остальных assignments текущего exec26111, независимо replay
+новые receipts и сохранить targeted mutation misses, unknowns и positive
+rejections. После actual terminal — подтвердить exit/PID/start/TERMINAL,
+запечатать raw и выполнить final audit всего registered denominator.
+Разделение native carrier / declared composition / conditional digest
+остаётся возможным проспективным изменением после завершения этого run,
+а не исправлением scores задним числом. Измерение всех6 BRI conjuncts,
+revision opportunities, две изолированные T2 линии, main preregistration,
+отдельно разрешённый heldout и полный итоговый аудит ещё не выполнены.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-025/.
