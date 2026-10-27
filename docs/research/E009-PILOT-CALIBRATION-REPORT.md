@@ -5277,3 +5277,103 @@ main preregistration, отдельно разрешённый heldout, robustnes
 
 Evidence:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-027/.
+
+
+## 66. Prospective provenance controls: регистрация и реальный запуск (2026-10-27)
+
+### 66.1. Гипотеза и полный знаменатель
+
+Проверяется гипотеза: разделение representation, source_current_digest и
+evaluator_digest уменьшит необоснованные отказы, не скрывая подмены
+происхождения. Конкурирующие объяснения: неоднозначность представления
+сохранится; ошибки только перераспределятся; модель примет ложное происхождение.
+v1 результаты не пересчитываются: прежние32/36 positive,24/24 negative и FAIL
+остаются наблюдением. Frozen project module0377de22 и прежние исходники неизменны.
+
+Весь Q27 корпус60 назначений сохранён byte-identical, включая порядок, IDs,
+private targets и12 mutation families. Добавлены8 authored cases ×2 fresh contexts:
+4 positive и4 negative. Итого38 cases/76 assignments, но по-прежнему только
+2 selected causal worlds и3 traces; новые fixtures не независимые миры.
+Четыре strata:36 inherited positive,24 inherited negative,8 new positive,
+8 new negative. Ничего не исключается из знаменателя из-за отсутствия ответа.
+
+Positive controls: опубликованный SHA-256 неканонических literal JSON bytes;
+дословно переданный, но криптографически неверный source digest; известный null;
+условная field projection с explicit predecessor без complete-object claim.
+Negative controls: evaluator hash выдан за опубликованный current digest;
+previous_sha256 выдан за current; conditional projection объявлена declared
+composition либо literal object. Каждый negative меняет один компонент,
+а source_input и остальные поля сохраняются. Допустимые contradicted/underdetermined
+вердикты зафиксированы до ответов; для подмены явно опубликованного digest требуется
+contradicted. Везде нужен свидетель по адресу целевого компонента.
+
+### 66.2. ASSAY, измерение, пороги, анализ
+
+ASSAY — Responses review полной public source history и proposed annotation.
+Измеряются все identity/7fields/representation/source_current_digest/unit
+assessments, coverage, target-specific witness, contract/availability outcomes
+и usage. Evaluator digest проверяется механически, не считается source assertion.
+Положительный исход требует поддержки всех компонентов и complete coverage;
+проверка не ослаблена до content-only. Gates:76/76 parsed,36/36 inherited positive,
+24/24 inherited negative,8/8 positive provenance,8/8 negative provenance.
+Их конъюнкция не присваивает semantic gold, measurement eligibility или BRI.
+Сравнение двух контекстов описательное; согласие не равно истине, n не38 миров.
+
+EXECUTION SHA: e3fe209334c00b56a4beb546ed7ebb4fa34fdc259f2a1bc6f6f8cecb1e9ece76
+FREEZE-MANIFEST SHA: 067df64283deae94235971d4d3220d7cd4eeb756d01de4e6f48391ced32edbe2,391 pinned files.
+Protocol/private targets/runner/scorer/independent auditor зафиксированы до calls.
+Инструкции модели не содержат private expectations. Модель gpt-6.1-sol,
+store=false, serial concurrency1, minimum gap1s. Retryable availability failures:
+до3 attempts, backoff30/90s с Retry-After, attempt deadline900s. Content retries,
+model switching и automatic replay запрещены. Все76 исполняются до terminal,
+кроме operator stop/fatal transport/model mismatch/3 consecutive exhausted cases.
+Совокупного token budget нет; output request cap16384 на вызов, максимум228
+transport attempts. Цена и фактический input token count заранее неизвестны.
+
+### 66.3. Локальная проверка и первые реальные наблюдения
+
+24 offline tests PASS:14 provenance/contract,5 runner,5 receipt audit с10
+snapshot-tampering canaries. Отдельный checker без producer imports проверил
+полный packet/source/private-target набор. Offline simulation дала76 квитанций;
+independent auditor перепроверил76 raw envelopes,38 catalogs,108 anchors,
+484 negative canaries. Это синтетические ожидаемые ответы, не model evidence.
+Обе реализации созданы одним автором; структурная независимость не семантическая.
+
+Реальный process30194 / PID45472 / start2026-10-27T02:32:30.0257258Z запущен.
+До него проверены terminal и отсутствие исходных процессов всех3 прежних jobs.
+Ключ введён однократно через masked getpass, только в память процесса.
+Snapshot002: {"parsed": 6, "pending_or_unreceipted": 1, "unstarted": 69}.
+Strata: {"real": {"assigned": 36, "pass": 4}, "mutation": {"assigned": 24, "pass": 0}, "provenance_positive": {"assigned": 8, "pass": 0}, "provenance_negative": {"assigned": 8, "pass": 0}}.
+В snapshot002 обе оценки trace2D (provenance-002-1/2) supported: прежний
+native/hash спор не воспроизведён в новом разделённом контракте. Однако обе
+trace1E (provenance-003-1/2) имеют partial coverage без rejected assessments:
+модель считает отсутствующими живые записи и анализ из D, первый контекст
+также указывает query subject E. Это новая отрицательная/противоречивая
+информация о границе current checkpoint versus carried-forward history,
+а не доказательство правильности этих замечаний. По строгому all-positive
+критерию уже есть провал; batch продолжается по зафиксированному stopping rule.
+EARLY-FAILURES-002.json сохраняет literal rationale/anchors без пересчёта.
+Независимо проверено6 receipts/6 raw
+bodies/103 exact anchors;34 negative canaries.
+Resource ledger: {"fixture": false, "transport_attempts": 7, "submitted_or_uncertain": 7, "unknown_usage_attempts": 1, "reported_input_tokens": 84896, "reported_output_tokens": 15879, "cost_usd": null}.
+Pending attempts:1; это незавершённый batch, не итоговый PASS.
+Зарегистрированные denominators остаются44 positive/32 negative/76 total.
+
+### 66.4. Continuation, ограничения и воспроизводимость
+
+Продолжать существующий process30194, не создавать второй run и не вводить ключ
+повторно из-за observation timeout. Сохранять неизменные raw/receipts, читать ledger
+consistent snapshot и повторять независимый аудит. После terminal запечатать raw,
+сопоставить все strata/paired disagreements и диагностировать отрицательные исходы
+без пересчёта v1. Нужны эмпирическая пригодность всех6 BRI conjuncts, реальные
+revision opportunities/nonzero dispersion,2 isolated T2, main preregistration,
+отдельно разрешённый heldout, robustness и итоговый requirements audit.
+
+IDE report read оказался stale: EOF5186 против5279 actual filesystem lines.
+Поэтому append выполнен CLI после byte-exact REPORT-BEFORE comparison; это не
+утверждение недоступности всего MCP. Исходный репозиторий не изменён. Новые
+экспериментальные скрипты/fixtures находятся во внешнем evidence каталоге;
+четыре прежние роли продолжаются с шестью BASELINE/MODIFIED/ROLLBACK probes.
+
+Evidence:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-028/.
