@@ -5772,3 +5772,97 @@ review FAIL сохраняются. TARGET и четыре native role artifacts
 
 Evidence directory:
 C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-032/.
+
+
+## 71. Выполненная проверка дополнительных публичных утверждений
+
+### 71.1. Область и результат
+
+На checkpoint203 продолжена первая незавершённая операция: проверка127
+дополнительных seed/A–D units трёх прежних traces. Новых model/API calls не было.
+Все127 точных ссылок заново разрешены до исходного JSON value либо text span;
+старые сырые ответы, source packets, зарегистрированные scores и исходный
+репозиторий не менялись. Три E units остаются связанными с проверкой §69.
+
+Первый исполняемый проход проверил4 native compatible-model lists, оставив123
+явно unresolved. Затем выполнены авторские source-bound интерпретации остальных
+утверждений, с раздельными наблюдаемыми значениями и вычисляемыми следствиями.
+Финальный локальный результат002 содержит194 атомарные проверки:
+
+| Категория | Units | Что именно означает |
+|---|---:|---|
+| Supported under authored interpretation | 106 | Проверяемые утверждения верны в явно записанной трактовке и конечном зарегистрированном классе |
+| Metadata / epistemic-policy statements | 20 | Сохранённые framing/type/serialization/stage/policy, не эмпирические causal successes |
+| Partial: competing graph readings | 1 | Обе трактовки проверены, неоднозначность не скрыта |
+
+Это не106 независимых наблюдений, не свободно обобщаемая accuracy модели и не
+автоматический semantic gold. Единицы, их разбиение и перевод прозы в проверяемые
+условия заданы постфактум тем же автором. Исходное произвольное представление
+памяти не заменялось структурированным сообщением участнику эксперимента.
+
+### 71.2. Какие проверки действительно выполнены
+
+Проверены literal census tables (включая нулевые ячейки), interventions, total8,
+нативные evidence records, admissibility, C revocation epoch и реальные
+verify_source receipts. Исторический authentication receipt не легализует
+отозванное свидетельство: выбор revoked EB/EC в текущие constraints отклоняется.
+
+Compatible-model sets независимо согласуются у constraint oracle и forward
+simulator. Проверяются наборы параметров, family alternatives, объяснения
+elimination через фактические и гипотетические marginals. Утверждения вида
+«EA alone» вычисляются на EA, а не на всей более сильной текущей совокупности.
+Family-conditional graph/quantity assertions проверяются во всех соответствующих
+совместимых моделях, а не только в истинном зарегистрированном мире.
+
+Объявленные структурные уравнения проверены при наблюдении и всех12 одиночных
+interventions с8 exogenous assignments. Отрицательный контроль заменяет
+common-source Z=U0 XOR1 на Z=X XOR1: observational tables остаются одинаковы,
+но intervention checks обнаруживают ошибку. Для natural C отдельно проверено
+pointwise V=not W при do(Z=0), numerator4 и сохранение независимого A4.
+
+Shared named declarations, статусы, grounds, версии, origin и predecessor values
+связаны с выполненной ранее независимой materialization §70, а не получены из
+private episode claims. Полнота их трактовки остаётся авторским суждением,
+не универсальным свойством parser. Normative «history is not evidence» не
+представляется доказательством того, что модель причинно не использовала историю.
+
+### 71.3. Оставшаяся конкретная неоднозначность
+
+В natural C текст утверждает «Y->Z and Y->Q hold for chain/confounded ...».
+Explicit claim A1 — edge Y→Z; A3 — path Y→Q. В контексте A3 path-reading верно:
+путь существует для chain/confounded, не для fork/common-source; оба claims
+undetermined после отзыва EB/EC. При буквальном direct-edge reading Y→Q ложен
+во всех четырёх families. Обе интерпретации сохранены с вычисленными witnesses;
+unit не получает безусловный PASS. Это не исправление текста участника.
+
+Первый диагностический результат выявил две ошибки авторской привязки: путь был
+ошибочно сопоставлен A2 вместо A3, а independent prediction — A3 вместо A4.
+Это ошибки нового evaluator specification, не два провала участника. Первые
+spec/result/command сохранены без перезаписи; версия002 исправляет IDs по
+исходным propositions. Старые frozen reviewer scores не пересчитываются.
+
+### 71.4. Проверки, ограничения и следующая операция
+
+16 risk-focused tests PASS: неверные model sets/counts/authentication/parameters,
+revoked grounds, observationally equivalent but causally wrong equations,
+graph-versus-path, неверная pointwise relation, IDs preservation, tampered source
+span/hash, revocation epoch и запрет продвижения результата в full BRI.
+Отдельная реализация (без импорта нового producer) повторно разрешила127 refs,
+проверила8 native evidence records, целостность194 result flags и отклонила7
+negative canaries. Это same-author source/integrity audit, не независимая
+семантическая сертификация всех194 математических/языковых интерпретаций.
+
+BRI по-прежнему не объявлен посчитанным: registered scores emitted0;
+full_BRI_adjudicated=false. Следующая операция — собрать и выполнить явный
+six-component measurement contract с sensitivity к оставшемуся edge/path reading,
+опираясь на §69–71. Нельзя снова объявлять все127 units непроверенными, требовать
+универсального доказательства семантики или закрывать ambiguity молчаливым PASS.
+Нужны проверяемые критерии eligibility/missingness/aggregation и связь каждого
+компонента с наблюдениями; diagnostic bounds не становятся registered main score.
+После этого остаются полноценная пилотная валидация/ненулевой разброс BRI,
+две isolated T2 линии,main preregistration/power/resources, отдельно разрешённый
+heldout,robustness и итоговый независимый audit. Старый37/44positive31/32negative
+review FAIL сохранён. Локальный report commit, без push; те же4 native role artifacts.
+
+Evidence directory:
+C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-033/.
