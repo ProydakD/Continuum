@@ -6208,3 +6208,67 @@ public extraction/materialization and whole-scope assay next; do not redo old
 batches instead. Full-cohort calibration, two isolated T2 lines, formula/sample/
 power/resource preregistration, separately authorized held-out evaluation,
 robustness handoffs/retractions/crash recovery and independent final audit remain.
+
+## 77. Shared JSON fragments, malformed predecessors and uncertain eligibility (2026-10-27)
+
+After closing monitor038 in local commit db207c7 and checkpoint215, monitor039
+claimed216 and extracted the prelocked original029,030,031,032,034,035,036,037
+assignments (worlds537/481). No new model/API calls or participant replays occurred.
+This section reports a named-component partial assay, not completed whole-scope
+measurement of this batch. Original manifests retain model/execution provenance.
+
+- Verified32 committed publications,3 rejected publication attempts,32 actual-read
+  handoffs and five distinct participant identities per run. Final materialization
+  candidate008 contains232 records:161 literal objects and71 source-bound assemblies.
+  Explicit prose supplies common/group fields, ordered predecessor hashes, inline
+  propositions and24 declared proposition carry-forwards. Nine publications need
+  such assembly. No native object digest is invented for the71 assembled records.
+- An earlier adapter recognized24 partial JSON-line fragments as complete native
+  objects even though their version/origin/bases/reasons were in surrounding prose.
+  Candidate008 preserves every fragment value, binds the explicit shared scopes,
+  and marks the reconstructed native encoding unknown. The earlier candidates and
+  failed executions remain as evaluator-error evidence, not accepted measurements.
+- Natural035 retains a65-bin C1 census at A–D. C2's proposition is correct but its
+  declared C1 support cannot be established from that malformed predicate. At D,
+  C1 additionally cites a predecessor digest that contradicts the actual native C
+  object. Controlled journal036 changes J from64 to65 bins at C, despite declaring
+  unchanged propositions; D explicitly carries that malformed proposition forward.
+  The literal error is not repaired from the issued EA source. These two traces
+  already have named integrity counterexamples, independently of pending auxiliaries.
+- The original eligibility calculation crashed on a malformed predecessor. The
+  candidate repair keeps possibly eligible assertions in the relevant component
+  denominator with an unknown check; it does not silently exclude them or award a
+  PASS. There are10 uncertain role-membership incidences. The eight completed Q38
+  named-component results remain exactly unchanged under this repair.035 has actual
+  dependency opportunities with an unknown outcome;034 has no observed dependency
+  opportunities. Those are distinct reasons for an unknown component.
+- Independent raw/forward audit reopens75 tool exchanges and232 named statuses:
+  226 correct,6 malformed/unknown,0 determinate status errors. All8 terminal answers
+  are correct. Native predecessor diagnostics:141 matches,1 contradiction,64 unknown.
+  Final answers and matching links alone do not establish semantic integrity.
+- Separate field/carry-forward audit checks all71 assemblies,24 carried propositions
+  and161 unchanged literal records; all6 malformed censuses are retained. Its5
+  canaries and the raw audit's6 canaries are rejected.24 focused tests pass, including
+  conservative eligibility propagation, missing/overlapping scopes, source mutation,
+  fragment hashing, native-link contradiction and the prior-batch regression. These
+  are bounded source/finite-model checks, not independent general prose gold.
+
+All71 auxiliary units remain pending. Therefore none of the current eight is
+reported as a whole-scope PASS. All120 assignments,12 worlds and11 technical
+failures remain; the other112 cohort rows are unchanged. Partial formal bounds
+are[8,99]/120, typed-ground bounds[9,100]/120 and retained envelope[8,100]/120.
+These are not point estimates or registered BRI scores.78 other technically
+completed originals await named-component assessment; including this partial
+batch,86 still lack whole-scope assessment.
+
+Evidence: external monitor039/{PUBLIC-SOURCE-EXTRACTION-001.json,
+PUBLIC-MATERIALIZATION-CANDIDATE-008.json,BATCH-ASSESSMENT-INPUTS.json,
+BATCH-COMPONENT-OBSERVATIONS-001.json,INDEPENDENT-BATCH-CHECK.json,
+INDEPENDENT-ASSEMBLY-CHECK.json,PARTIAL-COHORT-CHECK.json,
+PILOT-COHORT-OBSERVATIONS.json,CURRENT-BATCH-STATE.json,EXECUTION-NOTES.json}.
+
+The next unfinished operation is the source-bound semantic assay of these same71
+auxiliary units, preserving all named outcomes and uncertainty. Do not re-extract
+this batch or skip ahead to new originals. Full-cohort calibration, isolated T2,
+main formula/sample/power/resource preregistration, authorized held-out evaluation,
+robustness and final independent audit remain unfinished.
