@@ -6799,3 +6799,123 @@ calibration/natural dispersion, two isolated T2 runs, main formula/sample/power/
 resource preregistration, authorized held-out evaluation, robustness/handoffs/
 retractions/crash recovery and independent final audit remain unfinished. Full
 E009 scientific completion remains false.
+
+## 84. Original 072–079: explicit public retention, causal scope and an exact rejected request
+
+**Scope and provenance.** Continue checkpoint 229 / claim 230 on the same research
+copy. The preinspection lock fixes originals 072–079, all in world 218. Preserve
+32 committed publications, 6 rejected publication attempts and 32 actual-read
+handoffs. No model API calls, participant replays, external push or new paid
+infrastructure were used. All previous outcomes remain intact.
+
+**Public materialization.** The earlier bounded adapters left four journal stages
+unresolved; their outputs remain available. A separately saved v4 adapter handles
+072's explicit retention of original public propositions and origin, with shared
+or grouped status/bases/reasons and literal predecessor fields. Candidate 005 has
+236 named records: 204 native objects and 32 conditional public-journal assemblies.
+No hidden measurement or oracle value fills a public field. No native hash is
+invented for an assembled object, and missing initial predecessor fields stay absent.
+An independent implementation recomposes 32 objects / 256 fields from the actual
+public read and publication receipts, with eight negative canaries. This remains
+bounded source interpretation, not unrestricted independent prose adjudication.
+
+All 236 named statuses and eight final answers agree with finite forward checks.
+The named audit verifies 78 raw exchanges and six negative canaries. Predecessor
+diagnostics: 169 native-hash matches, no conflicts, 40 unknown. Natural 074 and 076
+actually contain claim dependencies; natural 075 and 079 do not. A missing repair
+opportunity remains unknown, not an automatically successful dependent revision.
+
+**Full additional scope.** All 72 auxiliary units are examined: nested and flat
+source records, every explicit metadata/authentication alias, source summaries,
+causal explanations, field declarations and retained support claims. The current
+specification has 573 base and four alternative-reading predicates, 577 total:
+69 units conditionally supported, two interpretation-dependent, one contradicted.
+Spec/observations 001 remain intact. V9/spec 002 adds seven direct checks without
+removing earlier ones: two conditional Q proportions in 076C and five Z=X
+relationships in supplied intervention censuses. Outcomes are unchanged.
+
+For 076C, the literal EA census gives P(Q=1 | V=1)=1 and P(Q=1 | V=0)=1/2.
+Joint source relationships are not reduced to equal marginal distributions: a
+regression mutation reverses Z/X association while preserving both marginals and
+must fail. Universal structural claims are checked over all 576 catalog models;
+complete asserted mechanisms are checked over all 729 partial interventions.
+Sparse declarations, chained counts[i] assignments, dense arrays and 079D's
+structured nonzero-count maps remain bound to their actual public values.
+
+**Negative result, 074D.** The publication explicitly says:
+`ED excludes 366,506 because their Y stays dependent on U0 under do(X=1).`
+Its plural Y-dependence claim is false for common-source model 506. Both finite
+implementations give these numerators, with denominator eight:
+
+| Record/model under do(X=1) | Y=1 | Z=1 |
+| --- | ---: | ---: |
+| Issued ED census | 0 | 8 |
+| Confounded 366 | 4 | 4 |
+| Common-source 506 | 0 | 4 |
+
+Common-source Y stays fixed at zero and agrees with ED; Z supplies an actual
+exclusion witness. The participant's Y explanation is not silently rewritten to
+Z, nor is its explicit plural referent narrowed to the confounded model. The
+correct final answer therefore does not rescue 074's whole-scope upper bound.
+
+**Retained causal scope.** The less explicit because-Y clauses in 072B and 073D
+retain two readings: a local explanation of the confounded exclusion, or a
+shared explanation for both named families. They differ for common-source and
+remain interpretation-sensitive. In contrast, 072D merely conjoins an observed
+Y marginal with exclusion; the evaluator does not add an unstated Y-only cause.
+These are authored competing interpretations, not an independent semantic gold
+standard or an adjustment of participant text to obtain a preferred result.
+
+**Authentication versus capability.** In 073B, two submitted EC copies received
+false validity replies: one had 65 bins, the other 64 bins with changed counts.
+A third request was the exact issued 64-bin EC record, but received
+`capability_rejected`, with no validity value. The source is still marked
+admissible in the public evidence metadata. A missing successful authentication
+receipt is an observable fact; it is not evidence that the issued source is false.
+No replay is used to replace this outcome. This differs from earlier malformed-
+copy failures and is retained as an exact-source capability rejection.
+
+Across this batch: 39 authentication attempts, 34 true replies, four false replies
+and one capability error. The remaining false replies are 075A/EA and 076D/EE,
+both 65-bin copies followed by exact successful submissions. 077 made no source
+verification calls and did not claim successful calls; none are imputed. All seven
+explicit `authentication_valid` flags in 078 are checked against actual receipts.
+
+**Checks and cohort.** The independent scope audit verifies 72 source units and
+all 577 flags, separately recomputes 552 checks and catches 12 negative canaries.
+All 29 risk-based tests pass, including public seed retention, grouped reasons,
+literal source encoding, exact capability-rejection semantics, joint-versus-marginal
+relations, conditional probabilities, causal-scope alternatives and an OR-to-XOR
+mechanism mutation. The 112 cohort rows outside this batch remain unchanged.
+
+Conditional whole-scope envelope: 3..7 / 8. Originals 076, 077 and 078 are
+conditionally complete; 072 and 073 are causal-scope-sensitive; 074 has a false
+explicit explanation; 075 and 079 lack dependency opportunities. Every final
+answer is correct. All 120 assignments / 12 worlds and all 11 technical failures
+remain in the denominator. Cohort formal bounds are 29..93, contextual 30..94,
+and interpretation envelope 29..94 out of 120. These are post-hoc diagnostic
+bounds, not preregistered BRI scores or population-effect estimates.
+
+38 technically completed originals remain without full whole-scope assessment.
+Next originals 080, 082–088 are locked before semantic inspection; failed original
+081 stays a retained technical failure and is not replayed or substituted.
+
+**Reproducibility.** Parent revision is
+`1e075248fdc3ade11e662daa27827219e591cc4d`; only this report changes in the research
+checkout. Original workspace bytes, participant traces and frozen experiment
+inputs remain unchanged. Evidence directory:
+`C:/Users/User/Documents/ChatGPT/ContinuumResearch/artifacts/e009-001/measurement-021/followup-001/followup-001/followup-001/monitor-046/`.
+Key records are `PUBLIC-MATERIALIZATION-CANDIDATE-005.json`,
+`INDEPENDENT-ASSEMBLY-CHECK.json`, `BATCH-COMPONENT-OBSERVATIONS-001.json`,
+`INDEPENDENT-BATCH-CHECK.json`, `AUXILIARY-INTERPRETATIONS-002.json`,
+`AUXILIARY-SEMANTIC-OBSERVATIONS-002.json`, `SCOPE-EXTENSION.json`,
+`CAUSAL-COUNTEREXAMPLE.json`, `BATCH-SCOPE-OBSERVATIONS.json`,
+`INDEPENDENT-SCOPE-CHECK.json`, `PILOT-COHORT-OBSERVATIONS.json`,
+`NEXT-BATCH-LOCK.json`, `FORM-AND-SCOPE-DIAGNOSTICS.json`,
+`tests-command-001.json` and `EXECUTION-NOTES.json`.
+
+Next: source extraction and named/full auxiliary assessment of 080, 082–088.
+Full-cohort calibration/natural dispersion, two isolated T2 runs, main formula /
+sample / power / resource preregistration, authorized held-out evaluation,
+robustness / handoffs / retractions / crash recovery and an independent final audit
+remain unfinished. Full E009 scientific completion remains false.
